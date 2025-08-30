@@ -9,14 +9,11 @@
       "Bash(rm:*)",
       "Bash(mkdir:*)",
       "Bash(grep:*)",
-
       "Bash(ls:*)",
-
       "Bash(find:*)",
       "Bash(cp:*)",
       "Bash(mv:*)",
       "Bash(chmod:*)",
-
       "Bash(bash:*)",
       "Bash(npx prisma generate:*)",
       "Bash(zsh:*)",
@@ -25,8 +22,8 @@
       "Bash(/bin/rm:*)",
       "Bash(rg:*)",
       "Bash(cat:*)",
-│ │   "Bash(head:*)",
-│ │   "Bash(tail:*)"
+      "Bash(head:*)",
+      "Bash(tail:*)"
     ],
     "deny": ["Bash(git:*)"]
   }
