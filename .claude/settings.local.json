@@ -9,23 +9,14 @@
       "Bash(rm:*)",
       "Bash(mkdir:*)",
       "Bash(grep:*)",
-      "Bash(pnpm add:*)",
-      "Bash(pnpm why:*)",
+
       "Bash(ls:*)",
-      "Bash(pnpm test:*)",
-      "Bash(pnpm type-check)",
-      "Bash(pnpm install:*)",
-      "Bash(pnpm run lint:*)",
-      "Bash(pnpm run type-check:*)",
+
       "Bash(find:*)",
       "Bash(cp:*)",
       "Bash(mv:*)",
-      "Bash(pnpm run:*)",
-      "Bash(pnpm db:generate:*)",
       "Bash(chmod:*)",
-      "Bash(pnpm db:seed-shisha:*)",
-      "Bash(pnpm db:studio:*)",
-      "Bash(./run-backend-test.sh:*)",
+
       "Bash(bash:*)",
       "Bash(npx prisma generate:*)",
       "Bash(zsh:*)",
@@ -33,8 +24,9 @@
       "Bash(/usr/local/bin/node:*)",
       "Bash(/bin/rm:*)",
       "Bash(rg:*)",
-      "Bash(pnpm dev:*)",
-      "Bash(eas build:*)"
+      "Bash(cat:*)",
+│ │   "Bash(head:*)",
+│ │   "Bash(tail:*)"
     ],
     "deny": ["Bash(git:*)"]
   }
