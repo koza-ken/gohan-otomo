@@ -80,4 +80,7 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   BetterErrors::Middleware.allow_ip! "0.0.0.0/0"
+
+  # deviseの
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 end
