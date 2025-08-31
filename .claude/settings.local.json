@@ -1,0 +1,30 @@
+{
+  "includeCoAuthoredBy": "false",
+  "permissions": {
+    "allow": [
+      "Bash(npx expo prebuild:*)",
+      "Bash(npx expo run:ios:*)",
+      "Bash(npx expo start:*)",
+      "Bash(node:*)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(chmod:*)",
+      "Bash(bash:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(zsh:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(/usr/local/bin/node:*)",
+      "Bash(/bin/rm:*)",
+      "Bash(rg:*)",
+      "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)"
+    ],
+    "deny": ["Bash(git:*)"]
+  }
+}
