@@ -1,7 +1,9 @@
 
  ブランチ戦略と実装順序
+  1. init
+  初期設定
 
-  1. feature/user-authentication
+  2. feature/user-authentication
 
   Issue: ユーザー認証機能の実装
 
@@ -22,7 +24,7 @@
   - 表示名を設定できる
   - 全テストがパス
 
-  2. feature/user-profile
+  3. feature/user-profile
 
   Issue: ユーザープロフィール機能の実装
 
@@ -43,7 +45,7 @@
   - 他のユーザーがプロフィールを閲覧できる
   - 公開設定が機能する
 
-  3. feature/post-models
+  4. feature/post-models
 
   Issue: 投稿モデルの実装（STI）
 
@@ -64,7 +66,7 @@
   - バリデーションが機能する
   - 全テストがパス
 
-  4. feature/image-upload
+  5. feature/image-upload
 
   Issue: 画像アップロード機能の実装
 
@@ -85,7 +87,7 @@
   - 外部リンクから画像を取得できる
   - 適切なフォールバック機能
 
-  5. feature/post-crud
+  6. feature/post-crud
 
   Issue: 投稿のCRUD機能実装
 
@@ -106,7 +108,7 @@
   - 投稿の一覧・詳細表示ができる
   - 適切な認可が設定されている
 
-  6. feature/post-listing
+  7. feature/post-listing
 
   Issue: 投稿一覧とフィルター機能
 
@@ -128,7 +130,7 @@
   - 検索・ソート機能が動作する
   - モバイルファーストデザイン
 
-  7. feature/like-system
+  8. feature/like-system
 
   Issue: いいね機能の実装
 
@@ -149,7 +151,7 @@
   - いいね状態が適切に表示される
   - 非同期で動作する
 
-  8. feature/sns-integration
+  9. feature/sns-integration
 
   Issue: SNS連携機能の実装
 
@@ -168,7 +170,7 @@
   - 投稿タイプに応じたシェア内容
   - OGP対応
 
-  9. feature/responsive-design
+  10. feature/responsive-design
 
   Issue: レスポンシブデザインの実装
 
@@ -188,7 +190,7 @@
   - モバイルファースト設計
   - 良好なUX
 
-  10. feature/deployment
+  11. feature/deployment
 
   Issue: デプロイメント設定
 
