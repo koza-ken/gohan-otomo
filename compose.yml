@@ -11,9 +11,10 @@ services: # コンテナの定義開始
       - 5432:5432
     healthcheck: # コンテナの健康チェック設定
       test: ["CMD-SHELL", "pg_isready -d myapp_development -U postgres"]
-      interval: 10s # チェック間隔
-      timeout: 5s # タイムアウト時間
-      retries: 5 # リトライ回数
+      interval: 5s # チェック間隔
+      timeout: 3s # タイムアウト時間
+      retries: 6 # リトライ回数
+      start_period: 10s # 初回チェック開始までの待機時間
 
   web: # Railsアプリケーションの設定
     build: # Dockerイメージのビルド設定

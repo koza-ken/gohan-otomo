@@ -22,13 +22,14 @@ jobs:
     - name: Wait for services to be ready
       run: |
         echo "Waiting for database to be ready..."
-        docker compose exec -T web bash -c 'until pg_isready -h db -p 5432; do echo "Waiting for postgres..."; sleep 2; done'
+        timeout 120 bash -c 'until docker compose exec -T db pg_isready -U postgres; do echo "Waiting for postgres..."; sleep 2; done'
 
     - name: Install dependencies
       run: docker compose exec -T web bundle install
 
     - name: Setup database
       run: |
+        echo "Setting up database..."
         docker compose exec -T web rails db:create
         docker compose exec -T web rails db:migrate
 
