@@ -6,8 +6,8 @@
 - **フレームワーク**: Ruby on Rails 7.2
 - **言語**: Ruby 3.3.6
 - **データベース**: PostgreSQL 17.6
-- **認証**: Devise（予定）
-- **テンプレートエンジン**: Haml (Hamlit)
+- **認証**: Devise（実装済み）
+- **テンプレートエンジン**: ERB（Rails標準）
 
 ### フロントエンド
 - **CSS**: TailwindCSS v4
