@@ -43,9 +43,11 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 RSpec.configure do |config|
   # Devise test helpers
-  # Featureテストでsign_inなどが使えるようになる
-  config.include Devise::Test::IntegrationHelpers, type: :feature
-  #  Controller testでsign_inなどが使えるようになる
+  # System testでsign_inなどが使えるようになる
+  config.include Devise::Test::IntegrationHelpers, type: :system
+  # Request testでsign_inなどが使えるようになる
+  config.include Devise::Test::IntegrationHelpers, type: :request
+  # Controller testでsign_inなどが使えるようになる
   config.include Devise::Test::ControllerHelpers, type: :controller
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
