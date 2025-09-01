@@ -2,7 +2,7 @@
 
 ## プロジェクト概要
 
-ユーザーが「ご飯のお供」や「おかず」を投稿・共有できるアプリです。
+ユーザーが「ご飯のお供」を投稿・共有できるアプリです。
 投稿にはおすすめポイントや通販リンク、画像などを添えることができ、他のユーザーは一覧から投稿を閲覧し、いいねを付けることができます。
 
 ## 開発環境の起動方法
@@ -38,7 +38,7 @@ docker compose exec web rails generate rspec:install
 - **バックエンド**: Ruby on Rails 7.2
 - **認証**: Devise
 - **フロントエンド**: TailwindCSS v4 + Hotwire (Turbo/Stimulus)
-- **テンプレートエンジン**: Haml (Hamlit)
+- **テンプレートエンジン**: ERB（Rails標準）
 - **テストフレームワーク**: RSpec + FactoryBot + Faker
 - **コード品質**: Rubocop + Brakeman
 - **開発ツール**: Better Errors + Ruby LSP
@@ -65,7 +65,14 @@ docker compose exec web rails generate rspec:install
 2. 添付がない場合、通販リンクがある場合 → 外部サイトの画像を引用（Amazon Product API、楽天商品API、Open Graph画像など）
 3. どちらもない場合 → サンプル画像やプレースホルダーを表示
 
-### その他の機能
+### 実装済み機能
+- **ウェルカムアニメーション**: 初回アクセス時の稲穂→コンバイン→炊き立てご飯のアニメーション
+- **お米がテーマのデザインシステム**: オレンジを基調とした温かいUI
+- **レスポンシブ対応**: モバイル・タブレット・デスクトップ対応
+- **セッション管理**: 初回のみアニメーション表示、スキップ機能
+- **統一されたフォームデザイン**: アイコン付きの日本語対応フォーム
+
+### 予定機能
 - 投稿一覧表示（掲示板形式）
 - 投稿タイプ別にフィルター可能
 - いいね機能
@@ -109,12 +116,24 @@ docker compose exec web rails generate rspec:install
 
 ## 開発時の注意事項
 
+### Rails 7準拠
+- **フォーム**: `form_for` → `form_with` を使用（`local: true` 必要時）
+- **テスト**: System Test (`type: :system`) を推奨、Feature Test廃止
+- **テスト構文**: `describe`/`it` で統一、`scenario` 使用禁止
+- **Request Test**: Controller TestよりRequest Testを優先
+
+### デザイン・UX
 - モバイルファースト設計を心がける
+- 米テーマの一貫性を保持（オレンジ基調、温かい印象）
+- レスポンシブデザインの実装
+- アニメーション・インタラクションの適切な使用
+
+### 開発フロー
 - 投稿タイプ（おすすめ/食べてみた）による機能差分を適切に実装
 - 画像取得のハイブリッド方式を適切に実装
 - プロフィール公開機能の実装
 - テストを書く際はRSpec + FactoryBotを活用する
-- ERBではなくHamlでビューを作成する
+- **ERB使用**: Hamlは使用しない（Rails標準ERBを使用）
 
 ## Claude Codeでの開発ルール
 
@@ -128,13 +147,15 @@ docker compose exec web rails generate rspec:install
 **方針**: どのようなアプローチで修正するか
 ```
 
-### テストコード作成のルール
+### テストコード作成のルール（Rails 7準拠）
+前提として、Rails7.2のベストプラクティスに従う。
 機能追加や修正を行う際は、必ず以下を実施する：
 
 1. **新機能追加時**
-   - モデル、コントローラー、サービスクラスのRSpecテストを作成
+   - モデル、Request、System testのRSpecテストを作成
    - FactoryBotでテストデータを定義
    - 正常系・異常系の両方をテスト
+   - **System Test** でブラウザ操作、**Request Test** でHTTPレスポンス
 
 2. **既存機能修正時**
    - 影響範囲のテストを確認・修正
@@ -144,6 +165,7 @@ docker compose exec web rails generate rspec:install
 3. **テスト実行**
    - コード修正後は必ず `docker compose exec web bundle exec rspec` でテスト実行
    - 失敗したテストがある場合は修正完了まで続行
+   - Controller specでは`render_template`等のRails固有matcherに制限あり
 
 ### コマンド権限の管理
 - `.claude/settings.local.json`のコマンド追加は実行時に弾かれたら追加する
@@ -169,8 +191,14 @@ docker compose exec web bundle exec rubocop -a
 # RSpecでテスト実行
 docker compose exec web bundle exec rspec
 
+# テストタイプ別実行
+docker compose exec web bundle exec rspec --tag type:system  # System tests
+docker compose exec web bundle exec rspec --tag type:request # Request tests
+docker compose exec web bundle exec rspec --tag type:model  # Model tests
+
 # 特定のファイルのテスト実行
 docker compose exec web bundle exec rspec spec/models/user_spec.rb
+docker compose exec web bundle exec rspec spec/requests/home_request_spec.rb
 
 # テストの詳細表示
 docker compose exec web bundle exec rspec --format documentation

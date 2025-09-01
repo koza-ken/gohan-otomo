@@ -1,125 +1,88 @@
-🍚 ご飯のお供投稿アプリ（仮）
-概要
+# 🍚 ご飯のお供（gohan-otomo）
 
-ユーザーが「ご飯のお供」や「おかず」を投稿・共有できるアプリです。
-投稿にはおすすめポイントや通販リンク、画像などを添えることができ、他のユーザーは一覧から投稿を閲覧し、いいねを付けることができます。
+## 概要
 
-特徴：
+ユーザーが「ご飯のお供」を投稿・共有できるWebアプリケーションです。
+お米がテーマの温かいデザインで、初回アクセス時には稲穂からご飯までのアニメーションでユーザーを迎えます。
 
-おすすめ投稿：ユーザーがおすすめの食材や商品を紹介
+## 実装済み機能
 
-食べてみた投稿：実際に購入・試食した感想や写真を投稿
+- **ウェルカムアニメーション**: 稲穂 → コンバイン → 炊き立てご飯のアニメーション
+- **ユーザー認証**: Deviseによる登録・ログイン（日本語対応フォーム）
+- **米テーマデザイン**: オレンジを基調とした統一されたUI
+- **レスポンシブ対応**: モバイル・タブレット・デスクトップ対応
+- **セッション管理**: 初回のみアニメーション表示、スキップ機能
 
-プロフィール公開：ユーザーの好きな食べ物・嫌いな食べ物を他のユーザーも確認可能
+## 開発環境セットアップ
 
-目的：
+```bash
+# コンテナ起動
+docker compose up
 
-ご飯に合う食材や商品を手軽に探す
+# ブラウザでアクセス
+http://localhost:3000
+```
 
-美味しそうな組み合わせを見つける
+## 予定機能
 
-投稿内容をSNSで共有
+### ユーザー機能
+- **プロフィール管理**: 好きな食べ物・嫌いな食べ物の設定
+- **プロフィール公開**: 他のユーザーからの閲覧機能
 
-ユーザーの好みを参考に、新しい食材や組み合わせを発見
+### 投稿機能（ハイブリッド画像方式）
+- **おすすめ投稿**: 名前、おすすめポイント、通販リンク、画像
+- **食べてみた投稿**: 実際に食べた写真、感想、評価点
 
-基本的には モバイルファースト設計 です。
+### 画像取得システム
+1. ユーザー画像添付 → その画像を使用
+2. 通販リンクから自動取得（Amazon API、楽天API、Open Graph）
+3. プレースホルダー画像表示
 
-主な機能
-ユーザー登録・認証
+### その他
+- **投稿一覧表示**: 掲示板形式、タイプ別フィルター
+- **いいね機能**: 投稿へのリアクション
+- **SNS連携**: X（旧Twitter）シェア
 
-Devise を使用してユーザー登録・ログイン・ログアウトを実装
+## 技術スタック
 
-投稿時に使用する表示名を設定可能
+- **バックエンド**: Ruby on Rails 7.2
+- **認証**: Devise
+- **フロントエンド**: TailwindCSS v4 + Hotwire (Turbo/Stimulus)
+- **テンプレート**: ERB（Rails標準）
+- **テストフレームワーク**: RSpec + FactoryBot
+- **コード品質**: Rubocop + Brakeman
+- **データベース**: PostgreSQL
+- **開発環境**: Docker
+- **デプロイ**: Render
 
-プロフィール情報
+## データベース設計（予定）
 
-好きな食べ物
+### Users
+- id, display_name, email, password_digest
+- favorite_foods, disliked_foods
+- created_at, updated_at
 
-嫌いな食べ物
+### Posts（STI）
+- id, user_id, type (RecommendPost / ReportPost)
+- title, description, link, image_url
+- created_at, updated_at
 
-プロフィール公開
+### Likes
+- id, user_id, post_id, created_at, updated_at
 
-他のユーザーも閲覧可能
+## 開発・テストコマンド
 
-投稿一覧やユーザーページで確認できる
+```bash
+# テスト実行
+docker compose exec web bundle exec rspec
 
-投稿機能（ハイブリッド画像方式）
+# コードチェック
+docker compose exec web bundle exec rubocop
+docker compose exec web bundle exec brakeman
 
-投稿タイプ
+# データベース関連
+docker compose exec web rails db:migrate
+docker compose exec web rails db:seed
+```
 
-おすすめ投稿 (RecommendPost)：名前、おすすめポイント、通販リンク、単体画像
-
-食べてみた投稿 (ReportPost)：実際に食べた写真、感想、評価点
-
-画像取得の流れ
-
-ユーザーが画像を添付 → その画像を使用
-
-添付がない場合、通販リンクがある場合 → 外部サイトの画像を引用（Amazon Product API、楽天商品API、Open Graph画像など）
-
-どちらもない場合 → サンプル画像やプレースホルダーを表示
-
-投稿一覧表示（掲示板形式）
-
-投稿タイプ別にフィルター可能
-
-タイプごとに異なるフォームや表示に対応
-
-投稿者プロフィール（好き・嫌いな食べ物）も表示可能
-
-いいね機能
-
-ユーザーが投稿に対してリアクション可能
-
-SNS連携
-
-投稿した内容を X（旧Twitter）にシェア可能
-
-投稿タイプに応じて文言や画像を変えることが可能
-
-技術スタック
-
-バックエンド: Ruby on Rails 7.2
-
-認証: Devise
-
-フロントエンド: TailwindCSS v4 + Hotwire (Turbo/Stimulus)
-
-画像管理: Active Storage + S3などクラウドストレージ
-
-データベース: PostgreSQL
-
-インフラ: Render
-
-開発環境: Docker
-
-モバイル対応: レスポンシブデザイン前提
-
-想定ER図（初期案）
-Users
-
-id, username, email, password_digest, favorite_foods (好きな食べ物), disliked_foods (嫌いな食べ物), created_at, updated_at
-
-Posts（STIで管理）
-
-id, user_id, type (RecommendPost / ReportPost), title, description, link, image_url, created_at, updated_at
-
-Likes
-
-id, user_id, post_id, created_at, updated_at
-
-今後検討すること
-
-通販リンクからの自動画像取得方法（Amazon API, 楽天API, Open Graphなど）
-
-投稿内容のSNSシェア機能（X連携）
-
-モバイル対応・レスポンシブデザインの最適化
-
-SEOやSNSシェア対応
-
-投稿タイプごとにフォームや表示を分けるUI/UX設計
-
-プロフィール情報（好き・嫌いな食べ物）の表示・編集UI
-
-投稿一覧・ユーザーページで他ユーザーの好みを確認できる機能
+詳細な開発ガイドは [CLAUDE.md](./CLAUDE.md) を参照してください。
