@@ -29,7 +29,6 @@ jobs:
     env:
       RAILS_ENV: test
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_database
-      CI: true
 
     # jobをさらに細かくstepに分けてその処理を実行する
     steps:
@@ -40,6 +39,20 @@ jobs:
       with:
         ruby-version: 3.3.6
         bundler-cache: true
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install JavaScript dependencies
+      run: npm install
+
+    - name: Build assets
+      run: |
+        npm run build
+        npm run build:css
 
     - name: Setup database
       run: |
