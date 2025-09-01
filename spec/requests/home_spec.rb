@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "HomeController", type: :request do
+RSpec.describe "Home", type: :request do
   describe "GET /" do
     context "初回アクセス時（welcome_shownセッションなし）" do
       it "welcomeページにリダイレクトする" do

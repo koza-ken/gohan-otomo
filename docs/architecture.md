@@ -32,14 +32,14 @@ gohan-otomo/
 ├── app/
 │   ├── controllers/         # コントローラー（REST API）
 │   ├── models/             # モデル（ビジネスロジック）
-│   ├── views/              # ビュー（Hamlテンプレート）
+│   ├── views/              # ビュー（ERBテンプレート）
 │   ├── javascript/         # Stimulus コントローラー
 │   └── assets/
 │       └── stylesheets/    # TailwindCSS設定
 ├── spec/                   # RSpecテスト
-│   ├── models/
-│   ├── controllers/
-│   ├── features/          # E2Eテスト
+│   ├── models/            # Model specs
+│   ├── requests/          # Request specs (旧Controller specs)
+│   ├── system/            # System specs (旧Feature specs)
 │   └── support/           # テスト設定
 ├── config/                # Rails設定
 ├── db/                    # データベース関連
@@ -51,7 +51,7 @@ gohan-otomo/
 
 ### MVCアーキテクチャ
 ```
-View Layer (Haml + Stimulus)
+View Layer (ERB + Stimulus)
     ↓
 Controller Layer (Rails Controllers)
     ↓

@@ -198,7 +198,7 @@ docker compose exec web bundle exec rspec --tag type:model  # Model tests
 
 # 特定のファイルのテスト実行
 docker compose exec web bundle exec rspec spec/models/user_spec.rb
-docker compose exec web bundle exec rspec spec/requests/home_request_spec.rb
+docker compose exec web bundle exec rspec spec/requests/home_spec.rb
 
 # テストの詳細表示
 docker compose exec web bundle exec rspec --format documentation
