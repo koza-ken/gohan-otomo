@@ -3,9 +3,9 @@ class HomeController < ApplicationController
     # 初回アクセス時はアニメーションを表示
     unless session[:welcome_shown]
       redirect_to welcome_path
-      return
+      nil
     end
-    
+
     # 通常のトップページ表示
   end
 
