@@ -1,13 +1,15 @@
 name: CI
 
+# どのイベントが発生したら処理を実行するかを指定
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
 
 jobs:
   test:
+    # ジョブを実行するOSを指定
     runs-on: ubuntu-latest
 
     services:
@@ -27,15 +29,20 @@ jobs:
     env:
       RAILS_ENV: test
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_database
+      CI: true
 
+    # jobをさらに細かくstepに分けてその処理を実行する
     steps:
     - uses: actions/checkout@v4
-
+      
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: 3.3.6
         bundler-cache: true
+
+    - name: Setup Chrome for Capybara
+      uses: browser-actions/setup-chrome@latest
 
     - name: Setup database
       run: |
