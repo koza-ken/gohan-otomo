@@ -10,26 +10,12 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
-# Capybara configuration for headless testing
+# Capybara configuration for testing
 require 'capybara/rails'
 require 'capybara/rspec'
 
-# Configure Capybara to use headless Chrome for CI
-Capybara.register_driver :headless_chrome do |app|
-  capabilities = Selenium::WebDriver::Chrome::Options.new
-  capabilities.add_argument('--headless')
-  capabilities.add_argument('--no-sandbox')
-  capabilities.add_argument('--disable-dev-shm-usage')
-  capabilities.add_argument('--disable-gpu')
-  capabilities.add_argument('--remote-debugging-port=9222')
-  capabilities.add_argument('--window-size=1400,1400')
-
-  Capybara::Selenium::Driver.new(app, browser: :chrome, options: capabilities)
-end
-
-# Use headless Chrome in CI environment
-Capybara.default_driver = ENV['CI'] ? :headless_chrome : :rack_test
-Capybara.javascript_driver = :headless_chrome
+# Use rack_test driver (no browser needed)
+Capybara.default_driver = :rack_test
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
