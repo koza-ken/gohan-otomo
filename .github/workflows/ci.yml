@@ -1,13 +1,15 @@
 name: CI
 
+# どのイベントが発生したら処理を実行するかを指定
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
 
 jobs:
   test:
+    # ジョブを実行するOSを指定
     runs-on: ubuntu-latest
 
     services:
@@ -28,14 +30,29 @@ jobs:
       RAILS_ENV: test
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_database
 
+    # jobをさらに細かくstepに分けてその処理を実行する
     steps:
     - uses: actions/checkout@v4
-
+      
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.2
+        ruby-version: 3.3.6
         bundler-cache: true
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install JavaScript dependencies
+      run: npm install
+
+    - name: Build assets
+      run: |
+        npm run build
+        npm run build:css
 
     - name: Setup database
       run: |

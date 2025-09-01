@@ -24,6 +24,52 @@
   - 表示名を設定できる
   - 全テストがパス
 
+  -----------------------------------
+  📋 Task 1: Devise基盤のセットアップ
+
+  - Devise gemをGemfileに追加
+  - rails generate devise:install
+  - Devise設定ファイルの調整
+  - Bundle install実行
+
+  📋 Task 2: Userモデルの生成と基本設定
+
+  - rails generate devise User
+  - Userモデルに表示名フィールド追加
+  - マイグレーション実行
+  - 基本的なバリデーション設定
+
+  📋 Task 3: Deviseビューの生成とHaml化
+
+  - rails generate devise:views（Deviseのビュー作成）
+  - ERBからHamlへの変換
+  - TailwindCSSでのスタイリング適用
+
+  📋 Task 4: ユーザー登録フォームのカスタマイズ
+
+  - 表示名フィールドをregistrationフォームに追加
+  - Strong parametersの設定
+  - バリデーションメッセージの日本語化
+
+  📋 Task 5: 認証フローの確認とテスト準備
+
+  - ログイン・ログアウトの動作確認
+  - ApplicationControllerでの認証設定
+  - FactoryBot::Userファクトリの作成
+
+  📋 Task 6: RSpecテストの実装
+
+  - Model specの作成（User）
+  - Feature specの作成（認証フロー）
+  - Request specの作成（必要に応じて）
+
+  📋 Task 7: 動作確認とリファクタリング
+
+  - 全テストの実行・パス確認
+  - Rubocop・Brakemanチェック
+  - 認証機能の最終動作確認
+  -----------------------------------
+
   3. feature/user-profile
 
   Issue: ユーザープロフィール機能の実装
