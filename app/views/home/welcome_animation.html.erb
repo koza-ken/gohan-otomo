@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>🍚 ご飯のお供</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+</head>
+<body class="overflow-hidden">
+  <!-- アニメーション背景 -->
+  <div id="animation-container" class="fixed inset-0 z-50 flex items-center justify-center">
+
+    <!-- 稲のシーン -->
+    <div id="rice-field" class="absolute inset-0 opacity-0 transition-opacity duration-1000">
+      <div class="absolute inset-0 bg-gradient-to-b from-yellow-200 via-green-100 to-green-300"></div>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="text-6xl animate-pulse">🌾🌾🌾</div>
+      </div>
+    </div>
+
+    <!-- コンバインのシーン -->
+    <div id="combine" class="absolute inset-0 opacity-0 transition-opacity duration-1000">
+      <div class="absolute inset-0 bg-gradient-to-b from-blue-200 via-yellow-100 to-amber-200"></div>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="text-6xl animate-bounce">🚜</div>
+      </div>
+    </div>
+
+    <!-- 炊き立てご飯のシーン -->
+    <div id="cooked-rice" class="absolute inset-0 opacity-0 transition-opacity duration-1000">
+      <div class="absolute inset-0 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50"></div>
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="relative">
+          <div class="text-8xl animate-pulse">🍚</div>
+          <!-- 湯気のエフェクト -->
+          <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 text-gray-300 text-2xl animate-ping">💨</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- スキップボタン -->
+  <div id="skip-button" class="fixed top-4 right-4 z-50">
+    <%= form_with url: skip_animation_path, method: :post, local: true, class: "inline" do |f| %>
+      <%= f.submit "スキップ", class: "bg-white/80 backdrop-blur-sm text-orange-600 px-4 py-2 rounded-full hover:bg-white transition duration-300 text-sm font-medium shadow-lg border border-orange-200" %>
+    <% end %>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const scenes = ['rice-field', 'combine', 'cooked-rice'];
+      let currentScene = 0;
+      let animationSkipped = false;
+
+      function showNextScene() {
+        if (animationSkipped) return;
+
+        // 現在のシーンを表示
+        document.getElementById(scenes[currentScene]).classList.remove('opacity-0');
+        document.getElementById(scenes[currentScene]).classList.add('opacity-100');
+
+        currentScene++;
+
+        if (currentScene < scenes.length) {
+          setTimeout(() => {
+            if (animationSkipped) return;
+            // 前のシーンを隠す
+            document.getElementById(scenes[currentScene - 1]).classList.add('opacity-0');
+            document.getElementById(scenes[currentScene - 1]).classList.remove('opacity-100');
+            showNextScene();
+          }, 2500); // 少し長めに表示
+        } else {
+          // 最後のシーン終了後、自動でトップページに遷移
+          setTimeout(() => {
+            if (!animationSkipped) {
+              window.location.href = '<%= root_path %>';
+            }
+          }, 2500);
+        }
+      }
+
+      // アニメーション開始
+      setTimeout(showNextScene, 500);
+
+      // スキップ機能
+      document.querySelector('form[action="<%= skip_animation_path %>"]').addEventListener('submit', function() {
+        animationSkipped = true;
+      });
+
+      // Escキーでスキップ
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          animationSkipped = true;
+          window.location.href = '<%= root_path %>';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
