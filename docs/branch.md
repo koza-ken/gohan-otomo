@@ -91,6 +91,79 @@
   - 他のユーザーがプロフィールを閲覧できる
   - 公開設定が機能する
 
+  ----------------------
+ 📋 Task 1: データベース設計とマイグレーション
+
+  - プロフィールフィールドのマイグレーション作成
+  - favorite_foods:text, disliked_foods:text, profile_public:boolean
+  - マイグレーション実行とDB更新確認
+
+  📋 Task 2: Userモデルの更新
+
+  - プロフィールフィールドのバリデーション追加
+  - profile_public?メソッドの実装
+  - scope :with_public_profileの追加
+  - Model specの作成・更新
+
+  📋 Task 3: ルーティング設計
+
+  - プロフィール関連ルートの追加
+  - resources :profilesまたはusersネストの実装
+  - ルーティングの動作確認
+
+  📋 Task 4: Profilesコントローラーの実装
+
+  - ProfilesControllerの作成
+  - show, edit, updateアクションの実装
+  - 認証・認可ロジックの設定
+  - Strong parametersの設定
+
+  📋 Task 5: プロフィール表示ビューの作成
+
+  - profiles/show.html.erbの作成
+  - 米テーマデザインの適用
+  - ユーザー情報・好き嫌いな食べ物の表示
+  - 公開設定に応じた表示制御
+
+  📋 Task 6: プロフィール編集ビューの作成
+
+  - profiles/edit.html.erbの作成
+  - プロフィール編集フォームの実装
+  - テキストエリア・チェックボックスの設定
+  - 米テーマフォームデザインの適用
+
+  📋 Task 7: ナビゲーション更新
+
+  - ヘッダーにプロフィールリンクの追加
+  - ログイン時のドロップダウンメニュー拡張
+    （ハンバーガーメニューstimulus）
+  - プロフィール編集へのアクセス導線追加
+
+  📋 Task 8: Request specの実装
+
+  - spec/requests/profiles_spec.rbの作成
+  - プロフィール表示・編集・更新のテスト
+  - アクセス制御・認可のテスト実装
+
+  📋 Task 9: System specの実装
+
+  - spec/system/user_profile_spec.rbの作成
+  - プロフィール表示・編集の統合テスト
+  - フォーム入力・更新フローのテスト
+
+  📋 Task 10: FactoryBot更新
+
+  - spec/factories/users.rbにプロフィール用trait追加
+  - with_profile, private_profileトレイトの実装
+
+  📋 Task 11: 動作確認とリファクタリング
+
+  - 全テストの実行・パス確認
+  - Rubocop・Brakemanチェック
+  - プロフィール機能の最終動作確認
+  - レスポンシブ対応の確認
+  ----------------------
+
   4. feature/post-models
 
   Issue: 投稿モデルの実装（STI）

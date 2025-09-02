@@ -62,6 +62,54 @@ RSpec.describe User, type: :model do
         expect(user.errors[:password]).to include("is too short (minimum is 6 characters)")
       end
     end
+
+    describe "favorite_foods" do
+      it "200文字以下である必要がある" do
+        user = build(:user, favorite_foods: "a" * 201)
+        expect(user).not_to be_valid
+        expect(user.errors[:favorite_foods]).to include("is too long (maximum is 200 characters)")
+      end
+
+      it "空白でも有効" do
+        user = build(:user, favorite_foods: "")
+        expect(user).to be_valid
+      end
+
+      it "nilでも有効" do
+        user = build(:user, favorite_foods: nil)
+        expect(user).to be_valid
+      end
+    end
+
+    describe "disliked_foods" do
+      it "200文字以下である必要がある" do
+        user = build(:user, disliked_foods: "a" * 201)
+        expect(user).not_to be_valid
+        expect(user.errors[:disliked_foods]).to include("is too long (maximum is 200 characters)")
+      end
+
+      it "空白でも有効" do
+        user = build(:user, disliked_foods: "")
+        expect(user).to be_valid
+      end
+
+      it "nilでも有効" do
+        user = build(:user, disliked_foods: nil)
+        expect(user).to be_valid
+      end
+    end
+
+    describe "profile_public" do
+      it "デフォルトでtrueである" do
+        user = build(:user)
+        expect(user.profile_public).to be true
+      end
+
+      it "falseに設定できる" do
+        user = build(:user, profile_public: false)
+        expect(user.profile_public).to be false
+      end
+    end
   end
 
   describe "作成" do
