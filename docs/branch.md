@@ -185,6 +185,57 @@
   - バリデーションが機能する
   - 全テストがパス
 
+　---------------------------
+  Task 1: データベース設計とマイグレーション
+
+  - Postモデル用のマイグレーション作成（STI対応）
+  - typeカラム（STI用）、title、description、link、image_url等の設計
+  - user_id（外部キー）、タイムスタンプの設定
+  - マイグレーション実行とDB更新確認
+
+  Task 2: Postベースモデル（STI）の作成
+
+  - app/models/post.rbの作成
+  - STI設定とself.inheritanceカラム設定
+  - User、Likeとのアソシエーション設定
+  - 共通バリデーション（title, description等）
+  - 共通メソッドの実装
+
+  Task 3: RecommendPostモデルの実装
+
+  - app/models/recommend_post.rbの作成
+  - おすすめ投稿専用バリデーション
+  - 通販リンク必須設定
+  - おすすめポイント関連メソッド
+
+  Task 4: ReportPostモデルの実装
+
+  - app/models/report_post.rbの作成
+  - 食べてみた投稿専用バリデーション
+  - 評価点（rating）フィールド対応
+  - 感想関連メソッド
+
+  Task 5: Model specの実装
+
+  - spec/models/post_spec.rbの作成
+  - spec/models/recommend_post_spec.rbの作成
+  - spec/models/report_post_spec.rbの作成
+  - STI動作確認、バリデーション、アソシエーション全テスト
+
+  Task 6: FactoryBot設定
+
+  - spec/factories/posts.rbの作成
+  - recommend_post、report_postトレイトの実装
+  - 画像付き、リンク付き等の各種トレイト
+
+  Task 7: 動作確認とリファクタリング
+
+  - 全テストの実行・パス確認
+  - Rubocop・Brakemanチェック
+  - STIモデルの動作確認（コンソール）
+  ---------------------------
+
+
   5. feature/image-upload
 
   Issue: 画像アップロード機能の実装
