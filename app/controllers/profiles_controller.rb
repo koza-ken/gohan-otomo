@@ -5,26 +5,17 @@ class ProfilesController < ApplicationController
 
   def show
     # 公開設定チェック
-    unless @user.profile_public || @user == current_user
-      redirect_to root_path, alert: "このプロフィールは非公開です。"
-      return
-    end
+    redirect_to root_path, alert: "このプロフィールは非公開です。" unless @user.profile_public || @user == current_user
   end
 
   def edit
     # 編集権限チェック（本人のみ）
-    unless @user == current_user
-      redirect_to root_path, alert: "権限がありません。"
-      return
-    end
+    redirect_to root_path, alert: "権限がありません。" unless @user == current_user
   end
 
   def update
     # 編集権限チェック（本人のみ）
-    unless @user == current_user
-      redirect_to root_path, alert: "権限がありません。"
-      return
-    end
+    return redirect_to root_path, alert: "権限がありません。" unless @user == current_user
 
     # プロフィール更新処理
     if @user.update(profile_params)
@@ -46,5 +37,4 @@ class ProfilesController < ApplicationController
   def profile_params
     params.require(:user).permit(:display_name, :favorite_foods, :disliked_foods, :profile_public)
   end
-
 end

@@ -9,5 +9,4 @@ class User < ApplicationRecord
   validates :display_name, uniqueness: { case_sensitive: false }
   validates :favorite_foods, length: { maximum: 200 }
   validates :disliked_foods, length: { maximum: 200 }
-
 end
