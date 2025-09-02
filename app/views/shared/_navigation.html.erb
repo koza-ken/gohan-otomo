@@ -1,12 +1,54 @@
 <% if user_signed_in? %>
   <div class="flex items-center space-x-4">
-    <span class="text-orange-100 text-sm">
-      こんにちは、<%= current_user.display_name %>さん 🌾
-    </span>
-    <%= link_to "プロフィール", edit_user_registration_path,
-                class: "text-white hover:text-orange-100 transition duration-300" %>
-    <%= link_to "ログアウト", destroy_user_session_path, method: :delete,
-                class: "bg-white text-orange-600 px-4 py-2 rounded-full hover:bg-orange-50 transition duration-300 text-sm font-medium shadow-sm" %>
+    <!-- ハンバーガーメニュー -->
+    <div class="relative" data-controller="dropdown">
+      <!-- ハンバーガーボタン -->
+      <button class="flex items-center justify-center w-10 h-10 text-white hover:text-orange-100 transition duration-300 bg-white/10 rounded-full hover:bg-white/20"
+              data-action="click->dropdown#toggle">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+
+      <!-- ドロップダウンメニュー -->
+      <div class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-orange-100 opacity-0 invisible transition-all duration-300 transform translate-y-2 z-50"
+           data-dropdown-target="menu">
+        <div class="py-2">
+          <!-- プロフィールを見る -->
+          <%= link_to user_profile_path(current_user),
+              class: "flex items-center px-2 py-1 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
+            <span class="mr-3 text-lg">📋</span>
+            <div>
+              <div class="text-sm font-medium">プロフィールを見る</div>
+            </div>
+          <% end %>
+
+          <!-- 区切り線 -->
+          <div class="border-t border-gray-100 my-2"></div>
+
+          <!-- アカウント設定 -->
+          <%= link_to edit_user_registration_path,
+              class: "flex items-center px-2 py-1 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
+            <span class="mr-3 text-lg">⚙️</span>
+            <div>
+              <div class="text-sm font-medium">アカウント設定</div>
+            </div>
+          <% end %>
+
+          <!-- 区切り線 -->
+          <div class="border-t border-gray-100 my-2"></div>
+
+          <!-- ログアウト -->
+          <%= link_to destroy_user_session_path, method: :delete,
+              class: "flex items-center px-2 py-1 text-gray-700 hover:bg-red-50 hover:text-red-600 transition duration-200" do %>
+            <span class="mr-3 text-lg">🚪</span>
+            <div>
+              <div class="text-sm font-medium">ログアウト</div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
 <% else %>
   <%= link_to "ログイン", new_user_session_path,
