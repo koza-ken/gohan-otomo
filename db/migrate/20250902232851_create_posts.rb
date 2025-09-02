@@ -10,8 +10,6 @@ class CreatePosts < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    # ユーザー投稿の検索用
-    add_index :posts, :user_id
     # 作成日時による並び替え用
     add_index :posts, :created_at
     # 商品名での検索用

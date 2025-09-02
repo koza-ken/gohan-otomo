@@ -8,9 +8,7 @@ class CreateComments < ActiveRecord::Migration[7.2]
       t.timestamps
     end
 
-    # 投稿に対するコメント一覧表示用
+    # 投稿に対するコメント一覧表示用（時系列順）
     add_index :comments, [:post_id, :created_at]
-    # ユーザーのコメント履歴用
-    add_index :comments, :user_id
   end
 end
