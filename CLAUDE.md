@@ -57,8 +57,8 @@ docker compose exec web rails generate rspec:install
 - プロフィール公開（他のユーザーも閲覧可能）
 
 ### 投稿機能（ハイブリッド画像方式）
-- **おすすめ投稿 (RecommendPost)**: 名前、おすすめポイント、通販リンク、単体画像
-- **食べてみた投稿 (ReportPost)**: 実際に食べた写真、感想、評価点
+- **おすすめ投稿 (Post)**: 商品名、おすすめポイント、通販リンク、画像
+- **感想コメント (Comment)**: おすすめ投稿への感想・評価コメント
 
 ### 画像取得の流れ
 1. ユーザーが画像を添付 → その画像を使用
@@ -74,25 +74,31 @@ docker compose exec web rails generate rspec:install
 
 ### 予定機能
 - 投稿一覧表示（掲示板形式）
-- 投稿タイプ別にフィルター可能
-- いいね機能
+- 投稿への感想コメント機能
+- いいね機能（投稿・コメント両方）
 - SNS連携（X（旧Twitter）にシェア）
 
-## データベース設計（初期案）
+## データベース設計
 
 ### Users
-- id, username, email, password_digest
+- id, display_name, email, password_digest
 - favorite_foods (好きな食べ物)
 - disliked_foods (嫌いな食べ物)
+- profile_public (プロフィール公開設定)
 - created_at, updated_at
 
-### Posts（STIで管理）
-- id, user_id, type (RecommendPost / ReportPost)
-- title, description, link, image_url
+### Posts（おすすめ投稿）
+- id, user_id, title (商品名), description (おすすめポイント)
+- link (通販リンク), image_url (外部画像URL)
 - created_at, updated_at
 
-### Likes
-- id, user_id, post_id, created_at, updated_at
+### Comments（感想コメント）
+- id, user_id, post_id, content (感想内容)
+- created_at, updated_at
+
+### Likes（予定）
+- id, user_id, likeable_id, likeable_type (Post/Comment)
+- created_at, updated_at
 
 ## 今後の開発予定
 
