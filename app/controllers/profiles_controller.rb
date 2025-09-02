@@ -44,7 +44,7 @@ class ProfilesController < ApplicationController
 
   # ストロングパラメータ
   def profile_params
-    params.require(:user).permit(:favorite_foods, :disliked_foods, :profile_public)
+    params.require(:user).permit(:display_name, :favorite_foods, :disliked_foods, :profile_public)
   end
 
 end
