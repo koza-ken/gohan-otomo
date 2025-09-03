@@ -1,10 +1,11 @@
 # 開発ノート
 
-## 現在の開発状況（2025年1月9日）
+## 現在の開発状況（2025年1月9日 - 更新）
 
 ### ブランチ: 05_post_model_#7
-**完了済み機能**: 投稿のCRUD機能とナビゲーション統合、Request spec実装が完成
-**次の実装**: System specの実装（Task 7）
+**完了済み機能**: 投稿のCRUD機能とナビゲーション統合、Request spec・System spec実装完成
+**現在の課題**: CIテストエラーの修正（Devise国際化関連）
+**進行状況**: Task 8（動作確認とリファクタリング）実施中
 
 ### 🎉 今回のセッションでの大きな成果
 - **POSTメソッドエラー完全解決**: `let(:post)`変数競合問題の発見と修正
@@ -56,8 +57,56 @@
 **最終結果**: 43テスト中約40テスト成功（93%成功率）
 
 **残りTask**:
-- ⏳ Task 7: System specの実装
-- ⏳ Task 8: 動作確認とリファクタリング（セキュリティ見直し含む）
+- ✅ Task 7: System spec実装完了（18テスト100%成功）
+- ⏳ Task 8: 動作確認とリファクタリング実施中（CIエラー対応）
+
+## 🚨 緊急対応事項（CIエラー修正）
+
+### 修正完了した項目
+1. **home_spec.rb削除**: ルーティング変更により不要になったテストファイルを削除
+2. **テスト環境ロケール設定**: test.rbで英語ロケール設定、既存テストとの互換性確保
+3. **投稿関連テスト**: Post/Request/System specすべて修正完了（79テスト成功）
+
+### 🔥 残りの対応事項（優先度：高）
+
+#### 1. Devise関連の日本語翻訳追加
+**エラー**: `Translation missing: ja.devise.sessions.signed_in`
+**対応場所**: `config/locales/ja.yml`
+**必要な追加**:
+```yaml
+ja:
+  devise:
+    sessions:
+      signed_in: "ログインしました"
+      signed_out: "ログアウトしました"
+    registrations:
+      signed_up: "アカウント登録が完了しました"
+  errors:
+    messages:
+      not_saved: "入力内容を確認してください"
+```
+
+#### 2. System specの日本語メッセージ対応
+**問題**: 英語メッセージを期待するテストが日本語表示になっている
+**対応ファイル**:
+- `spec/system/user_authentication_spec.rb`
+- `spec/system/profiles_spec.rb`
+
+**修正例**:
+```ruby
+# 修正前
+expect(page).to have_content("Welcome! You have signed up successfully.")
+
+# 修正後  
+expect(page).to have_content("アカウント登録が完了しました")
+```
+
+#### 3. Welcome animation spec修正
+**問題**: 実装とテスト内容が不一致
+**対応ファイル**: `spec/system/welcome_animation_spec.rb`
+**修正点**:
+- `#animation-container` → 実際のHTML要素に変更
+- `"スキップ"` → `"始める"`に変更
 
 ## Learning Mode での開発方法（重要）
 
@@ -178,6 +227,33 @@ factory :post do
   end
 end
 ```
+
+### 🎯 具体的な修正手順
+
+#### Step 1: Devise翻訳追加
+```bash
+# config/locales/ja.ymlに追加
+vi config/locales/ja.yml
+```
+
+#### Step 2: System specメッセージ修正
+```bash
+# 各ファイルの英語メッセージを日本語に変更
+vi spec/system/user_authentication_spec.rb
+vi spec/system/profiles_spec.rb
+vi spec/system/welcome_animation_spec.rb
+```
+
+#### Step 3: テスト実行と確認
+```bash
+docker compose exec web bundle exec rspec spec/system/ --format progress
+```
+
+### 📊 現在の状況サマリー
+- **投稿機能**: 完全実装完了 ✅
+- **テストカバレッジ**: 149テスト中140テスト成功（94%）
+- **残りCIエラー**: 9テスト（主にDevise関連）
+- **コード品質**: Rubocop準拠、Brakeman 1警告のみ
 
 ## Rails 7 + RSpec 8.0 互換性の注意点
 
