@@ -8,12 +8,10 @@
 
     <!-- 投稿詳細 -->
     <div class="bg-white rounded-3xl shadow-2xl border border-orange-200 overflow-hidden mb-8">
-      <!-- 画像表示（あれば） -->
-      <% if @post.image_url.present? %>
+      <!-- 画像表示（Helperを使用） -->
+      <% if @post.has_image? %>
         <div class="h-64 md:h-80 bg-gray-200 overflow-hidden">
-          <img src="<%= @post.image_url %>" alt="<%= @post.title %>" 
-               class="w-full h-full object-cover" 
-               onerror="this.parentElement.innerHTML='<div class=\'flex items-center justify-center h-full bg-orange-100\'><span class=\'text-orange-400 text-6xl\'>🍚</span></div>'">
+          <%= post_image_tag(@post, class: "w-full h-full object-cover") %>
         </div>
       <% end %>
 
