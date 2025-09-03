@@ -104,11 +104,16 @@ docker compose exec web rails generate rspec:install
 
 ## 今後の開発予定
 
-### 現在実装中
-- **投稿CRUD機能** (05_post_crud_#9)
-  - RESTfulルーティング設定完了
-  - PostsController実装中
-  - 基本的な投稿・閲覧・編集・削除機能
+### 現在実装中（2025年1月）
+- **投稿CRUD機能** (06_post_crud_#9) - **ほぼ完成**
+  - ✅ RESTfulルーティング設定完了
+  - ✅ PostsController実装完了（全7アクション）
+  - ✅ 投稿フォーム（new/edit）実装完了
+  - ✅ 投稿一覧・詳細画面実装完了
+  - ✅ ナビゲーション統合完了（ユーザー別投稿一覧含む）
+  - 🔄 Request spec実装中（Task 6）
+  - ⏳ System spec実装予定（Task 7）
+  - ⏳ 動作確認・セキュリティ見直し予定（Task 8）
 
 ### 実装予定機能
 1. 通販リンクからの自動画像取得方法（Amazon API, 楽天API, Open Graphなど）
