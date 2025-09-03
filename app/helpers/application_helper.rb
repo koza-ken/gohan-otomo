@@ -5,14 +5,14 @@ module ApplicationHelper
     # デフォルト値の設定
     css_class = options[:class] || ''
     alt_text = options[:alt] || post.title
+    size = options[:size] || :medium  # 新しくsizeオプションを追加
     
-    # 1. Active Storageに画像があるかチェック
-    if post.image.attached?
-      # Active Storage の画像を表示
-      image_tag(post.image, alt: alt_text, class: css_class)
-    elsif post.image_url.present?
-      # 外部URL（image_url）の画像を表示
-      image_tag(post.image_url, alt: alt_text, class: css_class)
+    # Modelのdisplay_imageメソッドに優先順位制御を委譲
+    image_source = post.display_image(size)
+    
+    if image_source.present?
+      # 画像が存在する場合（Active Storage variant または 外部URL）
+      image_tag(image_source, alt: alt_text, class: css_class)
     else
       # プレースホルダーを表示
       content_tag(:div, 
