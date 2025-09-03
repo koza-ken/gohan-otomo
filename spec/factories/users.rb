@@ -37,5 +37,18 @@ FactoryBot.define do
       disliked_foods { "" }
       profile_public { true }
     end
+
+    # 投稿・コメント関連のtrait
+    trait :active_poster do
+      display_name { "グルメ太郎" }
+      favorite_foods { "美味しいものなら何でも" }
+      profile_public { true }
+    end
+
+    trait :frequent_commenter do
+      display_name { "感想マン" }
+      favorite_foods { "いろいろな商品を試すのが好き" }
+      profile_public { true }
+    end
   end
 end
