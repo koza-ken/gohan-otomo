@@ -61,10 +61,9 @@ group :development, :test do
   gem "rubocop-rspec", require: false
   gem "rubocop-performance", require: false
   gem "rubocop-haml", require: false
-  gem 'rubocop-rspec', require: false
 
   # RSpec testing framework
-  gem "rspec-rails"
+  gem "rspec-rails", "~> 7.0"
   gem "factory_bot_rails"
   gem "faker"
 end
