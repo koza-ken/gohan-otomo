@@ -16,12 +16,12 @@ class Post < ApplicationRecord
 
   # セキュアなリンクを返すメソッド（javascript:スキームなどを防ぐ）
   def safe_link
-    return nil unless link.present?
-    
+    return nil if link.blank?
+
     # javascript:、data:、vbscript:などの危険なスキームをチェック
     uri = URI.parse(link)
     return nil unless %w[http https].include?(uri.scheme&.downcase)
-    
+
     link
   rescue URI::InvalidURIError
     nil
