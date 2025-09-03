@@ -10,6 +10,8 @@ RSpec.describe "Posts", type: :system do
     driven_by(:rack_test)
     # セッションでアニメーション表示済みに設定
     allow_any_instance_of(PostsController).to receive(:session).and_return({ welcome_shown: true })
+    # System specでは日本語ロケールを使用
+    I18n.locale = :ja
   end
 
   describe "投稿一覧画面" do

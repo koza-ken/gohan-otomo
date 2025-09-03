@@ -44,7 +44,7 @@ RSpec.describe "Posts", type: :request do
       it "指定ユーザーの投稿のみ表示する" do
         get posts_path, params: { user_id: user.id }
         user_posts.each do |post|
-          expect(response.body).to include(post_record.title)
+          expect(response.body).to include(post.title)
         end
         expect(response.body).not_to include(other_post.title)
       end
