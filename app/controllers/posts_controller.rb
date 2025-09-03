@@ -4,8 +4,14 @@ class PostsController < ApplicationController
   before_action :set_post, only: [:show, :edit, :update, :destroy]
   before_action :check_post_owner, only: [:edit, :update, :destroy]
 
-  # GET /posts （ログイン不要）
+  # GET / および GET /posts （ログイン不要）
   def index
+    # 初回アクセス時はアニメーションを表示
+    unless session[:welcome_shown]
+      redirect_to welcome_path
+      return
+    end
+
     @posts = Post.includes(:user, :comments).order(created_at: :desc)
   end
 
@@ -64,5 +70,16 @@ class PostsController < ApplicationController
   # ストロングパラメータ
   def post_params
     params.require(:post).permit(:title, :description, :link, :image_url)
+  end
+
+  # ウェルカムアニメーション表示
+  def welcome_animation
+    session[:welcome_shown] = true
+  end
+
+  # アニメーションをスキップしてトップページへ
+  def skip_animation
+    session[:welcome_shown] = true
+    redirect_to root_path
   end
 end
