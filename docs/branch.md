@@ -166,24 +166,75 @@
 
   4. feature/post-models
 
-  Issue: 投稿モデルの実装（STI）
+  Issue: 投稿・コメントモデルの実装
 
   概要
-  RecommendPostとReportPostのSTIモデル実装
+  PostモデルとCommentモデルの実装（STI廃止、シンプルな関連に変更）
 
   実装内容
-  - Postモデルの作成（STI base）
-  - RecommendPostモデルの作成
-  - ReportPostモデルの作成
+  - Postモデルの作成（おすすめ投稿）
+  - Commentモデルの作成（感想コメント）
   - 必要な属性とバリデーションの定義
-  - アソシエーション設定（User, Like）
+  - アソシエーション設定（User, Post, Comment）
   - RSpec テスト作成
   - FactoryBot設定
 
   完了条件
-  - 投稿タイプ別にモデルが正しく動作する
+  - Post-Comment関連が正しく動作する
   - バリデーションが機能する
   - 全テストがパス
+
+　---------------------------
+  Task 1: データベース設計とマイグレーション
+
+  - Postモデル用のマイグレーション作成（おすすめ投稿）
+  - Commentモデル用のマイグレーション作成（感想コメント）
+  - title（商品名）、description（おすすめポイント）、link、image_url等の設計
+  - user_id、post_id（外部キー）、適切なインデックス設定
+  - マイグレーション実行とDB更新確認
+
+  Task 2: Postモデルの作成
+
+  - app/models/post.rbの作成
+  - Userとのアソシエーション設定（belongs_to :user）
+  - Commentとの関連設定（has_many :comments）
+  - バリデーション設定（title, description必須）
+  - 商品名検索などの基本メソッド実装
+
+  Task 3: Commentモデルの作成
+
+  - app/models/comment.rbの作成
+  - User、Postとのアソシエーション設定
+  - バリデーション設定（content必須）
+  - 感想コメント関連メソッド実装
+
+  Task 4: モデル間のアソシエーション設定
+
+  - Userモデルにpost、commentとの関連追加
+  - 依存関係の設定（dependent: :destroy等）
+  - counter_cacheの検討・実装
+
+  Task 5: Model specの実装
+
+  - spec/models/post_spec.rbの作成
+  - spec/models/comment_spec.rbの作成
+  - バリデーション、アソシエーション、メソッドの全テスト
+  - User関連のテスト更新
+
+  Task 6: FactoryBot設定
+
+  - spec/factories/posts.rbの作成
+  - spec/factories/comments.rbの作成
+  - 各種トレイト実装（with_comments等）
+  - 画像付き、リンク付き等の各種トレイト
+
+  Task 7: 動作確認とリファクタリング
+
+  - 全テストの実行・パス確認
+  - Rubocop・Brakemanチェック
+  - STIモデルの動作確認（コンソール）
+  ---------------------------
+
 
   5. feature/image-upload
 
