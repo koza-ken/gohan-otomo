@@ -6,7 +6,9 @@ Rails.application.routes.draw do
   post "skip_animation", to: "posts#skip_animation"
   
   # 投稿機能（認証必須）
-  resources :posts
+  resources :posts do
+    resources :comments, only: [:create]
+  end
   
   # プロフィール関連（ネストルーティング）
   resources :users, only: [] do
