@@ -84,7 +84,7 @@ RSpec.describe "Profiles", type: :system do
       click_button "プロフィールを更新"
       
       expect(page).to have_content("入力内容を確認してください")
-      expect(page).to have_content("Favorite foods is too long")
+      expect(page).to have_content("好きな食べ物 は200文字以内で入力してください")
     end
 
     it "他人のプロフィール編集にアクセスできない" do
