@@ -25,7 +25,13 @@
         <div class="flex items-center justify-between mb-6 pb-4 border-b border-orange-100">
           <div class="flex items-center space-x-4 text-sm text-orange-500">
             <span class="flex items-center">
-              👤 <%= @post.user&.display_name || "退会済みユーザー" %>
+              👤 
+              <% if @post.user %>
+                <%= link_to @post.user.display_name, posts_path(user_id: @post.user.id), 
+                            class: "hover:text-orange-700 hover:underline transition-colors" %>
+              <% else %>
+                退会済みユーザー
+              <% end %>
             </span>
             <span><%= @post.created_at.strftime("%Y年%m月%d日 %H:%M") %></span>
           </div>
