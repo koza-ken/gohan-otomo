@@ -12,7 +12,12 @@ class PostsController < ApplicationController
       return
     end
 
-    @posts = Post.includes(:user, :comments).order(created_at: :desc)
+    if params[:user_id].present?
+      @user = User.find(params[:user_id])
+      @posts = @user.posts.includes(:user, :comments).order(created_at: :desc)
+    else
+      @posts = Post.includes(:user, :comments).order(created_at: :desc)
+    end
   end
 
    # GET /posts/1 （ログイン不要）
