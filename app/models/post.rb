@@ -1,3 +1,16 @@
 class Post < ApplicationRecord
+  has_many :comments, dependent: :destroy
   belongs_to :user
+
+  validates :title, presence: true, length: { maximum: 100 }
+  validates :description, presence: true, length: { maximum: 200 }
+  validates :link, length: { maximum: 500 }, allow_blank: true
+  validates :link, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "正しいURLを入力してください" }, if: :link?
+  validates :image_url, length: { maximum: 500 }, allow_blank: true
+  validates :image_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "正しいURLを入力してください" }, if: :image_url?
+
+  # counter_cache導入時のカラム名でメソッドを定義
+  def comments_count
+    comments.count
+  end
 end
