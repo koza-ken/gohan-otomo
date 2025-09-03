@@ -1,12 +1,14 @@
 Rails.application.routes.draw do
-  get "profiles/show"
-  get "profiles/edit"
-  get "profiles/update"
   devise_for :users
-  root "home#index"
+  root "posts#index"
   
-  get "welcome", to: "home#welcome_animation"
-  post "skip_animation", to: "home#skip_animation"
+  get "welcome", to: "posts#welcome_animation"
+  post "skip_animation", to: "posts#skip_animation"
+  
+  # 投稿機能（認証必須）
+  resources :posts do
+    resources :comments, only: [:create]
+  end
   
   # プロフィール関連（ネストルーティング）
   resources :users, only: [] do

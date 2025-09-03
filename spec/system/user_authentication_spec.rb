@@ -14,7 +14,7 @@ RSpec.describe "ユーザー認証", type: :system do
         click_button "新規登録"
       }.to change(User, :count).by(1)
 
-      expect(page).to have_content("Welcome! You have signed up successfully.")
+      expect(page).to have_content("アカウント登録が完了しました")
       expect(User.last.display_name).to eq("テストユーザー")
     end
 
@@ -28,10 +28,10 @@ RSpec.describe "ユーザー認証", type: :system do
 
       click_button "新規登録"
 
-      expect(page).to have_content("Display name can't be blank")
-      expect(page).to have_content("Email is invalid")
-      expect(page).to have_content("Password is too short")
-      expect(page).to have_content("Password confirmation doesn't match Password")
+      expect(page).to have_content("表示名 を入力してください")
+      expect(page).to have_content("メールアドレス の形式が正しくありません")
+      expect(page).to have_content("パスワード は6文字以上で入力してください")
+      expect(page).to have_content("Password confirmation と確認用パスワードが一致しません")
     end
 
     it "表示名の重複では登録に失敗する" do
@@ -46,7 +46,7 @@ RSpec.describe "ユーザー認証", type: :system do
 
       click_button "新規登録"
 
-      expect(page).to have_content("Display name has already been taken")
+      expect(page).to have_content("表示名 はすでに存在します")
     end
   end
 
@@ -60,7 +60,7 @@ RSpec.describe "ユーザー認証", type: :system do
       fill_in "パスワード", with: "password123"
       click_button "ログイン"
 
-      expect(page).to have_content("Signed in successfully.")
+      expect(page).to have_content("ログインしました")
     end
   end
 end

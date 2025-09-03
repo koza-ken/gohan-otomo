@@ -71,6 +71,8 @@ docker compose exec web rails generate rspec:install
 - **レスポンシブ対応**: モバイル・タブレット・デスクトップ対応
 - **セッション管理**: 初回のみアニメーション表示、スキップ機能
 - **統一されたフォームデザイン**: アイコン付きの日本語対応フォーム
+- **ユーザー認証**: Devise使用、プロフィール機能付き
+- **投稿・コメントモデル**: Post-Comment関連、包括的テストカバレッジ（88テスト）
 
 ### 予定機能
 - 投稿一覧表示（掲示板形式）
@@ -101,6 +103,17 @@ docker compose exec web rails generate rspec:install
 - created_at, updated_at
 
 ## 今後の開発予定
+
+### 現在実装中（2025年1月）
+- **投稿CRUD機能** (06_post_crud_#9) - **ほぼ完成**
+  - ✅ RESTfulルーティング設定完了
+  - ✅ PostsController実装完了（全7アクション）
+  - ✅ 投稿フォーム（new/edit）実装完了
+  - ✅ 投稿一覧・詳細画面実装完了
+  - ✅ ナビゲーション統合完了（ユーザー別投稿一覧含む）
+  - 🔄 Request spec実装中（Task 6）
+  - ⏳ System spec実装予定（Task 7）
+  - ⏳ 動作確認・セキュリティ見直し予定（Task 8）
 
 ### 実装予定機能
 1. 通販リンクからの自動画像取得方法（Amazon API, 楽天API, Open Graphなど）

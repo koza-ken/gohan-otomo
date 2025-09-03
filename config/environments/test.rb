@@ -17,6 +17,10 @@ Rails.application.configure do
   # loading is working properly before deploying your code.
   config.eager_load = ENV["CI"].present?
 
+  # テスト環境では英語ロケールを使用（既存のテストコードとの互換性のため）
+  config.i18n.default_locale = :en
+  config.i18n.available_locales = [:en, :ja]
+
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.headers = { "Cache-Control" => "public, max-age=#{1.hour.to_i}" }
 
