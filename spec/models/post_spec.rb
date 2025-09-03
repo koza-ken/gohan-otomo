@@ -132,5 +132,42 @@ RSpec.describe Post, type: :model do
         expect(post.comments_count).to eq(2)
       end
     end
+
+    describe "#safe_link" do
+      it "有効なHTTPSリンクを返す" do
+        post = create(:post, link: "https://example.com")
+        expect(post.safe_link).to eq("https://example.com")
+      end
+
+      it "有効なHTTPリンクを返す" do  
+        post = create(:post, link: "http://example.com")
+        expect(post.safe_link).to eq("http://example.com")
+      end
+
+      it "javascriptスキームの場合nilを返す" do
+        post = build(:post, link: "javascript:alert('xss')")
+        expect(post.safe_link).to be_nil
+      end
+
+      it "dataスキームの場合nilを返す" do
+        post = build(:post, link: "data:text/html,<script>alert('xss')</script>")
+        expect(post.safe_link).to be_nil
+      end
+
+      it "不正なURIの場合nilを返す" do
+        post = build(:post, link: "invalid-uri")
+        expect(post.safe_link).to be_nil
+      end
+
+      it "linkがnilの場合nilを返す" do
+        post = create(:post, link: nil)
+        expect(post.safe_link).to be_nil
+      end
+
+      it "空文字の場合nilを返す" do
+        post = create(:post, link: "")  
+        expect(post.safe_link).to be_nil
+      end
+    end
   end
 end

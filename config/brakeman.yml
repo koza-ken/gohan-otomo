@@ -1,0 +1,6 @@
+---
+# Brakeman configuration file
+check_options:
+  LinkToHref:
+    safe_methods:
+      - safe_link

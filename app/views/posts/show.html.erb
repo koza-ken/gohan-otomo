@@ -57,14 +57,15 @@
         </div>
 
         <!-- 通販リンク -->
-        <% if @post.link.present? %>
+        <% if @post.safe_link.present? %>
           <div class="mb-6 p-4 bg-orange-50 rounded-lg border border-orange-200">
             <h3 class="text-lg font-semibold text-orange-600 mb-2 flex items-center">
               🔗 購入リンク
             </h3>
-            <%= link_to "この商品を見る", @post.link, 
+            <%# safe_linkメソッドでjavascript:やdata:スキームなどの危険なURLは既にフィルタリング済み %>
+            <%= link_to "この商品を見る", @post.safe_link, 
                         class: "text-orange-500 hover:text-orange-700 underline font-medium",
-                        target: "_blank", rel: "noopener" %>
+                        target: "_blank", rel: "noopener noreferrer" %>
           </div>
         <% end %>
       </div>
