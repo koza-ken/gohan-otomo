@@ -18,6 +18,11 @@ AllCops:
     - "app/validators/attachment_validator.rb"
     - "node_modules/**/*"
     - "Gemfile"
+
+# counter_cache対応を見越したメソッドはdelegateしない
+Rails/Delegate:
+  Exclude:
+    - "app/models/post.rb"
     - "env_config"
   DisplayCopNames: true
 
