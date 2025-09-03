@@ -30,6 +30,11 @@ ja:
         invalid: の形式が正しくありません
         taken: はすでに存在します
         confirmation: と確認用パスワードが一致しません
+      models:
+        user:
+          attributes:
+            password_confirmation:
+              confirmation: と確認用パスワードが一致しません
         required: は必須です
   errors:
     messages:
@@ -38,3 +43,13 @@ ja:
       too_short: は%{count}文字以上で入力してください
       invalid: の形式が正しくありません
       required: は必須です
+      not_saved: "入力内容を確認してください"
+  devise:
+    sessions:
+      signed_in: "ログインしました"
+      signed_out: "ログアウトしました"
+    registrations:
+      signed_up: "アカウント登録が完了しました"
+    errors:
+      messages:
+        confirmation: "と確認用パスワードが一致しません"
