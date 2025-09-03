@@ -1,0 +1,34 @@
+ja:
+  activerecord:
+    models:
+      post: 投稿
+      user: ユーザー
+      comment: コメント
+    attributes:
+      post:
+        title: 商品名
+        description: おすすめポイント
+        link: 通販リンク
+        image_url: 画像URL
+      user:
+        email: メールアドレス
+        password: パスワード
+        display_name: 表示名
+        favorite_foods: 好きな食べ物
+        disliked_foods: 嫌いな食べ物
+      comment:
+        content: コメント内容
+    errors:
+      messages:
+        blank: を入力してください
+        too_long: は%{count}文字以内で入力してください
+        too_short: は%{count}文字以上で入力してください
+        invalid: の形式が正しくありません
+        taken: はすでに存在します
+        confirmation: と確認用パスワードが一致しません
+  errors:
+    messages:
+      blank: を入力してください
+      too_long: は%{count}文字以内で入力してください
+      too_short: は%{count}文字以上で入力してください
+      invalid: の形式が正しくありません
