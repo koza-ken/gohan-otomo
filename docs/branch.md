@@ -236,7 +236,82 @@
   ---------------------------
 
 
-  5. feature/image-upload
+  5. feature/post-crud
+
+  Issue: 投稿のCRUD機能実装
+
+  概要
+  投稿の作成・表示・編集・削除機能（画像なしの基本機能）
+
+  実装内容
+  - 投稿コントローラーの実装
+  - 投稿フォーム作成（基本項目のみ）
+  - 投稿詳細表示
+  - 投稿一覧表示
+  - 投稿編集・削除機能
+  - 認可設定（投稿者のみ編集可能）
+  - RSpec テスト作成（コントローラー・システム）
+
+  完了条件
+  - 投稿の作成・表示・編集・削除ができる
+  - 投稿一覧・詳細表示ができる
+  - 適切な認可が設定されている
+
+  ---------------------------
+  📋 Task 1: ルーティング設定
+
+  - config/routes.rbに投稿関連ルートの追加
+  - resources :posts でRESTfulルート設定
+  - 認証必須のルート設定
+
+  📋 Task 2: PostsControllerの実装
+
+  - app/controllers/posts_controller.rbの作成
+  - index, show, new, create, edit, update, destroyアクション
+  - 認証・認可の設定（before_action）
+  - Strong parametersの設定
+
+  📋 Task 3: 投稿フォームの作成
+
+  - app/views/posts/new.html.erbの作成
+  - app/views/posts/edit.html.erbの作成
+  - 米テーマデザインの適用
+  - バリデーションエラー表示
+
+  📋 Task 4: 投稿一覧・詳細画面の作成
+
+  - app/views/posts/index.html.erbの作成
+  - app/views/posts/show.html.erbの作成
+  - 投稿者情報・日時の表示
+  - 編集・削除ボタンの条件表示
+
+  📋 Task 5: ナビゲーション統合
+
+  - ヘッダーに「投稿する」リンクの追加
+  - 投稿一覧へのアクセス導線
+  - ユーザーの投稿一覧表示
+
+  📋 Task 6: Request specの実装
+
+  - spec/requests/posts_spec.rbの作成
+  - 投稿のCRUD操作テスト
+  - 認証・認可のテスト
+  - リダイレクト・エラーハンドリングのテスト
+
+  📋 Task 7: System specの実装
+
+  - spec/system/posts_spec.rbの作成
+  - 投稿作成・編集・削除の統合テスト
+  - フォーム入力・バリデーションエラーのテスト
+
+  📋 Task 8: 動作確認とリファクタリング
+
+  - 全テストの実行・パス確認
+  - Rubocop・Brakemanチェック
+  - 投稿機能の最終動作確認
+  ---------------------------
+
+  6. feature/image-upload
 
   Issue: 画像アップロード機能の実装
 
@@ -246,7 +321,7 @@
   実装内容
   - Active Storage設定
   - image_processing gem追加
-  - 画像アップロード機能
+  - 画像アップロード機能（投稿フォームに追加）
   - 画像リサイズ・最適化
   - 外部サイト画像取得機能（OGP等）
   - プレースホルダー画像設定
@@ -256,13 +331,6 @@
   - 画像をアップロードできる
   - 外部リンクから画像を取得できる
   - 適切なフォールバック機能
-
-  6. feature/post-crud
-
-  Issue: 投稿のCRUD機能実装
-
-  概要
-  投稿の作成・表示・編集・削除機能
 
   実装内容
   - 投稿コントローラーの実装
