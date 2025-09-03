@@ -77,9 +77,9 @@ class PostsController < ApplicationController
     params.require(:post).permit(:title, :description, :link, :image_url)
   end
 
-  # ウェルカムアニメーション表示
+  # ウェルカムアニメーション表示（ログイン不要）
   def welcome_animation
-    session[:welcome_shown] = true
+    # アニメーション画面を表示（セッション更新は別ルートで行う）
   end
 
   # アニメーションをスキップしてトップページへ
