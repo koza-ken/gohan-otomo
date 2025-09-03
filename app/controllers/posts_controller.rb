@@ -74,7 +74,7 @@ class PostsController < ApplicationController
 
   # ストロングパラメータ
   def post_params
-    params.require(:post).permit(:title, :description, :link, :image_url)
+    params.require(:post).permit(:title, :description, :link, :image_url, :image)
   end
 
   # ウェルカムアニメーション表示（ログイン不要）
