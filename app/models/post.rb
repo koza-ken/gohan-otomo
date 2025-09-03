@@ -29,4 +29,39 @@ class Post < ApplicationRecord
   rescue URI::InvalidURIError
     nil
   end
+
+  # Active Storage variant: サムネイル画像（投稿一覧用）
+  def thumbnail_image
+    return nil unless image.attached?
+
+    image.variant(resize_to_fill: [400, 300]).processed
+  end
+
+  # Active Storage variant: 中サイズ画像（投稿詳細用）
+  def medium_image
+    return nil unless image.attached?
+
+    image.variant(resize_to_fill: [800, 600]).processed
+  end
+
+  # ハイブリッド画像表示: 優先順位に従って適切な画像を返す
+  # 1. Active Storageの画像（最優先）
+  # 2. image_urlの外部画像（次優先）
+  # 3. プレースホルダー（最終手段）
+  def display_image(size = :medium)
+    case size
+    when :thumbnail
+      return thumbnail_image if image.attached?
+    when :medium, :large
+      return medium_image if image.attached?
+    end
+
+    # Active Storageに画像がない場合は外部URLを使用
+    image_url.presence
+  end
+
+  # 画像が存在するかチェック
+  def has_image?
+    image.attached? || image_url.present?
+  end
 end
