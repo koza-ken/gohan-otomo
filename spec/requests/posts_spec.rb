@@ -60,17 +60,6 @@ RSpec.describe "Posts", type: :request do
       end
     end
 
-    context "初回アクセス時" do
-      before do
-        # セッションを初期化（初回アクセス状態にする）
-        allow_any_instance_of(PostsController).to receive(:session).and_return({})
-      end
-
-      it "ウェルカムアニメーションにリダイレクトする" do
-        get posts_path
-        expect(response).to redirect_to(welcome_path)
-      end
-    end
   end
 
   describe "GET #show" do

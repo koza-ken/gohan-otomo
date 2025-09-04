@@ -236,11 +236,11 @@
   ---------------------------
 
 
-  5. feature/post-crud
+  5. 05_post_model_#7 ✅ 完了
 
   Issue: 投稿のCRUD機能実装
 
-  概要
+  概要  
   投稿の作成・表示・編集・削除機能（画像なしの基本機能）
 
   実装内容
@@ -311,40 +311,69 @@
   - 投稿機能の最終動作確認
   ---------------------------
 
-  6. feature/image-upload
+  6. 07_image-upload_#8 ✅ 05_post_model_#7完了後
 
   Issue: 画像アップロード機能の実装
 
   概要
-  Active Storageを使用した画像アップロードとハイブリッド画像取得
+  Active Storageを使用した画像アップロードとハイブリッド画像取得方式
 
   実装内容
   - Active Storage設定
-  - image_processing gem追加
+  - image_processing gem追加  
   - 画像アップロード機能（投稿フォームに追加）
-  - 画像リサイズ・最適化
-  - 外部サイト画像取得機能（OGP等）
-  - プレースホルダー画像設定
+  - 画像リサイズ・最適化（variant使用）
+  - 基本的な画像表示機能（アップロード > 外部URL > プレースホルダー）
   - RSpec テスト作成
+  - セキュリティ・パフォーマンス対策
 
   完了条件
   - 画像をアップロードできる
-  - 外部リンクから画像を取得できる
-  - 適切なフォールバック機能
+  - 外部URL画像の基本表示ができる
+  - 適切なフォールバック機能が動作する
+  - 画像関連テストが完備されている
 
-  実装内容
-  - 投稿コントローラーの実装
-  - 投稿フォーム作成（タイプ別）
-  - 投稿詳細表示
-  - 投稿一覧表示
-  - 投稿編集・削除機能
-  - 認可設定（投稿者のみ編集可能）
-  - RSpec テスト作成（コントローラー・フィーチャー）
+  ---------------------------
+  📋 Task 1: Active Storage設定とgem追加
 
-  完了条件
-  - 投稿タイプ別にフォームが機能する
-  - 投稿の一覧・詳細表示ができる
-  - 適切な認可が設定されている
+  - rails active_storage:install実行
+  - image_processing gemをGemfileに追加
+  - bundle install実行
+  - libvips設定の確認（Docker環境）
+
+  📋 Task 2: 画像アップロード機能の実装
+
+  - Postモデルにhas_one_attached :image追加
+  - 画像バリデーションの実装（サイズ、形式制限）
+  - PostsControllerのstrong parametersに:image追加
+
+  📋 Task 3: 投稿フォームの画像アップロード対応
+
+  - new.html.erb、edit.html.erbにfile_fieldを追加
+  - 画像プレビュー機能の実装（JavaScript）
+  - ファイル形式・サイズの入力制限表示
+
+  📋 Task 4: 画像表示機能の実装
+
+  - 投稿詳細・一覧での画像表示
+  - image.variant()でのリサイズ設定
+  - エラーハンドリング（onerror属性）
+  - レスポンシブ画像表示
+
+  📋 Task 5: テストの実装
+
+  - spec/models/post_spec.rbに画像関連テスト追加
+  - spec/system/posts_spec.rbに画像アップロードテスト追加
+  - spec/requests/posts_spec.rbに画像パラメータテスト追加
+  - FactoryBotにwith_imageトレイト追加
+
+  📋 Task 6: セキュリティとパフォーマンス対策
+
+  - 画像サイズ制限の強化（10MB制限等）
+  - ファイル形式制限（JPEG, PNG, WebP等）
+  - variantでの画像最適化設定
+  - 動作確認とリファクタリング
+  ---------------------------
 
   7. feature/post-listing
 
@@ -428,7 +457,26 @@
   - モバイルファースト設計
   - 良好なUX
 
-  11. feature/deployment
+  11. feature/advanced-image-features
+
+  Issue: 高度な画像機能の実装
+
+  概要
+  OGP画像取得やバックグラウンド処理など、拡張画像機能
+
+  実装内容
+  - OGP画像自動取得機能（通販リンクから商品画像取得）
+  - バックグラウンド画像取得（Active Job使用）
+  - 画像キャッシュ機能
+  - 外部API連携（Amazon API、楽天API）
+  - 画像最適化・WebP対応
+
+  完了条件
+  - 通販リンクから画像を自動取得できる
+  - バックグラウンド処理が正常動作する
+  - パフォーマンスが向上している
+
+  12. feature/deployment
 
   Issue: デプロイメント設定
 

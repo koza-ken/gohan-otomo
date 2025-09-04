@@ -42,7 +42,7 @@ docker compose exec web rails generate rspec:install
 - **テストフレームワーク**: RSpec + FactoryBot + Faker
 - **コード品質**: Rubocop + Brakeman
 - **開発ツール**: Better Errors + Ruby LSP
-- **画像管理**: Active Storage + S3などクラウドストレージ
+- **画像管理**: Active Storage + ImageMagick（完全実装済み）
 - **データベース**: PostgreSQL
 - **インフラ**: Render
 - **開発環境**: Docker
@@ -60,25 +60,57 @@ docker compose exec web rails generate rspec:install
 - **おすすめ投稿 (Post)**: 商品名、おすすめポイント、通販リンク、画像
 - **感想コメント (Comment)**: おすすめ投稿への感想・評価コメント
 
-### 画像取得の流れ
-1. ユーザーが画像を添付 → その画像を使用
-2. 添付がない場合、通販リンクがある場合 → 外部サイトの画像を引用（Amazon Product API、楽天商品API、Open Graph画像など）
-3. どちらもない場合 → サンプル画像やプレースホルダーを表示
+### 画像取得の流れ（ハイブリッド画像システム）
+1. **ユーザーアップロード画像（最優先）** → Active Storageで管理
+2. **外部URL画像（次優先）** → image_urlフィールドから取得
+3. **プレースホルダー（最終手段）** → 🍚アイコン表示
 
-### 実装済み機能
-- **ウェルカムアニメーション**: 初回アクセス時の稲穂→コンバイン→炊き立てご飯のアニメーション
+### ✅ 実装完了機能（2025年9月4日現在）
+
+#### **基本機能**
+- **ユーザー認証**: Devise使用、プロフィール機能付き（完全実装）
+- **投稿CRUD機能**: 作成・表示・編集・削除（完全実装）
+- **投稿・コメントモデル**: Post-Comment関連（完全実装）
+
+#### **画像機能（07_image-upload_#8完成）**
+- **Active Storage + ImageMagick**: Rails 7準拠の画像処理基盤
+- **ハイブリッド画像システム**: 3段階フォールバック完全実装
+- **画像アップロード**: ファイル形式・サイズ制限付き
+- **画像最適化**: variant処理（thumbnail: 400x300, medium: 800x600, quality: 85）
+- **Stimulus統合**: 画像プレビュー、リアルタイムURL検証、エラーハンドリング
+- **セキュリティ対策**: ファイル形式制限（JPEG,PNG,WebP,GIF）、10MB制限
+
+#### **UI/UXシステム**
 - **お米がテーマのデザインシステム**: オレンジを基調とした温かいUI
 - **レスポンシブ対応**: モバイル・タブレット・デスクトップ対応
-- **セッション管理**: 初回のみアニメーション表示、スキップ機能
 - **統一されたフォームデザイン**: アイコン付きの日本語対応フォーム
-- **ユーザー認証**: Devise使用、プロフィール機能付き
-- **投稿・コメントモデル**: Post-Comment関連、包括的テストカバレッジ（88テスト）
+- **ナビゲーション**: 投稿一覧・詳細・編集・削除の完全な導線
 
-### 予定機能
-- 投稿一覧表示（掲示板形式）
-- 投稿への感想コメント機能
-- いいね機能（投稿・コメント両方）
-- SNS連携（X（旧Twitter）にシェア）
+#### **テスト・品質管理**
+- **包括的テストカバレッジ**: 172テスト（100%成功）
+  - Model spec: 59テスト（バリデーション、画像処理、セキュリティ）
+  - System spec: 21テスト（画像アップロード、表示確認）
+  - Request spec: 43テスト（CRUD操作、認証・認可）
+  - その他: プロフィール、認証関連
+- **コード品質**: Rubocop完全準拠、Brakeman対策済み
+
+### 🚀 次期実装予定機能
+
+#### **優先度高（次のブランチ）**
+1. **feature/post-listing**: 投稿一覧とフィルター機能
+   - 投稿タイプ別フィルター、検索機能、ソート機能
+2. **feature/like-system**: いいね機能
+   - 投稿・コメントへのいいね、カウント表示
+3. **feature/sns-integration**: SNS連携
+   - X（旧Twitter）シェア機能、OGPメタタグ設定
+
+#### **将来実装（拡張機能）**
+- **feature/advanced-image-features**: 高度な画像機能
+  - OGP画像自動取得（Amazon API、楽天API）
+  - バックグラウンド画像取得（Active Job使用）
+  - WebP形式への自動変換
+- **feature/responsive-design**: レスポンシブデザイン最適化
+- **feature/deployment**: 本番環境デプロイ設定
 
 ## データベース設計
 
@@ -102,27 +134,30 @@ docker compose exec web rails generate rspec:install
 - id, user_id, likeable_id, likeable_type (Post/Comment)
 - created_at, updated_at
 
-## 今後の開発予定
+## 現在の開発状況（2025年9月4日）
 
-### 現在実装中（2025年1月）
-- **投稿CRUD機能** (06_post_crud_#9) - **ほぼ完成**
-  - ✅ RESTfulルーティング設定完了
-  - ✅ PostsController実装完了（全7アクション）
-  - ✅ 投稿フォーム（new/edit）実装完了
-  - ✅ 投稿一覧・詳細画面実装完了
-  - ✅ ナビゲーション統合完了（ユーザー別投稿一覧含む）
-  - 🔄 Request spec実装中（Task 6）
-  - ⏳ System spec実装予定（Task 7）
-  - ⏳ 動作確認・セキュリティ見直し予定（Task 8）
+### ✅ 完成済みブランチ
+- **07_image-upload_#8**: 画像アップロード機能完全実装（**100%完成**）
+  - Active Storage + ImageMagick による画像処理基盤
+  - ハイブリッド画像システム（3段階フォールバック）
+  - セキュリティ対策（ファイル形式・サイズ制限）
+  - 画像最適化（quality: 85, variant対応）
+  - 包括的テストカバレッジ（172テスト100%成功）
 
-### 実装予定機能
-1. 通販リンクからの自動画像取得方法（Amazon API, 楽天API, Open Graphなど）
-2. 投稿内容のSNSシェア機能（X連携）
-3. モバイル対応・レスポンシブデザインの最適化
-4. SEOやSNSシェア対応
-5. 投稿タイプごとにフォームや表示を分けるUI/UX設計
-6. プロフィール情報（好き・嫌いな食べ物）の表示・編集UI
-7. 投稿一覧・ユーザーページで他ユーザーの好みを確認できる機能
+- **05_post_model_#7**: 投稿CRUD機能完全実装（**100%完成**）
+- **04_user_profile_#6**: ユーザープロフィール機能（**100%完成**）
+- **02_user_auth_#5**: ユーザー認証機能（**100%完成**）
+
+### 🚀 次の開発予定
+- **マージ準備**: 07_image-upload_#8 → mainブランチ
+- **次期ブランチ**: feature/post-listing（投稿一覧・フィルター機能）
+
+### 📊 技術基盤の完成度
+- **Rails 7.2**: 完全対応、ベストプラクティス準拠
+- **テスト**: RSpec + FactoryBot（172テスト、100%成功率）
+- **コード品質**: Rubocop完全準拠、Brakeman対策済み
+- **画像処理**: Active Storage + ImageMagick完全実装
+- **フロントエンド**: TailwindCSS v4 + Stimulus統合
 
 ## 開発環境の設定ファイル
 
@@ -148,13 +183,66 @@ docker compose exec web rails generate rspec:install
 - アニメーション・インタラクションの適切な使用
 
 ### 開発フロー
-- 投稿タイプ（おすすめ/食べてみた）による機能差分を適切に実装
-- 画像取得のハイブリッド方式を適切に実装
-- プロフィール公開機能の実装
-- テストを書く際はRSpec + FactoryBotを活用する
+- **段階的実装**: 大きな機能を小さなタスクに分割して実装
+- **Learning Mode準拠**: 設計選択肢を提示し、理由を説明してから実装
+- **Rails 7ベストプラクティス**: 最新の推奨方法を採用
+- **テスト駆動**: 機能実装と並行してRSpec + FactoryBotでテスト作成
+- **コード品質**: 実装後にRubocop/Brakemanで品質確保
+- **画像取得のハイブリッド方式**: Active Storage → 外部URL → プレースホルダーの優先順位制御
 - **ERB使用**: Hamlは使用しない（Rails標準ERBを使用）
 
+### 重要な技術的知見
+
+#### **RSpec Request specでの注意点**
+```ruby
+# ⚠️ 危険: HTTPメソッドと同名の変数は使用禁止
+let(:post) { ... }    # HTTPメソッドpostと競合
+let(:get) { ... }     # HTTPメソッドgetと競合
+
+# ✅ 安全: 異なる変数名を使用
+let(:post_record) { ... }
+let(:get_response) { ... }
+```
+
+#### **Active Storageテストの推奨方法**
+```ruby
+# FactoryBot内では StringIO を使用
+trait :with_attached_image do
+  after(:build) do |post|
+    post.image.attach(
+      io: StringIO.new("fake image data"),
+      filename: 'test_image.jpg',
+      content_type: 'image/jpeg'
+    )
+  end
+end
+
+# Model specでは fixture_file_upload を使用
+it "画像を添付できる" do
+  file = fixture_file_upload('test_image.jpg', 'image/jpeg')
+  post.image.attach(file)
+  expect(post.image.attached?).to be true
+end
+```
+
+#### **ハイブリッド画像システムの設計**
+```ruby
+# Postモデル（データ処理担当）
+def display_image(size = :medium)
+  return thumbnail_image if size == :thumbnail && image.attached?
+  return medium_image if size == :medium && image.attached?
+  image_url.presence  # 外部URLにフォールバック
+end
+
+# ApplicationHelper（表示処理担当）
+def post_image_tag(post, options = {})
+  image_source = post.display_image(options[:size])
+  # HTMLタグ生成ロジック
+end
+```
+
 ## Claude Codeでの開発ルール
+前提：Output styleに従うこと。
 
 ### コード修正時のルール
 コードを修正する際は、必ず以下の形式で理由を明示してから修正を提示する：
@@ -165,6 +253,39 @@ docker compose exec web rails generate rspec:install
 **理由**: なぜこの修正が必要か
 **方針**: どのようなアプローチで修正するか
 ```
+
+### コード提案時のLearning Mode対応
+**重要**: ファイルの作成やコードの修正を提示する際は、以下の手順を必ず守る：
+
+1. **問題・課題の整理**: 現在の状況と解決すべき課題を明確化
+2. **考慮点の洗い出し**: 設計上の懸念、拡張性、既存コードとの整合性を検討
+3. **選択肢の比較**: 複数のアプローチを提示し、それぞれのメリット・デメリットを説明
+4. **推奨案の提示**: 理由と根拠を示して推奨する方法を提案
+5. **確認とコンセンサス**: ユーザーの同意を得てから実装に進む
+
+**例（例であり他の提示でもよい）**:
+```
+## 📚 プレースホルダーのサイズ対応について考察
+
+### 🤔 現在の問題と考え方
+- 問題の詳細説明
+
+### 💡 設計上の考慮点
+- 設計時に検討すべきポイント
+
+### 🎯 設計選択肢の比較
+- 選択肢A: メリット・デメリット
+- 選択肢B: メリット・デメリット
+- 選択肢C: メリット・デメリット
+
+どの方針で進めるのが良いと思いますか？
+```
+
+この方式により、設計判断の透明性を保ち、学習効果を最大化する。
+選択肢の比較のときは、Rails7でのベストプラクティスやセキュリティリスク、実行の効率性を考慮して、どの選択肢が適切か検討できるように情報を補足すること。
+現在の開発状況や今後実装する機能も考慮して、その時点での仕様に適した実装ができるように考慮すること。
+推奨の選択肢を提示する場合は、なぜそれが適当かも併せて説明すること。
+選択肢は、単純な比較ではなく、現在の開発状況や今後の開発状況も踏まえて、適当なものを検討すること。例えば、一から導入するのは複雑であっても、すでに他の機能による実装が完了している場合には複雑さが軽減されるような場合に、それも踏まえたうえで実装の選択を検討する。
 
 ### テストコード作成のルール（Rails 7準拠）
 前提として、Rails7.2のベストプラクティスに従う。

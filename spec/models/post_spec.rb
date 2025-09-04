@@ -117,6 +117,150 @@ RSpec.describe Post, type: :model do
     end
   end
 
+  describe "画像バリデーション" do
+    let(:user) { create(:user) }
+    let(:post) { build(:post, user: user) }
+
+    describe "画像形式チェック" do
+      it "JPEG形式の画像は有効" do
+        post.image.attach(
+          io: StringIO.new("fake jpeg data"),
+          filename: 'test.jpg',
+          content_type: 'image/jpeg'
+        )
+        expect(post.valid?).to be true
+      end
+
+      it "PNG形式の画像は有効" do
+        post.image.attach(
+          io: StringIO.new("fake png data"),
+          filename: 'test.png',
+          content_type: 'image/png'
+        )
+        expect(post.valid?).to be true
+      end
+
+      it "WebP形式の画像は有効" do
+        post.image.attach(
+          io: StringIO.new("fake webp data"),
+          filename: 'test.webp',
+          content_type: 'image/webp'
+        )
+        expect(post.valid?).to be true
+      end
+
+      it "GIF形式の画像は有効" do
+        post.image.attach(
+          io: StringIO.new("fake gif data"),
+          filename: 'test.gif',
+          content_type: 'image/gif'
+        )
+        expect(post.valid?).to be true
+      end
+
+      it "PDF形式のファイルは無効" do
+        post.image.attach(
+          io: StringIO.new("fake pdf data"),
+          filename: 'document.pdf',
+          content_type: 'application/pdf'
+        )
+        expect(post.valid?).to be false
+        expect(post.errors[:image]).to include('画像はJPEG、PNG、WebP、GIF形式でアップロードしてください')
+      end
+
+      it "テキストファイルは無効" do
+        post.image.attach(
+          io: StringIO.new("fake text data"),
+          filename: 'document.txt',
+          content_type: 'text/plain'
+        )
+        expect(post.valid?).to be false
+        expect(post.errors[:image]).to include('画像はJPEG、PNG、WebP、GIF形式でアップロードしてください')
+      end
+    end
+
+    describe "画像サイズチェック" do
+      it "10MB以下の画像は有効" do
+        post.image.attach(
+          io: StringIO.new("a" * (5 * 1024 * 1024)), # 5MB
+          filename: 'large.jpg',
+          content_type: 'image/jpeg'
+        )
+        expect(post.valid?).to be true
+      end
+
+      it "10MB超の画像は無効" do
+        post.image.attach(
+          io: StringIO.new("a" * (15 * 1024 * 1024)), # 15MB
+          filename: 'too_large.jpg',
+          content_type: 'image/jpeg'
+        )
+        expect(post.valid?).to be false
+        expect(post.errors[:image]).to include('画像サイズは10MB以下でアップロードしてください')
+      end
+    end
+
+    it "画像が添付されていない場合は有効" do
+      expect(post.valid?).to be true
+    end
+  end
+
+  describe "Active Storage" do
+    let(:user) { create(:user) }
+    let(:post) { create(:post, user: user) }
+    
+    describe "画像添付機能" do
+      it "画像を添付できる" do
+        expect(post.image.attached?).to be false
+        
+        # Rails 7推奨のfixture_file_uploadを使用
+        file = fixture_file_upload('test_image.jpg', 'image/jpeg')
+        post.image.attach(file)
+        
+        expect(post.image.attached?).to be true
+        expect(post.image.filename.to_s).to eq('test_image.jpg')
+        # fixture_file_uploadではcontent_typeが自動判定されるため、柔軟に対応
+        expect(post.image.content_type).to match(/^image\/.*$/)
+      end
+
+      it "画像を削除できる" do
+        # 画像を添付
+        file = fixture_file_upload('test_image.jpg', 'image/jpeg')
+        post.image.attach(file)
+        expect(post.image.attached?).to be true
+        
+        # 画像を削除
+        post.image.purge
+        expect(post.image.attached?).to be false
+      end
+    end
+
+    describe "画像variant生成" do
+      before do
+        file = fixture_file_upload('test_image.jpg', 'image/jpeg')
+        post.image.attach(file)
+      end
+
+      it "thumbnail_imageでサムネイル画像を生成できる" do
+        thumbnail = post.thumbnail_image
+        expect(thumbnail).to be_present
+        expect(thumbnail).to be_a(ActiveStorage::VariantWithRecord)
+      end
+
+      it "medium_imageで中サイズ画像を生成できる" do
+        medium = post.medium_image
+        expect(medium).to be_present
+        expect(medium).to be_a(ActiveStorage::VariantWithRecord)
+      end
+
+      it "画像が添付されていない場合はnilを返す" do
+        post_without_image = create(:post, user: user)
+        expect(post_without_image.thumbnail_image).to be_nil
+        expect(post_without_image.medium_image).to be_nil
+      end
+    end
+  end
+
   describe "メソッド" do
     let(:user) { create(:user) }
     let(:post) { create(:post, user: user) }
@@ -167,6 +311,93 @@ RSpec.describe Post, type: :model do
       it "空文字の場合nilを返す" do
         post = create(:post, link: "")  
         expect(post.safe_link).to be_nil
+      end
+    end
+
+    describe "#display_image" do
+      let(:post) { create(:post, user: user) }
+
+      context "Active Storage画像が添付されている場合" do
+        before do
+          file = fixture_file_upload('test_image.jpg', 'image/jpeg')
+          post.image.attach(file)
+        end
+
+        it "thumbnailサイズの場合はthumbnail_imageを返す" do
+          result = post.display_image(:thumbnail)
+          expect(result).to be_a(ActiveStorage::VariantWithRecord)
+          # VariantWithRecordの比較は内部のvariation_digestで行う
+          expect(result.variation.digest).to eq(post.thumbnail_image.variation.digest)
+        end
+
+        it "mediumサイズの場合はmedium_imageを返す" do
+          result = post.display_image(:medium)
+          expect(result).to be_a(ActiveStorage::VariantWithRecord)
+          expect(result.variation.digest).to eq(post.medium_image.variation.digest)
+        end
+
+        it "largeサイズの場合もmedium_imageを返す" do
+          result = post.display_image(:large)
+          expect(result).to be_a(ActiveStorage::VariantWithRecord)
+          expect(result.variation.digest).to eq(post.medium_image.variation.digest)
+        end
+      end
+
+      context "Active Storage画像がなく、image_urlがある場合" do
+        let(:post) { create(:post, :with_image, user: user) }
+
+        it "image_urlを返す" do
+          result = post.display_image(:thumbnail)
+          expect(result).to eq(post.image_url)
+        end
+
+        it "mediumサイズでもimage_urlを返す" do
+          result = post.display_image(:medium)
+          expect(result).to eq(post.image_url)
+        end
+      end
+
+      context "Active Storage画像もimage_urlもない場合" do
+        it "nilを返す" do
+          result = post.display_image(:thumbnail)
+          expect(result).to be_nil
+        end
+      end
+
+      context "デフォルトサイズの場合" do
+        before do
+          file = fixture_file_upload('test_image.jpg', 'image/jpeg')
+          post.image.attach(file)
+        end
+
+        it "引数なしの場合はmediumサイズを返す" do
+          result = post.display_image
+          expect(result.variation.digest).to eq(post.medium_image.variation.digest)
+        end
+      end
+    end
+
+    describe "#has_image?" do
+      it "Active Storage画像が添付されている場合はtrueを返す" do
+        file = fixture_file_upload('test_image.jpg', 'image/jpeg')
+        post.image.attach(file)
+        expect(post.has_image?).to be true
+      end
+
+      it "image_urlがある場合はtrueを返す" do
+        post = create(:post, :with_image, user: user)
+        expect(post.has_image?).to be true
+      end
+
+      it "Active Storage画像とimage_url両方がある場合はtrueを返す" do
+        post = create(:post, :with_image, user: user)
+        file = fixture_file_upload('test_image.jpg', 'image/jpeg')
+        post.image.attach(file)
+        expect(post.has_image?).to be true
+      end
+
+      it "どちらもない場合はfalseを返す" do
+        expect(post.has_image?).to be false
       end
     end
   end

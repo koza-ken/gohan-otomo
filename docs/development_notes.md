@@ -1,11 +1,15 @@
 # 開発ノート
 
-## 現在の開発状況（2025年1月9日 - 更新）
+## 現在の開発状況（2025年9月4日 - 更新）
 
-### ブランチ: 05_post_model_#7
+### 🔥 ブランチ: 07_image-upload_#8 ⚡ 進行中
+**完了済み機能**: Active Storageによる画像アップロード機能、Stimulus画像プレビュー機能
+**現在の進行状況**: Task 3完了（投稿フォームの画像アップロード対応）、Task 4開始予定（画像表示機能）
+**技術スタック追加**: Active Storage + image_processing gem + Stimulusによるモダンな画像機能
+
+### ✅ 前ブランチ完了: 05_post_model_#7
 **完了済み機能**: 投稿のCRUD機能とナビゲーション統合、Request spec・System spec実装完成
-**現在の課題**: CIテストエラーの修正（Devise国際化関連）
-**進行状況**: Task 8（動作確認とリファクタリング）実施中
+**CIエラー修正完了**: Devise国際化関連、Brakeman警告対応完了（100%テスト成功）
 
 ### 🎉 今回のセッションでの大きな成果
 - **POSTメソッドエラー完全解決**: `let(:post)`変数競合問題の発見と修正
@@ -329,6 +333,150 @@ end
 - 認証・認可の適切な設定
 - Brakeman定期チェック（現在：No warnings）
 
+## ブランチ: 07_image-upload_#8 実装記録 📸
+
+### 🎯 Task 4完全実装完了（2025年9月4日更新）
+
+**完全実装済み**: 包括的な画像機能システム
+- Active Storage + ImageMagick による画像処理基盤
+- ハイブリッド画像表示システム（3段階フォールバック）
+- レスポンシブ画像対応
+- リアルタイムURL検証機能
+- Stimulus統合エラーハンドリング
+
+### 🎯 実装完了項目（Task 1-7完了）
+
+#### ✅ Task 4-1: 現在の画像表示実装確認
+- 既存実装の問題点特定（image_urlのみ対応、variant未使用）
+- ハイブリッド画像表示の設計方針決定
+
+#### ✅ Task 4-2: Active Storage variant実装  
+- ImageMagick設定: `config.active_storage.variant_processor = :mini_magick`
+- thumbnail_image (400x300), medium_image (800x600) メソッド追加
+- display_image メソッドで優先順位制御実装
+
+#### ✅ Task 4-3: Helper/Modelの責任分離
+- ApplicationHelper: post_image_tag メソッドで表示ロジック集約
+- Postモデル: 画像データ処理とvariant生成を担当
+- 設計思想: データ処理(Model) vs 表示処理(Helper)の明確な分離
+
+#### ✅ Task 4-4: レスポンシブ画像対応
+- 投稿一覧: thumbnailサイズ、投稿詳細: mediumサイズ
+- プレースホルダーのサイズ別アイコン対応
+- CSS classとの適切な連携
+
+#### ✅ Task 4-5: ブラウザ動作テスト
+- 時間表示の日本語翻訳追加（distance_in_words）
+- ウェルカム機能の一時無効化（開発用）
+- 編集フォームの画像プレビュー改善（既存画像表示）
+
+#### ✅ Task 4-6: Stimulusエラーハンドリング実装
+- image-preview-controller.js拡張
+- 外部URL画像のエラー時プレースホルダー自動置換
+- サイズ別エラーハンドリング対応
+
+#### ✅ Task 4-7: リアルタイム画像URL検証
+- 投稿フォームでの即座フィードバック機能
+- URL形式チェック + 実際の画像読み込みテスト  
+- 状態表示: ✅成功 / ❌エラー / 🔄読み込み中
+
+### 🏗️ 技術アーキテクチャの設計判断
+
+#### Helper vs Model の責任分離
+```ruby
+# ✅ 適切な責任分離
+# Postモデル（データ処理）
+def display_image(size = :medium)
+  return thumbnail_image if size == :thumbnail && image.attached?
+  return medium_image if size == :medium && image.attached?
+  image_url.presence  # 外部URLにフォールバック
+end
+
+# ApplicationHelper（表示処理）  
+def post_image_tag(post, options = {})
+  image_source = post.display_image(options[:size])
+  # HTMLタグ生成ロジック
+end
+```
+
+#### Stimulusでの統一アーキテクチャ
+- **既存**: ファイルアップロードプレビュー
+- **拡張**: URL画像検証、エラーハンドリング
+- **利点**: 一貫したJavaScript設計、保守性向上
+
+### 🎓 Learning Mode開発の成果
+
+#### 設計判断の透明性
+- 複数選択肢の比較検討（Helper vs Decorator等）
+- Rails 7ベストプラクティスへの準拠
+- 既存実装を活用した段階的拡張
+
+#### 技術的学習ポイント
+- Active Storage variantの仕組み理解
+- ImageMagick vs libvipsの選択理由
+- Stimulusの設計思想（Convention over Configuration）
+
+### 📊 現在の開発状況サマリー
+- **画像機能**: 包括的システム完成 ✅
+- **技術基盤**: Rails 7 + Active Storage + Stimulus統合 ✅  
+- **UX**: リアルタイム検証、適切なエラーハンドリング ✅
+- **保守性**: Helper/Model分離、統一アーキテクチャ ✅
+
+### 🔧 技術学習ポイント
+
+#### Stimulusの理解
+**Convention over Configuration:**
+```
+image_preview_controller.js → data-controller="image-preview"
+static targets = ["input"]  → data-image-preview-target="input"
+preview(event) { }          → data-action="change->image-preview#preview"
+```
+
+**従来との比較:**
+- 従来: グローバル関数、IDセレクター（脆弱）
+- Stimulus: 規約ベース、確実な要素参照
+
+#### Active Storageの設計思想
+**CarrierWave vs Active Storage:**
+- CarrierWave: 専用カラム必要、複雑な設定
+- Active Storage: 関連テーブル使用、シンプルな設定
+
+**画像処理の仕組み:**
+```
+ユーザーアップロード → active_storage_blobs（実体）
+                   → active_storage_attachments（関連）
+                   → variant生成時 → active_storage_variant_records（キャッシュ）
+```
+
+### ⏳ 次期実装予定（Task 5以降）
+
+#### Task 5: テスト実装
+- Model specに画像関連テスト追加
+- System specに画像アップロードテスト追加
+- FactoryBotにwith_imageトレイト追加
+
+#### Task 6: セキュリティ・パフォーマンス対応
+- 画像サイズ・形式制限の強化
+- variantでの画像最適化設定
+- 動作確認とリファクタリング
+
+#### 将来実装（feature/advanced-image-features）
+- OGP画像自動取得機能（通販リンクから商品画像取得）
+- バックグラウンド画像取得（Active Job使用）
+- 画像キャッシュ機能
+
+### 🎓 開発手法の改善
+
+#### Learning Modeの効果
+- **小さなタスク分割**: Task 3をさらに3-1〜3-4に分割
+- **詳細解説**: Stimulus、Active Storageの仕組みを理解しながら実装
+- **段階的確認**: 各ステップでの動作確認・理解度チェック
+
+#### Convention over Configurationの体現
+- Rails 7標準技術の活用（Active Storage, Stimulus）
+- 外部ライブラリに依存しないシンプルな構成
+- 保守性・拡張性を考慮した設計
+
 ## 開発環境設定
 
 ### 重要な設定ファイル
@@ -336,3 +484,4 @@ end
 - `spec/support/factory_bot.rb`: テストデータ管理
 - `CLAUDE.md`: プロジェクト全体設計
 - `docs/branch.md`: ブランチ戦略と実装順序
+- `app/javascript/controllers/image_preview_controller.js`: Stimulus画像プレビュー

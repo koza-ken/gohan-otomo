@@ -44,12 +44,63 @@ ja:
       invalid: の形式が正しくありません
       required: は必須です
       not_saved: "入力内容を確認してください"
+  datetime:
+    distance_in_words:
+      half_a_minute: "30秒"
+      less_than_x_seconds:
+        one: "1秒未満"
+        other: "%{count}秒未満"
+      x_seconds:
+        one: "1秒"
+        other: "%{count}秒"
+      less_than_x_minutes:
+        one: "1分未満"
+        other: "%{count}分未満"
+      x_minutes:
+        one: "1分"
+        other: "%{count}分"
+      about_x_hours:
+        one: "約1時間"
+        other: "約%{count}時間"
+      x_hours:
+        one: "1時間"
+        other: "%{count}時間"
+      x_days:
+        one: "1日"
+        other: "%{count}日"
+      about_x_months:
+        one: "約1ヶ月"
+        other: "約%{count}ヶ月"
+      x_months:
+        one: "1ヶ月"
+        other: "%{count}ヶ月"
+      about_x_years:
+        one: "約1年"
+        other: "約%{count}年"
+      over_x_years:
+        one: "1年以上"
+        other: "%{count}年以上"
+      almost_x_years:
+        one: "1年近く"
+        other: "%{count}年近く"
   devise:
     sessions:
       signed_in: "ログインしました"
       signed_out: "ログアウトしました"
     registrations:
       signed_up: "アカウント登録が完了しました"
+    failure:
+      already_authenticated: "既にログインしています"
+      user:
+        already_authenticated: "既にログインしています"
+        inactive: "アカウントが有効化されていません"
+        invalid: "メールアドレスまたはパスワードが正しくありません"
+        locked: "アカウントがロックされています"
+        last_attempt: "もう一回失敗すると、アカウントがロックされます"
+        not_found_in_database: "メールアドレスまたはパスワードが正しくありません"
+        timeout: "セッションがタイムアウトしました。もう一度ログインしてください"
+        unauthenticated: "ログインまたはアカウント登録してください"
+        unconfirmed: "メールアドレスの確認が必要です"
     errors:
       messages:
         confirmation: "と確認用パスワードが一致しません"

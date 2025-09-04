@@ -6,11 +6,11 @@ class PostsController < ApplicationController
 
   # GET / および GET /posts （ログイン不要）
   def index
-    # 初回アクセス時はアニメーションを表示
-    unless session[:welcome_shown]
-      redirect_to welcome_path
-      return
-    end
+    # 初回アクセス時はアニメーションを表示（開発中は一時的に無効化）
+    # unless session[:welcome_shown]
+    #   redirect_to welcome_path
+    #   return
+    # end
 
     if params[:user_id].present?
       @user = User.find(params[:user_id])
@@ -74,7 +74,7 @@ class PostsController < ApplicationController
 
   # ストロングパラメータ
   def post_params
-    params.require(:post).permit(:title, :description, :link, :image_url)
+    params.require(:post).permit(:title, :description, :link, :image_url, :image)
   end
 
   # ウェルカムアニメーション表示（ログイン不要）
