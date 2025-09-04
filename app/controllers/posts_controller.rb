@@ -12,12 +12,18 @@ class PostsController < ApplicationController
     #   return
     # end
 
+    # 基本スコープ設定
     if params[:user_id].present?
       @user = User.find(params[:user_id])
-      @posts = @user.posts.includes(:user, :comments).order(created_at: :desc)
+      @posts = @user.posts
     else
-      @posts = Post.includes(:user, :comments).order(created_at: :desc)
+      @posts = Post.all
     end
+    
+    # 検索・ソート・includes適用
+    @posts = @posts.includes(:user, :comments)
+                   .search_by_keyword(params[:search])
+                   .order(sort_order)
   end
 
   # GET /posts/1 （ログイン不要）
@@ -75,6 +81,16 @@ class PostsController < ApplicationController
   # ストロングパラメータ
   def post_params
     params.require(:post).permit(:title, :description, :link, :image_url, :image)
+  end
+
+  # 検索・フィルター・ソート用のストロングパラメータ
+  def search_params
+    params.permit(:search, :filter, :sort, :user_id)
+  end
+
+  # ソート順の決定
+  def sort_order
+    params[:sort] == 'oldest' ? { created_at: :asc } : { created_at: :desc }
   end
 
   # ウェルカムアニメーション表示（ログイン不要）
