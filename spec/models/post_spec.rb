@@ -401,4 +401,55 @@ RSpec.describe Post, type: :model do
       end
     end
   end
+
+  # 検索機能のテスト
+  describe ".search_by_keyword" do
+    let(:user) { create(:user) }
+    let!(:post1) { create(:post, title: "明太子", description: "福岡の名産品", user: user) }
+    let!(:post2) { create(:post, title: "いくら", description: "北海道の海鮮", user: user) }
+    let!(:post3) { create(:post, title: "のり佃煮", description: "甘辛い明太子味", user: user) }
+
+    context "キーワードが指定されている場合" do
+      it "titleに一致する投稿を返す" do
+        results = Post.search_by_keyword("明太子")
+        expect(results).to include(post1, post3)
+        expect(results).not_to include(post2)
+      end
+
+      it "descriptionに一致する投稿を返す" do
+        results = Post.search_by_keyword("北海道")
+        expect(results).to include(post2)
+        expect(results).not_to include(post1, post3)
+      end
+
+      it "部分一致で検索できる" do
+        results = Post.search_by_keyword("太子")
+        expect(results).to include(post1, post3)
+        expect(results).not_to include(post2)
+      end
+
+      it "英字の大文字小文字を区別しない" do
+        post_en = create(:post, title: "Mentaiko", description: "Fukuoka specialty", user: user)
+        results = Post.search_by_keyword("mentaiko")
+        expect(results).to include(post_en)
+      end
+
+      it "該当する投稿がない場合は空の結果を返す" do
+        results = Post.search_by_keyword("存在しないキーワード")
+        expect(results).to be_empty
+      end
+    end
+
+    context "キーワードが空の場合" do
+      it "全ての投稿を返す" do
+        results = Post.search_by_keyword("")
+        expect(results).to include(post1, post2, post3)
+      end
+
+      it "nilの場合も全ての投稿を返す" do
+        results = Post.search_by_keyword(nil)
+        expect(results).to include(post1, post2, post3)
+      end
+    end
+  end
 end

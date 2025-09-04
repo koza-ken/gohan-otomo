@@ -54,9 +54,140 @@ RSpec.describe "Posts", type: :request do
         expect(response.body).to include("#{user.display_name}さんの投稿")
       end
 
-      it "存在しないユーザーIDの場合は404エラー" do
+      it "存在しないユーザーIDの場合はリダイレクト" do
         get posts_path, params: { user_id: 999 }
-        expect(response).to have_http_status(:not_found)
+        expect(response).to redirect_to(posts_path)
+        expect(flash[:alert]).to eq("指定されたユーザーが見つかりません")
+      end
+    end
+
+    # 検索・ソート・ページネーション機能のテスト
+    describe "検索・ソート・ページネーション機能" do
+      let!(:post1) { create(:post, title: "明太子", description: "福岡の名産品", user: user, created_at: 3.days.ago) }
+      let!(:post2) { create(:post, title: "いくら", description: "北海道の海鮮", user: user, created_at: 1.day.ago) }
+      let!(:post3) { create(:post, title: "のり佃煮", description: "甘辛い明太子味", user: user, created_at: 2.days.ago) }
+
+      describe "検索機能" do
+        it "キーワード検索が正常に動作する" do
+          get posts_path, params: { search: "明太子" }
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include(post1.title)
+          expect(response.body).to include(post3.title)
+          expect(response.body).not_to include(post2.title)
+        end
+
+        it "検索結果情報が表示される" do
+          get posts_path, params: { search: "明太子" }
+          expect(response.body).to include("明太子")
+          expect(response.body).to include("の検索結果")
+        end
+
+        it "空の検索キーワードでも正常に動作する" do
+          get posts_path, params: { search: "" }
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include(post1.title)
+          expect(response.body).to include(post2.title) 
+          expect(response.body).to include(post3.title)
+        end
+
+        it "該当なしの場合は適切に表示される" do
+          get posts_path, params: { search: "存在しないキーワード" }
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("まだ投稿がありません")
+        end
+      end
+
+      describe "ソート機能" do
+        it "デフォルトは新着順（created_at DESC）で表示される" do
+          get posts_path
+          expect(response).to have_http_status(:ok)
+          # レスポンスボディで投稿の順序を確認（新着順: post2 > post3 > post1）
+          post2_index = response.body.index(post2.title)
+          post3_index = response.body.index(post3.title)
+          post1_index = response.body.index(post1.title)
+          
+          expect(post2_index).to be < post3_index
+          expect(post3_index).to be < post1_index
+        end
+
+        it "古い順（created_at ASC）で表示される" do
+          get posts_path, params: { sort: "oldest" }
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("（古い順）")
+          
+          # レスポンスボディで投稿の順序を確認（古い順: post1 > post3 > post2）
+          post1_index = response.body.index(post1.title)
+          post3_index = response.body.index(post3.title)
+          post2_index = response.body.index(post2.title)
+          
+          expect(post1_index).to be < post3_index
+          expect(post3_index).to be < post2_index
+        end
+
+        it "oldest指定の場合は古い順ラベルが表示される" do
+          get posts_path, params: { sort: "oldest" }
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("（古い順）")
+        end
+      end
+
+      describe "検索とソートの組み合わせ" do
+        it "検索結果をソートできる" do
+          get posts_path, params: { search: "明太子", sort: "oldest" }
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("明太子")
+          expect(response.body).to include("の検索結果")
+          expect(response.body).to include("（古い順）")
+          expect(response.body).to include(post1.title)
+          expect(response.body).to include(post3.title)
+        end
+      end
+
+      describe "ページネーション機能" do
+        # 12件を超える投稿を作成（ページネーションをテスト）
+        let!(:additional_posts) do
+          (4..15).map do |i|
+            create(:post, title: "追加投稿#{i}", description: "テスト投稿#{i}", user: user, created_at: i.hours.ago)
+          end
+        end
+
+        it "1ページ目が正常に表示される" do
+          get posts_path
+          expect(response).to have_http_status(:ok)
+          # kaminariのページネーションが機能している
+          expect(response.body).to include("page=2") # 2ページ目リンクが存在
+        end
+
+        it "2ページ目が正常に表示される" do
+          get posts_path, params: { page: 2 }
+          expect(response).to have_http_status(:ok)
+          # 2ページ目に何らかの投稿が表示される
+          expect(response.body).to include("class=\"text-lg font-bold text-gray-800 mb-2\"")
+        end
+
+        it "存在しないページ番号でもエラーにならない" do
+          get posts_path, params: { page: 999 }
+          expect(response).to have_http_status(:ok)
+          # kaminariは存在しないページでも空のページを返す
+        end
+
+        it "検索結果もページネーションされる" do
+          # 追加投稿12件中、「追加」で検索すると12件ヒット
+          get posts_path, params: { search: "追加", page: 1 }
+          expect(response).to have_http_status(:ok)
+          expect(response.body).to include("追加")
+          expect(response.body).to include("の検索結果")
+          expect(response.body).to match(/追加投稿\d+/)
+        end
+
+        it "パラメータが保持される（検索+ページネーション）" do
+          get posts_path, params: { search: "追加", sort: "oldest", page: 1 }
+          expect(response).to have_http_status(:ok)
+          # 検索結果とソート情報が表示されることでパラメータ保持を確認
+          expect(response.body).to include("追加")
+          expect(response.body).to include("の検索結果")
+          expect(response.body).to include("（古い順）")
+        end
       end
     end
 
