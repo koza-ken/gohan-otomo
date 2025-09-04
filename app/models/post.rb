@@ -1,7 +1,7 @@
 class Post < ApplicationRecord
   has_many :comments, dependent: :destroy
   belongs_to :user
-  
+
   # Active Storage: 画像アップロード機能
   has_one_attached :image
 
@@ -38,14 +38,14 @@ class Post < ApplicationRecord
   def thumbnail_image
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [400, 300], quality: 85).processed
+    image.variant(resize_to_fill: [ 400, 300 ], quality: 85).processed
   end
 
   # Active Storage variant: 中サイズ画像（投稿詳細用）
   def medium_image
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [800, 600], quality: 85).processed
+    image.variant(resize_to_fill: [ 800, 600 ], quality: 85).processed
   end
 
   # ハイブリッド画像表示: 優先順位に従って適切な画像を返す
@@ -75,8 +75,8 @@ class Post < ApplicationRecord
   def image_format
     return unless image.attached?
 
-    unless image.content_type.in?(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
-      errors.add(:image, '画像はJPEG、PNG、WebP、GIF形式でアップロードしてください')
+    unless image.content_type.in?([ "image/jpeg", "image/png", "image/webp", "image/gif" ])
+      errors.add(:image, "画像はJPEG、PNG、WebP、GIF形式でアップロードしてください")
     end
   end
 
@@ -85,7 +85,7 @@ class Post < ApplicationRecord
     return unless image.attached?
 
     if image.byte_size > 10.megabytes
-      errors.add(:image, '画像サイズは10MB以下でアップロードしてください')
+      errors.add(:image, "画像サイズは10MB以下でアップロードしてください")
     end
   end
 end
