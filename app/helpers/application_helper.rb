@@ -12,7 +12,20 @@ module ApplicationHelper
     
     if image_source.present?
       # 画像が存在する場合（Active Storage variant または 外部URL）
-      image_tag(image_source, alt: alt_text, class: css_class)
+      if image_source.is_a?(ActiveStorage::VariantWithRecord)
+        # Active Storage variant の場合
+        image_tag(image_source, alt: alt_text, class: css_class)
+      else
+        # 外部URL画像の場合（Stimulusエラーハンドリング付き）
+        image_tag(image_source, 
+                  alt: alt_text, 
+                  class: css_class,
+                  data: { 
+                    controller: "image-preview",
+                    size: size,
+                    action: "error->image-preview#handleImageError"
+                  })
+      end
     else
       # プレースホルダーを表示（サイズに応じて調整）
       placeholder_image_tag(size, css_class)
