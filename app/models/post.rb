@@ -12,6 +12,10 @@ class Post < ApplicationRecord
   validates :image_url, length: { maximum: 500 }, allow_blank: true
   validates :image_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "正しいURLを入力してください" }, if: :image_url?
 
+  # 画像バリデーション
+  validate :image_format
+  validate :image_size
+
   # counter_cache導入時のカラム名でメソッドを定義
   def comments_count
     comments.count
@@ -34,14 +38,14 @@ class Post < ApplicationRecord
   def thumbnail_image
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [400, 300]).processed
+    image.variant(resize_to_fill: [400, 300], quality: 85).processed
   end
 
   # Active Storage variant: 中サイズ画像（投稿詳細用）
   def medium_image
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [800, 600]).processed
+    image.variant(resize_to_fill: [800, 600], quality: 85).processed
   end
 
   # ハイブリッド画像表示: 優先順位に従って適切な画像を返す
@@ -63,5 +67,25 @@ class Post < ApplicationRecord
   # 画像が存在するかチェック
   def has_image?
     image.attached? || image_url.present?
+  end
+
+  private
+
+  # 画像形式のバリデーション
+  def image_format
+    return unless image.attached?
+
+    unless image.content_type.in?(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+      errors.add(:image, '画像はJPEG、PNG、WebP、GIF形式でアップロードしてください')
+    end
+  end
+
+  # 画像サイズのバリデーション
+  def image_size
+    return unless image.attached?
+
+    if image.byte_size > 10.megabytes
+      errors.add(:image, '画像サイズは10MB以下でアップロードしてください')
+    end
   end
 end
