@@ -106,14 +106,16 @@ docker compose exec web rails generate rspec:install
 ### 🚀 次期実装予定機能
 
 #### **優先度高（次のブランチ）**
-1. **feature/like-system**: いいね機能
-   - 投稿・コメントへのいいね、カウント表示、サービスオブジェクト検討
-   - Ajaxでのいいね切り替え、カウンターキャッシュ
-2. **feature/sns-integration**: SNS連携
+1. **feature/sns-integration**: SNS連携（いいね機能完了後）
    - X（旧Twitter）シェア機能、OGPメタタグ設定
    - 投稿詳細ページでのSNSボタン配置
+   - いいね数表示との連携
 
 #### **将来実装（拡張機能）**
+- **feature/advanced-search**: 高度な検索機能
+  - カテゴリ別検索、タグ機能
+  - 人気順ソート（いいね数順）
+  - 期間指定検索
 - **feature/advanced-image-features**: 高度な画像機能
   - OGP画像自動取得（Amazon API、楽天API）
   - バックグラウンド画像取得（Active Job使用）
@@ -145,8 +147,8 @@ docker compose exec web rails generate rspec:install
 
 ## 現在の開発状況（2025年9月4日）
 
-### ✅ 完成済みブランチ
-- **08_post_listing_#10**: 投稿一覧・検索・ソート機能完全実装（**100%完成**）
+### ✅ 完成済みブランチ（マージ済み）
+- **08_post_listing_#10**: 投稿一覧・検索・ソート機能完全実装（**マージ済み**）
   - 検索機能（キーワード検索、ILIKE使用）
   - ソート機能（新着順・古い順）
   - ページネーション（kaminari、12件/ページ）
@@ -159,13 +161,16 @@ docker compose exec web rails generate rspec:install
   - セキュリティ対策（ファイル形式・サイズ制限）
   - 画像最適化（quality: 85, variant対応）
 
-- **05_post_model_#7**: 投稿CRUD機能完全実装（**100%完成**）
-- **04_user_profile_#6**: ユーザープロフィール機能（**100%完成**）
-- **02_user_auth_#5**: ユーザー認証機能（**100%完成**）
+- **05_post_model_#7**: 投稿CRUD機能完全実装（**マージ済み**）
+- **04_user_profile_#6**: ユーザープロフィール機能（**マージ済み**）
+- **02_user_auth_#5**: ユーザー認証機能（**マージ済み**）
 
-### 🚀 次の開発予定
-- **マージ準備**: 08_post_listing_#10 → main への統合
-- **次期ブランチ**: feature/like-system（いいね機能）
+### 🔄 現在開発中
+- **09_like_#11**: いいね機能の実装（**進行中**）
+  - 投稿・コメントへのいいね機能
+  - Polymorphic Association実装
+  - Ajaxでのリアルタイム切り替え
+  - サービスオブジェクト設計
 
 ### 📊 技術基盤の完成度
 - **Rails 7.2**: 完全対応、ベストプラクティス準拠
