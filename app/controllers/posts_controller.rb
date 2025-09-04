@@ -28,10 +28,11 @@ class PostsController < ApplicationController
       @posts = Post.all
     end
 
-    # 検索・ソート・includes適用（パフォーマンス最適化: 検索で絞り込んでからinclude）
+    # 検索・ソート・ページネーション・includes適用（パフォーマンス最適化: 検索で絞り込んでからpage、最後にinclude）
     @posts = @posts.search_by_keyword(params[:search])
-                   .includes(:user, :comments)
                    .order(sort_order)
+                   .page(params[:page])
+                   .includes(:user, :comments)
   end
 
   # GET /posts/1 （ログイン不要）
@@ -91,9 +92,9 @@ class PostsController < ApplicationController
     params.require(:post).permit(:title, :description, :link, :image_url, :image)
   end
 
-  # 検索・フィルター・ソート用のストロングパラメータ
+  # 検索・フィルター・ソート・ページネーション用のストロングパラメータ
   def search_params
-    params.permit(:search, :filter, :sort, :user_id)
+    params.permit(:search, :filter, :sort, :user_id, :page)
   end
 
   # ソート順の決定
