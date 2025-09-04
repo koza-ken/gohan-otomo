@@ -15,20 +15,7 @@ RSpec.describe "Posts", type: :system do
   end
 
   describe "投稿一覧画面" do
-    context "初回アクセス時" do
-      before do
-        # 初回アクセス状態にセッションをリセット
-        allow_any_instance_of(PostsController).to receive(:session).and_return({})
-      end
-
-      it "ウェルカムアニメーションが表示される" do
-        visit posts_path
-        expect(current_path).to eq(welcome_path)
-        expect(page).to have_content("ご飯のお供掲示板へようこそ")
-      end
-    end
-
-    context "アニメーション表示済みの場合" do
+    context "投稿一覧表示" do
 
       let!(:posts) { create_list(:post, 3) }
 
@@ -260,6 +247,73 @@ RSpec.describe "Posts", type: :system do
 
       expect(current_path).to eq(posts_path)
       expect(page).to have_content("#{user.display_name}さんの投稿")
+    end
+  end
+
+  describe "画像アップロード機能" do
+    before do
+      sign_in user
+    end
+
+    context "新規投稿での基本機能" do
+      it "画像ファイルをアップロードして投稿できる" do
+        visit new_post_path
+
+        fill_in "商品名", with: "画像付きテスト商品"
+        fill_in "おすすめポイント", with: "美味しそうな見た目です"
+        
+        # 画像ファイルをアップロード
+        attach_file "画像をアップロード（任意）", Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg')
+
+        expect {
+          click_button "投稿する"
+        }.to change(Post, :count).by(1)
+
+        post = Post.last
+        expect(post.image.attached?).to be true
+        expect(post.image.filename.to_s).to eq('test_image.jpg')
+        
+        expect(current_path).to eq(post_path(post))
+        expect(page).to have_content("投稿が作成されました")
+        expect(page).to have_content("画像付きテスト商品")
+      end
+
+      it "画像URLのみで投稿できる" do
+        visit new_post_path
+
+        fill_in "商品名", with: "URL画像テスト"
+        fill_in "おすすめポイント", with: "外部画像のテスト"
+        fill_in "画像URL", with: "https://example.com/external.jpg"
+
+        click_button "投稿する"
+
+        post = Post.last
+        expect(post.image_url).to eq("https://example.com/external.jpg")
+        expect(post.has_image?).to be true
+        
+        expect(current_path).to eq(post_path(post))
+        expect(page).to have_content("投稿が作成されました")
+      end
+    end
+
+    context "画像の基本確認" do
+      it "画像URLのみの投稿で適切に表示される" do
+        post_with_url = create(:post, :with_image, user: user)
+        
+        visit post_path(post_with_url)
+        
+        expect(page).to have_content(post_with_url.title)
+        expect(post_with_url.has_image?).to be true
+      end
+
+      it "画像がない投稿でも正常に表示される" do
+        post_without_image = create(:post, user: user)
+        
+        visit post_path(post_without_image)
+        
+        expect(page).to have_content(post_without_image.title)
+        expect(post_without_image.has_image?).to be false
+      end
     end
   end
 end
