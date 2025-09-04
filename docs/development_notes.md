@@ -448,22 +448,22 @@ preview(event) { }          → data-action="change->image-preview#preview"
                    → variant生成時 → active_storage_variant_records（キャッシュ）
 ```
 
-### ⏳ 次期実装予定（Task 4以降）
+### ⏳ 次期実装予定（Task 5以降）
 
-#### Task 4: 投稿詳細での画像表示機能
-- Active Storage variant を使った画像リサイズ
-- ハイブリッド画像表示（アップロード > URL > プレースホルダー）
-- レスポンシブ画像対応
-
-#### Task 5: ハイブリッド画像取得方式の実装
-- OGP画像取得機能（将来のAPI連携準備）
-- 画像取得の優先順位制御
-- display_imageヘルパーメソッドの作成
-
-#### Task 6-7: テスト・セキュリティ対応
+#### Task 5: テスト実装
 - Model specに画像関連テスト追加
 - System specに画像アップロードテスト追加
+- FactoryBotにwith_imageトレイト追加
+
+#### Task 6: セキュリティ・パフォーマンス対応
 - 画像サイズ・形式制限の強化
+- variantでの画像最適化設定
+- 動作確認とリファクタリング
+
+#### 将来実装（feature/advanced-image-features）
+- OGP画像自動取得機能（通販リンクから商品画像取得）
+- バックグラウンド画像取得（Active Job使用）
+- 画像キャッシュ機能
 
 ### 🎓 開発手法の改善
 
