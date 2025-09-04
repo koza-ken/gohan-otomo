@@ -29,6 +29,66 @@
     <% end %>
   </div>
 
+  <!-- 検索・フィルター部分 -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <%= form_with url: posts_path, method: :get, local: true, class: "space-y-4" do |form| %>
+      <!-- 検索フィールド -->
+      <div>
+        <%= form.label :search, "🔍 キーワード検索", class: "block text-sm font-medium text-orange-700 mb-2" %>
+        <%= form.text_field :search, 
+                            value: params[:search], 
+                            placeholder: "商品名・おすすめポイントで検索...",
+                            class: "w-full px-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition duration-200" %>
+      </div>
+      
+      <!-- ソート・検索ボタン -->
+      <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-4 space-y-4 sm:space-y-0">
+        <!-- ソート選択 -->
+        <div class="flex-1">
+          <%= form.label :sort, "📊 並び順", class: "block text-sm font-medium text-orange-700 mb-2" %>
+          <%= form.select :sort, 
+                          options_for_select([
+                            ['新着順', ''],
+                            ['古い順', 'oldest']
+                          ], params[:sort]),
+                          {},
+                          { class: "w-full px-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition duration-200" } %>
+        </div>
+        
+        <!-- 検索ボタン -->
+        <div>
+          <%= form.submit "検索", class: "w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition duration-200 shadow-lg" %>
+        </div>
+      </div>
+      
+      <!-- user_idパラメータの保持 -->
+      <%= form.hidden_field :user_id, value: params[:user_id] if params[:user_id].present? %>
+    <% end %>
+  </div>
+
+  <!-- 検索結果情報 -->
+  <% if params[:search].present? || params[:sort].present? %>
+    <div class="bg-orange-50 rounded-lg p-4 mb-6">
+      <div class="flex flex-wrap items-center justify-between">
+        <div class="text-orange-700">
+          <% if params[:search].present? %>
+            <span class="font-medium">「<%= params[:search] %>」</span>の検索結果: 
+          <% end %>
+          <span class="font-bold"><%= @posts.count %>件</span>の投稿
+          <% if params[:sort] == 'oldest' %>
+            <span class="text-sm">（古い順）</span>
+          <% else %>
+            <span class="text-sm">（新着順）</span>
+          <% end %>
+        </div>
+        <div>
+          <%= link_to "× 検索をクリア", posts_path(user_id: params[:user_id]), 
+                      class: "text-orange-500 hover:text-orange-700 text-sm font-medium transition duration-200" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <!-- 投稿一覧 -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <% @posts.each do |post| %>
@@ -90,6 +150,22 @@
                       class: "bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition duration-200 shadow-lg" %>
         <% end %>
       <% end %>
+    </div>
+  <% end %>
+
+  <!-- ページネーション -->
+  <% if @posts.respond_to?(:current_page) && @posts.total_pages > 1 %>
+    <div class="mt-12">
+      <div class="flex justify-center items-center space-x-1">
+        <%= paginate @posts, 
+            params: { search: params[:search], sort: params[:sort], user_id: params[:user_id] }.compact,
+            class: "flex items-center space-x-1" %>
+      </div>
+      
+      <!-- ページ情報表示 -->
+      <div class="text-center mt-4 text-sm text-orange-600">
+        <%= page_entries_info @posts, entry_name: '投稿' %>
+      </div>
     </div>
   <% end %>
 </div>

@@ -20,10 +20,11 @@ services: # コンテナの定義開始
     build: # Dockerイメージのビルド設定
       context: .  # ビルドコンテキストはカレントディレクトリ
       dockerfile: Dockerfile.dev # 開発用Dockerfileを使用
-    command: bash -c "bundle install && bundle exec rails db:prepare && rm -f tmp/pids/server.pid && ./bin/dev"
+    command: bash -c "bundle install && bundle exec rails db:prepare && bundle exec rails db:seed && rm -f tmp/pids/server.pid && ./bin/dev"
     # ↑ サーバー起動時のコマンド：
     # - bundle install: 必要なgemをインストール
     # - rails db:prepare: DBの準備
+    # - rails db:seed: テストデータの投入
     # - サーバープロセスIDファイルの削除
     # - 開発サーバーの起動
 

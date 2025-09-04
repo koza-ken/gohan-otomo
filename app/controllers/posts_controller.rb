@@ -12,12 +12,27 @@ class PostsController < ApplicationController
     #   return
     # end
 
-    if params[:user_id].present?
-      @user = User.find(params[:user_id])
-      @posts = @user.posts.includes(:user, :comments).order(created_at: :desc)
+    # 基本スコープ設定
+    @user = User.find_by(id: params[:user_id])
+    # user_idが有効でユーザーが存在する場合
+    if @user
+      @posts = @user.posts
     else
-      @posts = Post.includes(:user, :comments).order(created_at: :desc)
+      # user_idパラメータが無効または存在しない場合は全投稿を表示
+      if params[:user_id].present?
+        # user_idが空でない場合はリダイレクト
+        redirect_to posts_path, alert: "指定されたユーザーが見つかりません"
+        return
+      end
+      # user_idが空の場合は全投稿を表示
+      @posts = Post.all
     end
+
+    # 検索・ソート・ページネーション・includes適用（パフォーマンス最適化: 検索で絞り込んでからpage、最後にinclude）
+    @posts = @posts.search_by_keyword(params[:search])
+                   .order(sort_order)
+                   .page(params[:page])
+                   .includes(:user, :comments)
   end
 
   # GET /posts/1 （ログイン不要）
@@ -75,6 +90,16 @@ class PostsController < ApplicationController
   # ストロングパラメータ
   def post_params
     params.require(:post).permit(:title, :description, :link, :image_url, :image)
+  end
+
+  # 検索・フィルター・ソート・ページネーション用のストロングパラメータ
+  def search_params
+    params.permit(:search, :filter, :sort, :user_id, :page)
+  end
+
+  # ソート順の決定
+  def sort_order
+    params[:sort] == "oldest" ? { created_at: :asc } : { created_at: :desc }
   end
 
   # ウェルカムアニメーション表示（ログイン不要）

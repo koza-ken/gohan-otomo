@@ -16,6 +16,16 @@ class Post < ApplicationRecord
   validate :image_format
   validate :image_size
 
+  # 検索用スコープ
+  scope :search_by_keyword, ->(keyword) {
+    return all if keyword.blank?
+    # ILIKEはPostgreSQL用、名前付きプレースホルダーでSQLインジェクション対策
+    where(
+      "title ILIKE :keyword OR description ILIKE :keyword",
+      keyword: "%#{keyword}%"
+    )
+  }
+
   # counter_cache導入時のカラム名でメソッドを定義
   def comments_count
     comments.count

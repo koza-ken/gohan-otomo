@@ -166,3 +166,35 @@
 .rice-spinner {
   @apply inline-block w-6 h-6 border-2 border-amber-200 border-t-amber-500 rounded-full animate-spin;
 }
+
+/* Kaminari pagination styling with rice theme */
+.pagination {
+  @apply flex items-center justify-center space-x-1;
+}
+
+.pagination a,
+.pagination span {
+  @apply px-3 py-2 text-sm font-medium rounded-lg transition duration-200;
+}
+
+.pagination a {
+  @apply text-orange-600 bg-white border border-orange-200 hover:bg-orange-50 hover:border-orange-300 hover:text-orange-700;
+}
+
+.pagination span.current {
+  @apply text-white bg-orange-500 border border-orange-500 shadow-md;
+}
+
+.pagination span.gap {
+  @apply text-orange-400 bg-transparent border-transparent cursor-default;
+}
+
+.pagination a.prev,
+.pagination a.next {
+  @apply px-4 py-2 bg-orange-100 text-orange-700 hover:bg-orange-200;
+}
+
+.pagination span.prev,
+.pagination span.next {
+  @apply px-4 py-2 text-orange-300 bg-orange-50 border border-orange-100 cursor-not-allowed;
+}
