@@ -50,6 +50,18 @@ ja:
       signed_out: "ログアウトしました"
     registrations:
       signed_up: "アカウント登録が完了しました"
+    failure:
+      already_authenticated: "既にログインしています"
+      user:
+        already_authenticated: "既にログインしています"
+        inactive: "アカウントが有効化されていません"
+        invalid: "メールアドレスまたはパスワードが正しくありません"
+        locked: "アカウントがロックされています"
+        last_attempt: "もう一回失敗すると、アカウントがロックされます"
+        not_found_in_database: "メールアドレスまたはパスワードが正しくありません"
+        timeout: "セッションがタイムアウトしました。もう一度ログインしてください"
+        unauthenticated: "ログインまたはアカウント登録してください"
+        unconfirmed: "メールアドレスの確認が必要です"
     errors:
       messages:
         confirmation: "と確認用パスワードが一致しません"
