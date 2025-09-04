@@ -28,9 +28,9 @@ class PostsController < ApplicationController
       @posts = Post.all
     end
 
-    # 検索・ソート・includes適用
-    @posts = @posts.includes(:user, :comments)
-                   .search_by_keyword(params[:search])
+    # 検索・ソート・includes適用（パフォーマンス最適化: 検索で絞り込んでからinclude）
+    @posts = @posts.search_by_keyword(params[:search])
+                   .includes(:user, :comments)
                    .order(sort_order)
   end
 
