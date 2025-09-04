@@ -42,7 +42,7 @@ RSpec.describe "Profiles", type: :system do
       it "他人の非公開プロフィールにアクセスできない" do
         visit user_profile_path(private_user)
         
-        expect(page).to have_current_path("/welcome")
+        expect(page).to have_current_path("/")
         expect(page).to have_content("このプロフィールは非公開です")
       end
     end
@@ -90,7 +90,7 @@ RSpec.describe "Profiles", type: :system do
     it "他人のプロフィール編集にアクセスできない" do
       visit edit_user_profile_path(other_user)
       
-      expect(page).to have_current_path("/welcome")
+      expect(page).to have_current_path("/")
       expect(page).to have_content("権限がありません")
     end
   end

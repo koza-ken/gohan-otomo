@@ -117,6 +117,94 @@ RSpec.describe Post, type: :model do
     end
   end
 
+  describe "画像バリデーション" do
+    let(:user) { create(:user) }
+    let(:post) { build(:post, user: user) }
+
+    describe "画像形式チェック" do
+      it "JPEG形式の画像は有効" do
+        post.image.attach(
+          io: StringIO.new("fake jpeg data"),
+          filename: 'test.jpg',
+          content_type: 'image/jpeg'
+        )
+        expect(post.valid?).to be true
+      end
+
+      it "PNG形式の画像は有効" do
+        post.image.attach(
+          io: StringIO.new("fake png data"),
+          filename: 'test.png',
+          content_type: 'image/png'
+        )
+        expect(post.valid?).to be true
+      end
+
+      it "WebP形式の画像は有効" do
+        post.image.attach(
+          io: StringIO.new("fake webp data"),
+          filename: 'test.webp',
+          content_type: 'image/webp'
+        )
+        expect(post.valid?).to be true
+      end
+
+      it "GIF形式の画像は有効" do
+        post.image.attach(
+          io: StringIO.new("fake gif data"),
+          filename: 'test.gif',
+          content_type: 'image/gif'
+        )
+        expect(post.valid?).to be true
+      end
+
+      it "PDF形式のファイルは無効" do
+        post.image.attach(
+          io: StringIO.new("fake pdf data"),
+          filename: 'document.pdf',
+          content_type: 'application/pdf'
+        )
+        expect(post.valid?).to be false
+        expect(post.errors[:image]).to include('画像はJPEG、PNG、WebP、GIF形式でアップロードしてください')
+      end
+
+      it "テキストファイルは無効" do
+        post.image.attach(
+          io: StringIO.new("fake text data"),
+          filename: 'document.txt',
+          content_type: 'text/plain'
+        )
+        expect(post.valid?).to be false
+        expect(post.errors[:image]).to include('画像はJPEG、PNG、WebP、GIF形式でアップロードしてください')
+      end
+    end
+
+    describe "画像サイズチェック" do
+      it "10MB以下の画像は有効" do
+        post.image.attach(
+          io: StringIO.new("a" * (5 * 1024 * 1024)), # 5MB
+          filename: 'large.jpg',
+          content_type: 'image/jpeg'
+        )
+        expect(post.valid?).to be true
+      end
+
+      it "10MB超の画像は無効" do
+        post.image.attach(
+          io: StringIO.new("a" * (15 * 1024 * 1024)), # 15MB
+          filename: 'too_large.jpg',
+          content_type: 'image/jpeg'
+        )
+        expect(post.valid?).to be false
+        expect(post.errors[:image]).to include('画像サイズは10MB以下でアップロードしてください')
+      end
+    end
+
+    it "画像が添付されていない場合は有効" do
+      expect(post.valid?).to be true
+    end
+  end
+
   describe "Active Storage" do
     let(:user) { create(:user) }
     let(:post) { create(:post, user: user) }
