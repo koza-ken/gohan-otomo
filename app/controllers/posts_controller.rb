@@ -13,13 +13,21 @@ class PostsController < ApplicationController
     # end
 
     # 基本スコープ設定
-    if params[:user_id].present?
-      @user = User.find(params[:user_id])
+    @user = User.find_by(id: params[:user_id])
+    # user_idが有効でユーザーが存在する場合
+    if @user
       @posts = @user.posts
     else
+      # user_idパラメータが無効または存在しない場合は全投稿を表示
+      if params[:user_id].present?
+        # user_idが空でない場合はリダイレクト
+        redirect_to posts_path, alert: "指定されたユーザーが見つかりません"
+        return
+      end
+      # user_idが空の場合は全投稿を表示
       @posts = Post.all
     end
-    
+
     # 検索・ソート・includes適用
     @posts = @posts.includes(:user, :comments)
                    .search_by_keyword(params[:search])
