@@ -16,6 +16,13 @@ class Post < ApplicationRecord
   validate :image_format
   validate :image_size
 
+  # 検索用スコープ
+  scope :search_by_keyword, ->(keyword) {
+    return all if keyword.blank?
+    
+    where("title ILIKE ? OR description ILIKE ?", "%#{keyword}%", "%#{keyword}%")
+  }
+
   # counter_cache導入時のカラム名でメソッドを定義
   def comments_count
     comments.count
