@@ -38,14 +38,14 @@ class Post < ApplicationRecord
   def thumbnail_image
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [ 400, 300 ], quality: 85).processed
+    image.variant(resize_to_fill: [ 400, 300 ], quality: 85)
   end
 
   # Active Storage variant: 中サイズ画像（投稿詳細用）
   def medium_image
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [ 800, 600 ], quality: 85).processed
+    image.variant(resize_to_fill: [ 800, 600 ], quality: 85)
   end
 
   # ハイブリッド画像表示: 優先順位に従って適切な画像を返す
