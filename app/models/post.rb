@@ -21,7 +21,7 @@ class Post < ApplicationRecord
     return all if keyword.blank?
     # ILIKEはPostgreSQL用、名前付きプレースホルダーでSQLインジェクション対策
     where(
-      "title ILIKE :keyword OR description ILIKE :keyword", 
+      "title ILIKE :keyword OR description ILIKE :keyword",
       keyword: "%#{keyword}%"
     )
   }

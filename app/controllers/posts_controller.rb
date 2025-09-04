@@ -99,7 +99,7 @@ class PostsController < ApplicationController
 
   # ソート順の決定
   def sort_order
-    params[:sort] == 'oldest' ? { created_at: :asc } : { created_at: :desc }
+    params[:sort] == "oldest" ? { created_at: :asc } : { created_at: :desc }
   end
 
   # ウェルカムアニメーション表示（ログイン不要）
