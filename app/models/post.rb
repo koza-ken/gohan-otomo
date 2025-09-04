@@ -19,8 +19,11 @@ class Post < ApplicationRecord
   # 検索用スコープ
   scope :search_by_keyword, ->(keyword) {
     return all if keyword.blank?
-    
-    where("title ILIKE ? OR description ILIKE ?", "%#{keyword}%", "%#{keyword}%")
+    # ILIKEはPostgreSQL用、名前付きプレースホルダーでSQLインジェクション対策
+    where(
+      "title ILIKE :keyword OR description ILIKE :keyword", 
+      keyword: "%#{keyword}%"
+    )
   }
 
   # counter_cache導入時のカラム名でメソッドを定義
