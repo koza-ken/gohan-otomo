@@ -152,4 +152,20 @@
       <% end %>
     </div>
   <% end %>
+
+  <!-- ページネーション -->
+  <% if @posts.respond_to?(:current_page) && @posts.total_pages > 1 %>
+    <div class="mt-12">
+      <div class="flex justify-center items-center space-x-1">
+        <%= paginate @posts, 
+            params: params.slice(:search, :sort, :user_id),
+            class: "flex items-center space-x-1" %>
+      </div>
+      
+      <!-- ページ情報表示 -->
+      <div class="text-center mt-4 text-sm text-orange-600">
+        <%= page_entries_info @posts, entry_name: '投稿' %>
+      </div>
+    </div>
+  <% end %>
 </div>
