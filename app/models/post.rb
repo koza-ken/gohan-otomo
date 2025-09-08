@@ -1,5 +1,6 @@
 class Post < ApplicationRecord
   has_many :comments, dependent: :destroy
+  has_many :likes, dependent: :destroy
   belongs_to :user
 
   # Active Storage: 画像アップロード機能
@@ -29,6 +30,18 @@ class Post < ApplicationRecord
   # counter_cache導入時のカラム名でメソッドを定義
   def comments_count
     comments.count
+  end
+  
+  # いいね数を取得
+  def likes_count
+    likes.count
+  end
+  
+  # 特定のユーザーがこの投稿にいいねしているかチェック
+  def liked_by?(user)
+    return false unless user
+    
+    likes.exists?(user: user)
   end
 
   # セキュアなリンクを返すメソッド（javascript:スキームなどを防ぐ）
