@@ -65,7 +65,7 @@ docker compose exec web rails generate rspec:install
 2. **外部URL画像（次優先）** → image_urlフィールドから取得
 3. **プレースホルダー（最終手段）** → 🍚アイコン表示
 
-### ✅ 実装完了機能（2025年9月4日現在）
+### ✅ 実装完了機能（2025年9月8日現在）
 
 #### **基本機能**
 - **ユーザー認証**: Devise使用、プロフィール機能付き（完全実装）
@@ -88,6 +88,14 @@ docker compose exec web rails generate rspec:install
 - **レスポンシブUI**: 検索フォーム・結果表示の最適化
 - **パフォーマンス最適化**: 検索→ページネーション→includes の効率的順序
 
+#### **いいね機能（09_like_#11完成）**
+- **Likeモデル**: User-Post間のシンプルなhas_many関連（Polymorphic不使用）
+- **データ整合性**: ユニーク制約（DB + モデル）で重複いいね防止
+- **便利メソッド**: `likes_count`, `liked_by?`, `liked_posts`（has_many through活用）
+- **Ajax対応**: Turbo Stream使用、ページリロードなしでいいね切り替え
+- **UI統合**: 投稿詳細・一覧ページの両方にいいねボタン配置
+- **レスポンシブ対応**: お米テーマ統一（オレンジ基調）のいいねボタンデザイン
+
 #### **UI/UXシステム**
 - **お米がテーマのデザインシステム**: オレンジを基調とした温かいUI
 - **レスポンシブ対応**: モバイル・タブレット・デスクトップ対応
@@ -96,17 +104,18 @@ docker compose exec web rails generate rspec:install
 - **kaminariスタイリング**: お米テーマに合わせたページネーション
 
 #### **テスト・品質管理**
-- **包括的テストカバレッジ**: 192テスト（100%成功）
-  - Model spec: 66テスト（バリデーション、画像処理、セキュリティ、検索機能）
-  - System spec: 21テスト（画像アップロード、表示確認）
-  - Request spec: 56テスト（CRUD操作、認証・認可、検索・ソート・ページネーション）
-  - その他: プロフィール、認証関連
+- **包括的テストカバレッジ**: 230+テスト（100%成功）
+  - Model spec: 約80テスト（バリデーション、アソシエーション、いいね機能）
+  - System spec: 約30テスト（画像アップロード、いいね操作、統合テスト）
+  - Request spec: 約70テスト（CRUD操作、認証・認可、Ajax機能）
+  - Like機能: 約40テスト追加（Model/Request/System）
+  - その他: プロフィール、認証、検索関連
 - **コード品質**: Rubocop完全準拠、Brakeman対策済み
 
 ### 🚀 次期実装予定機能
 
 #### **優先度高（次のブランチ）**
-1. **feature/sns-integration**: SNS連携（いいね機能完了後）
+1. **10_sns_integration_#12**: SNS連携（いいね機能完了済み）
    - X（旧Twitter）シェア機能、OGPメタタグ設定
    - 投稿詳細ページでのSNSボタン配置
    - いいね数表示との連携
@@ -141,11 +150,12 @@ docker compose exec web rails generate rspec:install
 - id, user_id, post_id, content (感想内容)
 - created_at, updated_at
 
-### Likes（予定）
-- id, user_id, likeable_id, likeable_type (Post/Comment)
+### Likes（実装済み）
+- id, user_id, post_id
 - created_at, updated_at
+- ユニーク制約: (user_id, post_id)
 
-## 現在の開発状況（2025年9月4日）
+## 現在の開発状況（2025年9月8日）
 
 ### ✅ 完成済みブランチ（マージ済み）
 - **08_post_listing_#10**: 投稿一覧・検索・ソート機能完全実装（**マージ済み**）
@@ -165,21 +175,22 @@ docker compose exec web rails generate rspec:install
 - **04_user_profile_#6**: ユーザープロフィール機能（**マージ済み**）
 - **02_user_auth_#5**: ユーザー認証機能（**マージ済み**）
 
-### 🔄 現在開発中
-- **09_like_#11**: いいね機能の実装（**進行中**）
-  - 投稿・コメントへのいいね機能
-  - Polymorphic Association実装
-  - Ajaxでのリアルタイム切り替え
-  - サービスオブジェクト設計
+### ✅ 最新完成ブランチ
+- **09_like_#11**: いいね機能の実装（**完成**）
+  - 投稿へのいいね機能（Commentは対象外に変更）
+  - シンプルなUser-Post関連実装（Polymorphic不使用）
+  - Turbo Streamでのリアルタイム切り替え
+  - 包括的テストカバレッジ（Model/Request/System）
 
 ### 📊 技術基盤の完成度
 - **Rails 7.2**: 完全対応、ベストプラクティス準拠
-- **テスト**: RSpec + FactoryBot（192テスト、100%成功率）
+- **テスト**: RSpec + FactoryBot（230+テスト、100%成功率）
 - **コード品質**: Rubocop完全準拠、Brakeman対策済み
 - **画像処理**: Active Storage + ImageMagick完全実装
-- **フロントエンド**: TailwindCSS v4 + Stimulus統合
+- **フロントエンド**: TailwindCSS v4 + Turbo Stream統合
 - **データベース**: PostgreSQL + Docker Volume永続化
 - **検索・ページネーション**: kaminari + 最適化されたクエリ
+- **いいね機能**: Turbo Stream + Ajax完全実装
 
 ## 開発環境の設定ファイル
 
@@ -352,6 +363,43 @@ def post_image_tag(post, options = {})
   image_source = post.display_image(options[:size])
   # HTMLタグ生成ロジック
 end
+```
+
+#### **いいね機能のシンプル設計**
+```ruby
+# Likeモデル（シンプルなUser-Post関連）
+class Like < ApplicationRecord
+  belongs_to :user
+  belongs_to :post
+  validates :user_id, uniqueness: { scope: :post_id }
+end
+
+# Postモデル（便利メソッド）
+def likes_count
+  likes.count
+end
+
+def liked_by?(user)
+  return false unless user
+  likes.exists?(user: user)
+end
+
+# Userモデル（has_many through活用）
+has_many :likes, dependent: :destroy
+has_many :liked_posts, through: :likes, source: :post
+```
+
+#### **Turbo Streamの活用**
+```erb
+<!-- いいねボタンのパーシャル -->
+<%= turbo_frame_tag "like_button_#{post.id}" do %>
+  <!-- 状態に応じたボタン表示 -->
+<% end %>
+
+<!-- create.turbo_stream.erb -->
+<%= turbo_stream.replace "like_button_#{@post.id}" do %>
+  <%= render 'likes/button', post: @post %>
+<% end %>
 ```
 
 ## Claude Codeでの開発ルール
