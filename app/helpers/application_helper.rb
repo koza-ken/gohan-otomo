@@ -55,9 +55,9 @@ module ApplicationHelper
     # ボタンテキストを投稿者判定で変更
     button_text = if user_signed_in? && current_user == post.user
                     "おすすめ"  # 自分の投稿
-                  else
+    else
                     "気になる"  # 他人の投稿
-                  end
+    end
 
     # デフォルトのCSSクラス（お米テーマに合わせたデザイン）
     default_class = "inline-flex items-center gap-2 px-3 py-1 bg-black hover:bg-black/60 text-white rounded-lg transition-colors duration-200"
