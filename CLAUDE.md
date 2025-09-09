@@ -96,6 +96,15 @@ docker compose exec web rails generate rspec:install
 - **UI統合**: 投稿詳細・一覧ページの両方にいいねボタン配置
 - **レスポンシブ対応**: お米テーマ統一（オレンジ基調）のいいねボタンデザイン
 
+#### **SNS連携機能（10_sns_#12完成）**
+- **X（旧Twitter）投稿ボタン**: Web Intents API使用のシンプル実装
+- **投稿者判定機能**: 自分の投稿「おすすめ」／他人の投稿「気になる」の自動切り替え
+- **シェア内容最適化**: 投稿タイトル + ハッシュタグ（#ご飯のお供 #gohan_otomo）自動生成
+- **セキュリティ対策**: CGI.escape によるURL Safe処理、rel="noopener noreferrer" 設定
+- **基本OGPメタタグ**: 投稿詳細ページでの動的メタタグ設定（仮画像対応）
+- **Xブランドデザイン**: 黒基調のボタンデザインでXらしい外観
+- **Rails 7準拠**: ヘルパーメソッドによる再利用可能な実装
+
 #### **UI/UXシステム**
 - **お米がテーマのデザインシステム**: オレンジを基調とした温かいUI
 - **レスポンシブ対応**: モバイル・タブレット・デスクトップ対応
@@ -115,10 +124,10 @@ docker compose exec web rails generate rspec:install
 ### 🚀 次期実装予定機能
 
 #### **優先度高（次のブランチ）**
-1. **10_sns_integration_#12**: SNS連携（いいね機能完了済み）
-   - X（旧Twitter）シェア機能、OGPメタタグ設定
-   - 投稿詳細ページでのSNSボタン配置
-   - いいね数表示との連携
+1. **OGP画像設定**: 本格的なSNSシェア対応
+   - 投稿画像をOGP画像として設定
+   - デフォルトOGP画像の作成・設定
+   - Twitter Card の最適化
 
 #### **将来実装（拡張機能）**
 - **feature/advanced-search**: 高度な検索機能
@@ -158,6 +167,13 @@ docker compose exec web rails generate rspec:install
 ## 現在の開発状況（2025年9月9日）
 
 ### ✅ 完成済みブランチ（マージ済み）
+- **10_sns_#12**: SNS連携機能完全実装（**完成**）
+  - X（旧Twitter）投稿ボタン（Web Intents API使用）
+  - 投稿者判定による動的メッセージ（「おすすめ」／「気になる」）
+  - セキュリティ対策完備（CGI.escape、rel属性設定）
+  - 基本OGPメタタグ設定（動的メタタグ対応）
+  - ブラウザ動作確認完了、Rails 7準拠
+
 - **09_like_#11**: いいね機能完全実装（**マージ済み**）
   - User-Post間のシンプルないいね関連（Polymorphic不使用）
   - Turbo Streamによるリアルタイム更新（ページリロード不要）
@@ -183,10 +199,10 @@ docker compose exec web rails generate rspec:install
 - **02_user_auth_#5**: ユーザー認証機能（**マージ済み**）
 
 ### 🎯 次期実装予定
-- **10_sns_integration_#12**: SNS連携機能の実装
-  - X（旧Twitter）シェア機能
-  - OGPメタタグ設定
-  - いいね数を活用したSNS投稿
+- **OGP画像設定**: 本格的なSNSシェア対応
+  - 投稿画像をOGP画像として自動設定
+  - アプリ用デフォルトOGP画像の作成
+  - Twitter Card最適化
 
 ### 📊 技術基盤の完成度
 - **Rails 7.2**: 完全対応、ベストプラクティス準拠
