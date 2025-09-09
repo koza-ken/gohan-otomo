@@ -14,14 +14,10 @@ class User < ApplicationRecord
   validates :display_name, uniqueness: { case_sensitive: false }
   validates :favorite_foods, length: { maximum: 200 }
   validates :disliked_foods, length: { maximum: 200 }
-  
+
   # いいねした投稿数を取得（Postモデルと統一的なインターフェース）
-  def liked_posts_count
-    liked_posts.count
-  end
-  
+  delegate :count, to: :liked_posts, prefix: true
+
   # このユーザーが行ったいいね総数
-  def likes_count
-    likes.count
-  end
+  delegate :count, to: :likes, prefix: true
 end

@@ -31,16 +31,16 @@ class Post < ApplicationRecord
   def comments_count
     comments.count
   end
-  
+
   # いいね数を取得
   def likes_count
     likes.count
   end
-  
+
   # 特定のユーザーがこの投稿にいいねしているかチェック
   def liked_by?(user)
     return false unless user
-    
+
     likes.exists?(user: user)
   end
 
