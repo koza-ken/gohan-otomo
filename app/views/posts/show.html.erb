@@ -34,16 +34,21 @@
             <span><%= @post.created_at.strftime("%Y年%m月%d日 %H:%M") %></span>
           </div>
           
-          <!-- 編集・削除ボタン（投稿者のみ） -->
-          <% if user_signed_in? && current_user == @post.user %>
-            <div class="flex space-x-2">
-              <%= link_to "編集", edit_post_path(@post), 
-                          class: "bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200" %>
-              <%= link_to "削除", @post, method: :delete,
-                          class: "bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200",
-                          confirm: "本当に削除しますか？" %>
-            </div>
-          <% end %>
+          <div class="flex items-center space-x-3">
+            <!-- いいねボタン -->
+            <%= render 'likes/button', post: @post %>
+            
+            <!-- 編集・削除ボタン（投稿者のみ） -->
+            <% if user_signed_in? && current_user == @post.user %>
+              <div class="flex space-x-2">
+                <%= link_to "編集", edit_post_path(@post), 
+                            class: "bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200" %>
+                <%= link_to "削除", @post, method: :delete,
+                            class: "bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200",
+                            confirm: "本当に削除しますか？" %>
+              </div>
+            <% end %>
+          </div>
         </div>
 
         <!-- おすすめポイント -->
