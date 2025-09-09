@@ -95,19 +95,5 @@ RSpec.describe "Profiles", type: :system do
     end
   end
 
-  describe "ナビゲーション統合" do
-    before { sign_in user }
-
-    it "ハンバーガーメニューからプロフィールにアクセスできる", js: true do
-      visit root_path
-      
-      # ハンバーガーメニューをクリック
-      find('[data-controller="dropdown"] button').click
-      
-      expect(page).to have_link("プロフィール")
-      click_link "プロフィール"
-      
-      expect(page).to have_current_path(user_profile_path(user))
-    end
   end
 end

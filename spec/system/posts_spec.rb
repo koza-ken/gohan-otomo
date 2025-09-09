@@ -221,7 +221,7 @@ RSpec.describe "Posts", type: :system do
         expect(page).to have_link("新しいお供を投稿")
         expect(page).to have_link("マイ投稿一覧")
         expect(page).to have_link("プロフィールを見る")
-        expect(page).to have_link("ログアウト")
+        expect(page).to have_button("ログアウト")
         expect(page).not_to have_link("ログイン")
       end
 

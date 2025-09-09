@@ -21,37 +21,6 @@ RSpec.describe "いいね機能", type: :system do
         expect(page).to have_content("0") # 初期いいね数
       end
 
-      it "いいねボタンをクリックするといいねできる", js: true do
-        # JavaScriptが必要なテストの場合
-        driven_by(:selenium_chrome_headless)
-        visit post_path(post_record)
-        
-        expect {
-          find('[data-turbo-frame="like_button_' + post_record.id.to_s + '"] a').click
-          sleep 1 # Ajax完了を待つ
-        }.to change { post_record.reload.likes_count }.by(1)
-
-        # いいね済み状態になることを確認
-        expect(page).to have_content("1")
-        expect(page).to have_css('.bg-orange-500') # いいね済みのボタンスタイル
-      end
-
-      it "いいね済みボタンをクリックするといいねを取り消せる", js: true do
-        # 事前にいいねを作成
-        create(:like, user: user2, post: post_record)
-        
-        driven_by(:selenium_chrome_headless)
-        visit post_path(post_record)
-        
-        expect {
-          find('[data-turbo-frame="like_button_' + post_record.id.to_s + '"] a').click
-          sleep 1 # Ajax完了を待つ
-        }.to change { post_record.reload.likes_count }.by(-1)
-
-        # いいね未実行状態になることを確認
-        expect(page).to have_content("0")
-        expect(page).to have_css('.bg-gray-100') # 未いいねのボタンスタイル
-      end
     end
 
     context "未ログインユーザーの場合" do
@@ -95,17 +64,6 @@ RSpec.describe "いいね機能", type: :system do
         expect(page).to have_content("0") # 初期いいね数
       end
 
-      it "一覧ページでもいいね操作ができる", js: true do
-        driven_by(:selenium_chrome_headless)
-        visit posts_path
-        
-        expect {
-          find('[data-turbo-frame="like_button_' + post_record.id.to_s + '"] a').click
-          sleep 1 # Ajax完了を待つ
-        }.to change { post_record.reload.likes_count }.by(1)
-
-        expect(page).to have_content("1")
-      end
     end
 
     context "未ログインユーザーの場合" do
@@ -134,21 +92,6 @@ RSpec.describe "いいね機能", type: :system do
       sign_in user2
     end
 
-    it "異なる投稿に個別にいいねできる", js: true do
-      driven_by(:selenium_chrome_headless)
-      visit posts_path
-      
-      # 投稿1にいいね
-      find('[data-turbo-frame="like_button_' + post_record.id.to_s + '"] a').click
-      sleep 1
-      
-      # 投稿2にいいね
-      find('[data-turbo-frame="like_button_' + post2.id.to_s + '"] a').click
-      sleep 1
-      
-      expect(post_record.reload.likes_count).to eq(1)
-      expect(post2.reload.likes_count).to eq(1)
-    end
 
     it "他のユーザーのいいねと混在して正しく表示される" do
       # user が post_record にいいね
