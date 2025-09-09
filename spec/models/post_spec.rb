@@ -452,4 +452,67 @@ RSpec.describe Post, type: :model do
       end
     end
   end
+
+  describe "いいね機能" do
+    let(:user) { create(:user) }
+    let(:user2) { create(:user, display_name: "ユーザー2", email: "user2@example.com") }
+    let(:post_record) { create(:post, user: user) }
+
+    describe "associations" do
+      it "has many likes with dependent destroy" do
+        user = create(:user)
+        post_record = create(:post)
+        like1 = create(:like, user: user, post: post_record)
+        like2 = create(:like, user: create(:user, display_name: "別のユーザー", email: "other@example.com"), post: post_record)
+        
+        expect(post_record.likes.count).to eq(2)
+        expect(post_record.likes).to include(like1, like2)
+        
+        # dependent: destroyの確認
+        expect { post_record.destroy }.to change { Like.count }.by(-2)
+      end
+    end
+
+    describe "#likes_count" do
+      it "いいね数を正確に返す" do
+        expect(post_record.likes_count).to eq(0)
+        
+        create(:like, user: user, post: post_record)
+        expect(post_record.likes_count).to eq(1)
+        
+        create(:like, user: user2, post: post_record)
+        expect(post_record.likes_count).to eq(2)
+      end
+    end
+
+    describe "#liked_by?" do
+      it "ユーザーがいいねしている場合はtrueを返す" do
+        create(:like, user: user, post: post_record)
+        expect(post_record.liked_by?(user)).to be true
+      end
+
+      it "ユーザーがいいねしていない場合はfalseを返す" do
+        expect(post_record.liked_by?(user)).to be false
+      end
+
+      it "ユーザーがnilの場合はfalseを返す" do
+        expect(post_record.liked_by?(nil)).to be false
+      end
+
+      it "異なるユーザーのいいね状態は影響しない" do
+        create(:like, user: user2, post: post_record)
+        expect(post_record.liked_by?(user)).to be false
+        expect(post_record.liked_by?(user2)).to be true
+      end
+    end
+
+    describe "dependency" do
+      it "投稿を削除するとそのいいねも削除される" do
+        create(:like, user: user, post: post_record)
+        create(:like, user: user2, post: post_record)
+        
+        expect { post_record.destroy }.to change { Like.count }.by(-2)
+      end
+    end
+  end
 end

@@ -65,7 +65,7 @@ docker compose exec web rails generate rspec:install
 2. **外部URL画像（次優先）** → image_urlフィールドから取得
 3. **プレースホルダー（最終手段）** → 🍚アイコン表示
 
-### ✅ 実装完了機能（2025年9月4日現在）
+### ✅ 実装完了機能（2025年9月9日現在）
 
 #### **基本機能**
 - **ユーザー認証**: Devise使用、プロフィール機能付き（完全実装）
@@ -88,6 +88,14 @@ docker compose exec web rails generate rspec:install
 - **レスポンシブUI**: 検索フォーム・結果表示の最適化
 - **パフォーマンス最適化**: 検索→ページネーション→includes の効率的順序
 
+#### **いいね機能（09_like_#11完成）**
+- **Likeモデル**: User-Post間のシンプルなhas_many関連（Polymorphic不使用）
+- **データ整合性**: ユニーク制約（DB + モデル）で重複いいね防止
+- **便利メソッド**: `likes_count`, `liked_by?`, `liked_posts`（has_many through活用）
+- **Ajax対応**: Turbo Stream使用、ページリロードなしでいいね切り替え
+- **UI統合**: 投稿詳細・一覧ページの両方にいいねボタン配置
+- **レスポンシブ対応**: お米テーマ統一（オレンジ基調）のいいねボタンデザイン
+
 #### **UI/UXシステム**
 - **お米がテーマのデザインシステム**: オレンジを基調とした温かいUI
 - **レスポンシブ対応**: モバイル・タブレット・デスクトップ対応
@@ -96,24 +104,27 @@ docker compose exec web rails generate rspec:install
 - **kaminariスタイリング**: お米テーマに合わせたページネーション
 
 #### **テスト・品質管理**
-- **包括的テストカバレッジ**: 192テスト（100%成功）
-  - Model spec: 66テスト（バリデーション、画像処理、セキュリティ、検索機能）
-  - System spec: 21テスト（画像アップロード、表示確認）
-  - Request spec: 56テスト（CRUD操作、認証・認可、検索・ソート・ページネーション）
-  - その他: プロフィール、認証関連
+- **包括的テストカバレッジ**: 230+テスト（100%成功）
+  - Model spec: 約80テスト（バリデーション、アソシエーション、いいね機能）
+  - System spec: 約30テスト（画像アップロード、いいね操作、統合テスト）
+  - Request spec: 約70テスト（CRUD操作、認証・認可、Ajax機能）
+  - Like機能: 約40テスト追加（Model/Request/System）
+  - その他: プロフィール、認証、検索関連
 - **コード品質**: Rubocop完全準拠、Brakeman対策済み
 
 ### 🚀 次期実装予定機能
 
 #### **優先度高（次のブランチ）**
-1. **feature/like-system**: いいね機能
-   - 投稿・コメントへのいいね、カウント表示、サービスオブジェクト検討
-   - Ajaxでのいいね切り替え、カウンターキャッシュ
-2. **feature/sns-integration**: SNS連携
+1. **10_sns_integration_#12**: SNS連携（いいね機能完了済み）
    - X（旧Twitter）シェア機能、OGPメタタグ設定
    - 投稿詳細ページでのSNSボタン配置
+   - いいね数表示との連携
 
 #### **将来実装（拡張機能）**
+- **feature/advanced-search**: 高度な検索機能
+  - カテゴリ別検索、タグ機能
+  - 人気順ソート（いいね数順）
+  - 期間指定検索
 - **feature/advanced-image-features**: 高度な画像機能
   - OGP画像自動取得（Amazon API、楽天API）
   - バックグラウンド画像取得（Active Job使用）
@@ -139,19 +150,27 @@ docker compose exec web rails generate rspec:install
 - id, user_id, post_id, content (感想内容)
 - created_at, updated_at
 
-### Likes（予定）
-- id, user_id, likeable_id, likeable_type (Post/Comment)
+### Likes（実装済み）
+- id, user_id, post_id
 - created_at, updated_at
+- ユニーク制約: (user_id, post_id)
 
-## 現在の開発状況（2025年9月4日）
+## 現在の開発状況（2025年9月9日）
 
-### ✅ 完成済みブランチ
-- **08_post_listing_#10**: 投稿一覧・検索・ソート機能完全実装（**100%完成**）
+### ✅ 完成済みブランチ（マージ済み）
+- **09_like_#11**: いいね機能完全実装（**マージ済み**）
+  - User-Post間のシンプルないいね関連（Polymorphic不使用）
+  - Turbo Streamによるリアルタイム更新（ページリロード不要）
+  - データ整合性（DB制約 + モデルバリデーション）
+  - delegate活用によるパフォーマンス最適化
+  - 包括的テストカバレッジ（229テスト、CI対応完了）
+  - ブラウザ動作確認完了、Rails 7完全準拠
+
+- **08_post_listing_#10**: 投稿一覧・検索・ソート機能完全実装（**マージ済み**）
   - 検索機能（キーワード検索、ILIKE使用）
   - ソート機能（新着順・古い順）
   - ページネーション（kaminari、12件/ページ）
   - データ永続化（Docker Volume + 自動seed）
-  - 包括的テストカバレッジ（20の新規テスト追加）
 
 - **07_image-upload_#8**: 画像アップロード機能完全実装（**マージ済み**）
   - Active Storage + ImageMagick による画像処理基盤
@@ -159,22 +178,25 @@ docker compose exec web rails generate rspec:install
   - セキュリティ対策（ファイル形式・サイズ制限）
   - 画像最適化（quality: 85, variant対応）
 
-- **05_post_model_#7**: 投稿CRUD機能完全実装（**100%完成**）
-- **04_user_profile_#6**: ユーザープロフィール機能（**100%完成**）
-- **02_user_auth_#5**: ユーザー認証機能（**100%完成**）
+- **05_post_model_#7**: 投稿CRUD機能完全実装（**マージ済み**）
+- **04_user_profile_#6**: ユーザープロフィール機能（**マージ済み**）
+- **02_user_auth_#5**: ユーザー認証機能（**マージ済み**）
 
-### 🚀 次の開発予定
-- **マージ準備**: 08_post_listing_#10 → main への統合
-- **次期ブランチ**: feature/like-system（いいね機能）
+### 🎯 次期実装予定
+- **10_sns_integration_#12**: SNS連携機能の実装
+  - X（旧Twitter）シェア機能
+  - OGPメタタグ設定
+  - いいね数を活用したSNS投稿
 
 ### 📊 技術基盤の完成度
 - **Rails 7.2**: 完全対応、ベストプラクティス準拠
-- **テスト**: RSpec + FactoryBot（192テスト、100%成功率）
+- **テスト**: RSpec + FactoryBot（229テスト、CI環境100%成功）
 - **コード品質**: Rubocop完全準拠、Brakeman対策済み
 - **画像処理**: Active Storage + ImageMagick完全実装
-- **フロントエンド**: TailwindCSS v4 + Stimulus統合
+- **フロントエンド**: TailwindCSS v4 + Turbo Stream統合
 - **データベース**: PostgreSQL + Docker Volume永続化
 - **検索・ページネーション**: kaminari + 最適化されたクエリ
+- **いいね機能**: Turbo Stream + Ajax完全実装
 
 ## 開発環境の設定ファイル
 
@@ -209,6 +231,61 @@ docker compose exec web rails generate rspec:install
 - **ERB使用**: Hamlは使用しない（Rails標準ERBを使用）
 
 ### 重要な技術的知見
+
+#### **Learning Modeでの成功事例**
+
+**設計判断の具体例**:
+1. **STI廃止とPost-Comment関連設計への変更** (05_post_model_#7)
+   - 理由: STIは複雑すぎ、シンプルなhas_many関連の方が適切
+   - 学習ポイント: 複雑さを避け、Railsの基本パターンを活用
+
+2. **Active Storage vs CarrierWave**
+   - 選択: Active Storage を採用
+   - 理由: Rails 7標準、シンプルな設定、variant機能の充実
+   - 学習ポイント: Rails標準を優先することの重要性
+
+3. **ハイブリッド画像システム**
+   - アップロード → 外部URL → プレースホルダーの3段階フォールバック
+   - 学習ポイント: ユーザビリティと拡張性の両立
+
+4. **Helper vs Model の責任分離**
+   - Model: データ処理とvariant生成を担当
+   - Helper: HTML生成とCSS適用を担当
+   - 学習ポイント: 単一責任原則、テストしやすい構造
+
+#### **Rails 7テストのベストプラクティス**
+
+**RSpec Request specでの重要な注意点**:
+```ruby
+# ⚠️ 危険: HTTPメソッドと同名の変数は使用禁止
+let(:post) { ... }    # HTTPメソッドpostと競合
+let(:get) { ... }     # HTTPメソッドgetと競合
+
+# ✅ 安全: 異なる変数名を使用
+let(:post_record) { ... }
+let(:get_response) { ... }
+```
+
+**Active Storageテストの推奨方法**:
+```ruby
+# FactoryBot内では StringIO を使用
+trait :with_attached_image do
+  after(:build) do |post|
+    post.image.attach(
+      io: StringIO.new("fake image data"),
+      filename: 'test_image.jpg',
+      content_type: 'image/jpeg'
+    )
+  end
+end
+
+# Model specでは fixture_file_upload を使用
+it "画像を添付できる" do
+  file = fixture_file_upload('test_image.jpg', 'image/jpeg')
+  post.image.attach(file)
+  expect(post.image.attached?).to be true
+end
+```
 
 #### **検索・ソート機能実装のベストプラクティス**
 
@@ -294,6 +371,43 @@ def post_image_tag(post, options = {})
 end
 ```
 
+#### **いいね機能のシンプル設計**
+```ruby
+# Likeモデル（シンプルなUser-Post関連）
+class Like < ApplicationRecord
+  belongs_to :user
+  belongs_to :post
+  validates :user_id, uniqueness: { scope: :post_id }
+end
+
+# Postモデル（便利メソッド）
+def likes_count
+  likes.count
+end
+
+def liked_by?(user)
+  return false unless user
+  likes.exists?(user: user)
+end
+
+# Userモデル（has_many through活用）
+has_many :likes, dependent: :destroy
+has_many :liked_posts, through: :likes, source: :post
+```
+
+#### **Turbo Streamの活用**
+```erb
+<!-- いいねボタンのパーシャル -->
+<%= turbo_frame_tag "like_button_#{post.id}" do %>
+  <!-- 状態に応じたボタン表示 -->
+<% end %>
+
+<!-- create.turbo_stream.erb -->
+<%= turbo_stream.replace "like_button_#{@post.id}" do %>
+  <%= render 'likes/button', post: @post %>
+<% end %>
+```
+
 ## Claude Codeでの開発ルール
 前提：Output styleに従うこと。
 
@@ -307,38 +421,67 @@ end
 **方針**: どのようなアプローチで修正するか
 ```
 
-### コード提案時のLearning Mode対応
-**重要**: ファイルの作成やコードの修正を提示する際は、以下の手順を必ず守る：
+### Learning Mode実装手法（重要）
+**基本方針**: 段階的実装とユーザー参加型の設計判断を重視
 
-1. **問題・課題の整理**: 現在の状況と解決すべき課題を明確化
-2. **考慮点の洗い出し**: 設計上の懸念、拡張性、既存コードとの整合性を検討
-3. **選択肢の比較**: 複数のアプローチを提示し、それぞれのメリット・デメリットを説明
-4. **推奨案の提示**: 理由と根拠を示して推奨する方法を提案
-5. **確認とコンセンサス**: ユーザーの同意を得てから実装に進む
-
-**例（例であり他の提示でもよい）**:
+#### **1. 機能実装の進め方**
 ```
-## 📚 プレースホルダーのサイズ対応について考察
+1. 要件整理 → 2. 設計選択肢提示 → 3. 小さな実装 → 4. 動作確認 → 5. 次のステップ
+```
+
+**実装パターン例**:
+- Step1: 現在の問題点と必要性を整理
+- Step2: 複数のアプローチを提示（gem使用 vs Rails標準 vs カスタム実装）
+- Step3: 推奨案の理由説明（Rails 7準拠、現在の開発状況適合）
+- Step4: 小さく実装（機能を細分化して段階的に実装）
+- Step5: 各段階で動作確認・テスト追加
+
+#### **2. 設計判断時の考え方**
+**複数選択肢を提示して理由説明**
+- パターン1: メリット・デメリット・適用場面
+- パターン2: メリット・デメリット・適用場面
+- **推奨**: 理由と根拠、現在の開発状況への適合性
+
+**CLAUDE.mdの指針に従った選択肢提示例**:
+```markdown
+## 📚 [機能名]の実装について考察
 
 ### 🤔 現在の問題と考え方
-- 問題の詳細説明
-
-### 💡 設計上の考慮点
-- 設計時に検討すべきポイント
+- 技術的制約、拡張性、保守性、Rails 7準拠
 
 ### 🎯 設計選択肢の比較
-- 選択肢A: メリット・デメリット
-- 選択肢B: メリット・デメリット
-- 選択肢C: メリット・デメリット
+- **選択肢A**: メリット・デメリット・適用場面
+- **選択肢B**: メリット・デメリット・適用場面
+- **選択肢C**: メリット・デメリット・適用場面
+
+### 🏆 推奨案
+- **理由**: なぜその選択肢が適切か
+- **現在の開発状況への適合性**
+- **将来の拡張性**
 
 どの方針で進めるのが良いと思いますか？
 ```
 
-この方式により、設計判断の透明性を保ち、学習効果を最大化する。
-選択肢の比較のときは、Rails7でのベストプラクティスやセキュリティリスク、実行の効率性を考慮して、どの選択肢が適切か検討できるように情報を補足すること。
-現在の開発状況や今後実装する機能も考慮して、その時点での仕様に適した実装ができるように考慮すること。
-推奨の選択肢を提示する場合は、なぜそれが適当かも併せて説明すること。
-選択肢は、単純な比較ではなく、現在の開発状況や今後の開発状況も踏まえて、適当なものを検討すること。例えば、一から導入するのは複雑であっても、すでに他の機能による実装が完了している場合には複雑さが軽減されるような場合に、それも踏まえたうえで実装の選択を検討する。
+#### **3. 段階的実装アプローチ**
+- **Task分割**: 大きな機能を小さなステップに分解
+- **設計判断の透明性**: 選択肢提示→メリット・デメリット比較→推奨案
+- **理由説明重視**: なぜその実装方法を選ぶのかを必ず説明
+- **Rails 7準拠**: 最新のベストプラクティス採用
+
+#### **4. 実装例での学習ポイント**
+- **小さなタスク分割**: Task 3をさらに3-1〜3-4に分割
+- **詳細解説**: Stimulus、Active Storageの仕組みを理解しながら実装
+- **段階的確認**: 各ステップでの動作確認・理解度チェック
+
+#### **5. 問題解決のアプローチ**
+- **段階的な問題切り分け**: 複雑な問題を小さく分割
+- **実用的な判断**: 完璧を求めすぎず、動作する部分を活用
+- **根本原因の追求**: 表面的な修正でなく、真の原因を発見
+
+**選択肢比較の重要ポイント**:
+- Rails7でのベストプラクティスやセキュリティリスク、実行効率性を考慮
+- 現在の開発状況や今後実装する機能も踏まえた適切な判断
+- 既存実装を活用できる場合は、複雑さが軽減されることも考慮に入れる
 
 ### テストコード作成のルール（Rails 7準拠）
 前提として、Rails7.2のベストプラクティスに従う。

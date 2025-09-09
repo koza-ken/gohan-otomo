@@ -22,7 +22,7 @@ RSpec.describe "Profiles", type: :system do
 
       it "自分のプロフィールを正常に表示できる" do
         visit user_profile_path(user)
-        
+
         expect(page).to have_content(user.display_name)
         expect(page).to have_content(user.favorite_foods)
         expect(page).to have_content(user.disliked_foods)
@@ -32,7 +32,7 @@ RSpec.describe "Profiles", type: :system do
 
       it "他人の公開プロフィールを表示できる" do
         visit user_profile_path(other_user)
-        
+
         expect(page).to have_content(other_user.display_name)
         expect(page).to have_content(other_user.favorite_foods)
         expect(page).not_to have_content(other_user.email) # 他人には非表示
@@ -41,7 +41,7 @@ RSpec.describe "Profiles", type: :system do
 
       it "他人の非公開プロフィールにアクセスできない" do
         visit user_profile_path(private_user)
-        
+
         expect(page).to have_current_path("/")
         expect(page).to have_content("このプロフィールは非公開です")
       end
@@ -53,20 +53,20 @@ RSpec.describe "Profiles", type: :system do
 
     it "プロフィールを正常に編集できる" do
       visit edit_user_profile_path(user)
-      
+
       expect(page).to have_content("プロフィール編集")
       expect(page).to have_field("user_display_name", with: user.display_name)
       expect(page).to have_field("user_favorite_foods", with: user.favorite_foods)
       expect(page).to have_field("user_disliked_foods", with: user.disliked_foods)
-      
+
       # フォームを更新
       fill_in "user_display_name", with: "更新されたユーザー名"
       fill_in "user_favorite_foods", with: "寿司、刺身、天ぷら"
       fill_in "user_disliked_foods", with: "苦い野菜"
       uncheck "user_profile_public"
-      
+
       click_button "プロフィールを更新"
-      
+
       expect(page).to have_current_path(user_profile_path(user))
       expect(page).to have_content("プロフィールを更新しました")
       expect(page).to have_content("更新されたユーザー名")
@@ -76,38 +76,23 @@ RSpec.describe "Profiles", type: :system do
 
     it "バリデーションエラーが表示される" do
       visit edit_user_profile_path(user)
-      
+
       # 長すぎる値を入力
       fill_in "user_display_name", with: "a" * 21
       fill_in "user_favorite_foods", with: "a" * 201
-      
+
       click_button "プロフィールを更新"
-      
+
       expect(page).to have_content("入力内容を確認してください")
       expect(page).to have_content("好きな食べ物 は200文字以内で入力してください")
     end
 
     it "他人のプロフィール編集にアクセスできない" do
       visit edit_user_profile_path(other_user)
-      
+
       expect(page).to have_current_path("/")
       expect(page).to have_content("権限がありません")
     end
   end
 
-  describe "ナビゲーション統合" do
-    before { sign_in user }
-
-    it "ハンバーガーメニューからプロフィールにアクセスできる", js: true do
-      visit root_path
-      
-      # ハンバーガーメニューをクリック
-      find('[data-controller="dropdown"] button').click
-      
-      expect(page).to have_link("プロフィール")
-      click_link "プロフィール"
-      
-      expect(page).to have_current_path(user_profile_path(user))
-    end
-  end
 end

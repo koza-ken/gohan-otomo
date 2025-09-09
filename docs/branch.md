@@ -458,30 +458,124 @@
   - 効率的クエリ順序（検索→ソート→ページネーション→includes）
   ---------------------------
 
-  8. feature/like-system
+  8. 09_like_#11 ✅ 完成
 
-  Issue: いいね機能の実装
+  Issue: いいね機能の実装（投稿のみ）
 
   概要
-  投稿に対するいいね機能とカウント表示
+  投稿に対するいいね機能とカウント表示（コメント機能は対象外）
 
   実装内容
-  - Likeモデルの作成
+  - Likeモデルの作成（User-Post間の関連）
   - いいね/いいね取消の実装
   - いいね数の表示
-  - 非同期いいね機能（Turbo）
-  - 重複いいね防止
-  - RSpec テスト作成
+  - Ajax対応のいいねボタン
+  - 重複いいね防止（ユニーク制約）
+  - RSpec テスト作成（Model/Request/System）
   - FactoryBot設定
 
-  完了条件
-  - ユーザーが投稿にいいねできる
-  - いいね状態が適切に表示される
-  - 非同期で動作する
+  完了条件 ✅
+  - ユーザーが投稿にいいねできる ✅
+  - いいね状態とカウントが適切に表示される ✅ 
+  - Ajax（非同期）で動作する ✅
+  - 230+テスト継続成功 ✅
 
-  9. feature/sns-integration
+  ---------------------------
+  📋 Task 1: branch.mdの更新（いいね機能仕様確定）
 
-  Issue: SNS連携機能の実装
+  - いいね機能の対象を投稿のみに確定
+  - Task分解の詳細化
+  - CLAUDE.mdとの整合性確保
+
+  📋 Task 2: Likeモデルの作成（Postのみ）
+
+  - rails generate model Like user:references post:references実行
+  - シンプルなUser-Post関連（Polymorphicは使用しない）
+  - マイグレーションファイル生成確認
+
+  📋 Task 3: マイグレーションファイルの調整
+
+  - ユニーク制約追加（user_id + post_id）
+  - インデックス設定の最適化
+  - created_at, updated_atの設定確認
+
+  📋 Task 4: Likeモデルにバリデーション追加
+
+  - user_id, post_idの必須バリデーション
+  - ユニークネスバリデーション実装
+  - モデルテスト用基本メソッド準備
+
+  📋 Task 5: Postモデルにいいね関連を追加
+
+  - has_many :likes, dependent: :destroyの追加
+  - いいね数取得メソッド実装（likes_count）
+  - いいね状態確認メソッド実装（liked_by?）
+
+  📋 Task 6: Userモデルにいいね関連を追加
+
+  - has_many :likes, dependent: :destroyの追加
+  - いいねした投稿取得メソッド実装（liked_posts）
+
+  📋 Task 7: マイグレーション実行とテスト
+
+  - rails db:migrateでマイグレーション実行
+  - schema.rbの確認
+  - コンソールでの基本動作確認
+
+  📋 Task 8: いいねコントローラーの作成
+
+  - LikesControllerの作成
+  - create, destroyアクション実装
+  - 認証必須設定（before_action）
+
+  📋 Task 9: ルーティングの追加
+
+  - config/routes.rbにいいね関連ルート追加
+  - posts/:post_id/likes（RESTfulなネスト構造）
+  - Ajax対応の設定
+
+  📋 Task 10: いいねボタンのView実装（Ajax対応）
+
+  - _like_button.html.erbパーシャル作成
+  - いいね状態に応じたボタン表示切り替え
+  - Stimulus又はTurboでのAjax機能実装
+  - 投稿詳細・一覧へのボタン配置
+
+  📋 Task 11: ユニットテストの作成
+
+  - spec/models/like_spec.rbの作成（バリデーション、アソシエーション）
+  - spec/models/post_spec.rbの更新（いいね関連メソッド）
+  - spec/models/user_spec.rbの更新（いいね関連メソッド）
+  - FactoryBot設定（spec/factories/likes.rb）
+
+  ✅ Task 12: Systemテストの作成
+
+  - spec/system/likes_spec.rbの作成
+  - いいねボタンクリックの統合テスト
+  - Ajax動作確認テスト
+  - いいね数表示確認テスト
+  ---------------------------
+
+  🎉 **09_like_#11ブランチ完全完成！**
+  
+  **実装完了日**: 2025-09-08
+  **実装内容**: いいね機能の完全実装
+  - Likeモデル（User-Post関連、ユニーク制約）
+  - LikesController（Turbo Stream + HTML対応）
+  - いいねボタンUI（投稿詳細・一覧配置）
+  - 包括的テスト（Model/Request/System、約40テスト追加）
+  
+  **技術選択**:
+  - シンプルなhas_many関連（Polymorphic不使用）
+  - Turbo Stream活用（JSON API削除、シンプル化）
+  - has_many through設計（統一的メソッドインターフェース）
+  
+  **テスト結果**: 230+テスト全て成功
+  ---------------------------
+
+  9. 10_sns_integration_#12 📋 次期推奨ブランチ
+
+  Issue: SNS連携機能の実装（いいね機能完了後）
 
   概要
   X（旧Twitter）シェア機能の実装

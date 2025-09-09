@@ -60,8 +60,9 @@
           <div class="border-t border-gray-100 my-2"></div>
 
           <!-- ログアウト -->
-          <%= link_to destroy_user_session_path, method: :delete,
-              class: "flex items-center px-2 py-1 text-gray-700 hover:bg-red-50 hover:text-red-600 transition duration-200" do %>
+          <%= button_to destroy_user_session_path, method: :delete,
+              data: { turbo_confirm: "ログアウトしますか？" },
+              class: "flex items-center px-2 py-1 text-gray-700 hover:bg-red-50 hover:text-red-600 transition duration-200 w-full text-left border-0 bg-transparent cursor-pointer" do %>
             <span class="mr-3 text-lg">🚪</span>
             <div>
               <div class="text-sm font-medium">ログアウト</div>

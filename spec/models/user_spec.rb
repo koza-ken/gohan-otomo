@@ -119,4 +119,101 @@ RSpec.describe User, type: :model do
       }.to change(User, :count).by(1)
     end
   end
+
+  describe "いいね機能" do
+    let(:user) { create(:user) }
+    let(:user2) { create(:user, display_name: "ユーザー2", email: "user2@example.com") }
+    let(:post1) { create(:post, title: "投稿1") }
+    let(:post2) { create(:post, title: "投稿2") }
+
+    describe "associations" do
+      it "has many likes with dependent destroy" do
+        user = create(:user)
+        post1 = create(:post)
+        post2 = create(:post, title: "投稿2")
+        like1 = create(:like, user: user, post: post1)
+        like2 = create(:like, user: user, post: post2)
+        
+        expect(user.likes.count).to eq(2)
+        expect(user.likes).to include(like1, like2)
+        
+        # dependent: destroyの確認
+        expect { user.destroy }.to change { Like.count }.by(-2)
+      end
+      
+      it "has many liked_posts through likes" do
+        user = create(:user)
+        post1 = create(:post, title: "投稿1")
+        post2 = create(:post, title: "投稿2")
+        create(:like, user: user, post: post1)
+        create(:like, user: user, post: post2)
+        
+        expect(user.liked_posts.count).to eq(2)
+        expect(user.liked_posts).to include(post1, post2)
+        expect(user.liked_posts.first).to be_a(Post)
+      end
+    end
+
+    describe "#liked_posts" do
+      it "いいねした投稿を正しく取得する" do
+        create(:like, user: user, post: post1)
+        create(:like, user: user, post: post2)
+        
+        expect(user.liked_posts).to include(post1, post2)
+        expect(user.liked_posts.count).to eq(2)
+      end
+
+      it "他のユーザーがいいねした投稿は含まれない" do
+        create(:like, user: user, post: post1)
+        create(:like, user: user2, post: post2)
+        
+        expect(user.liked_posts).to include(post1)
+        expect(user.liked_posts).not_to include(post2)
+      end
+
+      it "いいねしていない場合は空を返す" do
+        expect(user.liked_posts).to be_empty
+      end
+    end
+
+    describe "#liked_posts_count" do
+      it "いいねした投稿数を正確に返す" do
+        expect(user.liked_posts_count).to eq(0)
+        
+        create(:like, user: user, post: post1)
+        expect(user.liked_posts_count).to eq(1)
+        
+        create(:like, user: user, post: post2)
+        expect(user.liked_posts_count).to eq(2)
+      end
+    end
+
+    describe "#likes_count" do
+      it "ユーザーが行ったいいね総数を返す" do
+        expect(user.likes_count).to eq(0)
+        
+        create(:like, user: user, post: post1)
+        expect(user.likes_count).to eq(1)
+        
+        create(:like, user: user, post: post2)
+        expect(user.likes_count).to eq(2)
+      end
+    end
+
+    describe "dependency" do
+      it "ユーザーを削除するとそのいいねも削除される" do
+        create(:like, user: user, post: post1)
+        create(:like, user: user, post: post2)
+        
+        expect { user.destroy }.to change { Like.count }.by(-2)
+      end
+
+      it "ユーザーを削除してもいいねされた投稿は残る" do
+        create(:like, user: user, post: post1)
+        
+        expect { user.destroy }.not_to change { Post.count }
+        expect(post1.reload).to be_persisted
+      end
+    end
+  end
 end
