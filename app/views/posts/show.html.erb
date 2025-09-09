@@ -1,3 +1,12 @@
+<% content_for :title, @post.title %>
+<% content_for :og_title, "「#{@post.title}」- ご飯のお供" %>
+<% content_for :og_type, "article" %>
+<% content_for :og_url, request.original_url %>
+<% content_for :og_description, truncate(@post.description, length: 100) %>
+<% if @post.has_image? %>
+  <% content_for :og_image, url_for(@post.display_image(:medium)) %>
+<% end %>
+
 <div class="min-h-screen bg-gradient-to-br from-orange-50 via-orange-100 to-yellow-50 py-8">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- 戻るリンク -->
@@ -37,6 +46,9 @@
           <div class="flex items-center space-x-3">
             <!-- いいねボタン -->
             <%= render 'likes/button', post: @post %>
+            
+            <!-- X投稿ボタン -->
+            <%= x_share_button(@post) %>
             
             <!-- 編集・削除ボタン（投稿者のみ） -->
             <% if user_signed_in? && current_user == @post.user %>
