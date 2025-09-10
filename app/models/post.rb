@@ -8,9 +8,9 @@ class Post < ApplicationRecord
 
   validates :title, presence: true, length: { maximum: 100 }
   validates :description, presence: true, length: { maximum: 200 }
-  validates :link, length: { maximum: 500 }, allow_blank: true
+  validates :link, length: { maximum: 1000 }, allow_blank: true
   validates :link, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "正しいURLを入力してください" }, if: :link?
-  validates :image_url, length: { maximum: 500 }, allow_blank: true
+  validates :image_url, length: { maximum: 1000 }, allow_blank: true
   validates :image_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "正しいURLを入力してください" }, if: :image_url?
 
   # 画像バリデーション
