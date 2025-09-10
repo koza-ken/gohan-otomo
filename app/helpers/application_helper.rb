@@ -36,10 +36,11 @@ module ApplicationHelper
 
   # プレースホルダー画像のHTMLを生成（サイズ対応）
   def placeholder_image_tag(size, css_class)
-    icon_size = size == :thumbnail ? "text-4xl" : "text-6xl"
-
+    # 透過no_image.pngをオレンジ背景の上に表示
     content_tag(:div,
-                content_tag(:span, "🍚", class: "text-orange-400 #{icon_size}"),
+                image_tag("/no_image.png", 
+                          alt: "画像がありません", 
+                          class: "w-full h-full object-contain"),
                 class: "flex items-center justify-center bg-orange-100 #{css_class}")
   end
 

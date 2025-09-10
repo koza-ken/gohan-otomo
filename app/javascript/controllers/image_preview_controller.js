@@ -38,11 +38,10 @@ export default class extends Controller {
 
   // プレースホルダーHTMLを生成
   createPlaceholder(size) {
-    const iconSize = size === 'thumbnail' ? 'text-4xl' : 'text-6xl'
     const heightClass = size === 'thumbnail' ? 'h-48' : 'h-64 md:h-80'
     
     return `<div class="flex items-center justify-center ${heightClass} bg-orange-100">
-              <span class="text-orange-400 ${iconSize}">🍚</span>
+              <img src="/no_image.png" alt="画像がありません" class="w-full h-full object-contain">
             </div>`
   }
 
