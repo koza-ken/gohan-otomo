@@ -1,7 +1,36 @@
 <% if user_signed_in? %>
   <div class="flex items-center space-x-4">
-    <!-- ハンバーガーメニュー -->
-    <div class="relative" data-controller="dropdown">
+    <!-- デスクトップ用メニュー（md以上で表示） -->
+    <div class="hidden md:flex items-center space-x-4">
+      <%= link_to new_post_path,
+          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-sm font-medium" do %>
+        <span class="mr-1">✍️</span>投稿
+      <% end %>
+      
+      <%= link_to posts_path(user_id: current_user.id),
+          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-sm font-medium" do %>
+        <span class="mr-1">📝</span>マイ投稿
+      <% end %>
+      
+      <%= link_to user_profile_path(current_user),
+          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-sm font-medium" do %>
+        <span class="mr-1">📋</span>プロフィール
+      <% end %>
+      
+      <%= link_to edit_user_registration_path,
+          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-sm font-medium" do %>
+        <span class="mr-1">⚙️</span>設定
+      <% end %>
+      
+      <%= button_to destroy_user_session_path, method: :delete,
+          data: { turbo_confirm: "ログアウトしますか？" },
+          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-red-500/20 text-sm font-medium border-0 bg-transparent cursor-pointer" do %>
+        <span class="mr-1">🚪</span>ログアウト
+      <% end %>
+    </div>
+
+    <!-- スマホ用ハンバーガーメニュー（md未満で表示） -->
+    <div class="relative md:hidden" data-controller="dropdown">
       <!-- ハンバーガーボタン -->
       <button class="flex items-center justify-center w-10 h-10 text-white hover:text-orange-100 transition duration-300 bg-white/10 rounded-full hover:bg-white/20"
               data-action="click->dropdown#toggle">
@@ -22,6 +51,9 @@
               <div class="text-sm font-medium">新しいお供を投稿</div>
             </div>
           <% end %>
+
+          <!-- 区切り線 -->
+          <div class="border-t border-gray-100 my-2"></div>
 
           <!-- マイ投稿 -->
           <%= link_to posts_path(user_id: current_user.id),
