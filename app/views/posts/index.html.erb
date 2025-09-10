@@ -2,19 +2,14 @@
   <!-- ヘッダー部分 -->
   <div class="text-center mb-8">
     <% if @user.present? %>
-      <h1 class="text-3xl font-bold text-orange-600 mb-4">📝 <%= @user.display_name %>さんの投稿</h1>
+      <h1 class="text-3xl font-bold text-orange-600 mb-4"><%= @user.display_name %>さんのお供</h1>
 
       <div class="mt-4">
-        <%= link_to "👤 プロフィール", user_profile_path(@user),
+        <%= link_to "プロフィール", user_profile_path(@user),
                     class: "bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition duration-200 shadow-lg inline-flex items-center mb-4" %>
       </div>
-
-      <div class="mt-4">
-        <%= link_to "← 全ての投稿を見る", posts_path,
-                    class: "text-orange-500 hover:text-orange-700 underline" %>
-      </div>
     <% else %>
-      <h1 class="text-3xl font-bold text-orange-600 mb-4">🍚 みんなのお供</h1>
+      <h1 class="text-3xl font-bold text-orange-600 mb-4">みんなのお供</h1>
       <%# <p class="text-orange-700">みんなのおすすめお米のお供を見つけよう！</p> %>
     <% end %>
 

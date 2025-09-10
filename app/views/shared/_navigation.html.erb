@@ -2,9 +2,14 @@
   <div class="flex items-center space-x-4">
     <!-- デスクトップ用メニュー（md以上で表示） -->
     <div class="hidden md:flex items-center space-x-4">
+      <%= link_to posts_path,
+          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-lg font-medium" do %>
+          みんなのお供
+      <% end %>
+
       <%= link_to new_post_path,
           class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-lg font-medium" do %>
-          投稿
+          お供の投稿
       <% end %>
 
       <%= link_to posts_path(user_id: current_user.id),
@@ -30,8 +35,15 @@
     </div>
 
     <!-- スマホ用ハンバーガーメニュー（md未満で表示） -->
-    <div class="relative md:hidden" data-controller="dropdown">
-      <!-- ハンバーガーボタン -->
+    <div class="flex items-center space-x-3 md:hidden">
+      <!-- みんなのお供リンク -->
+      <%= link_to posts_path,
+          class: "text-white hover:text-orange-100 transition duration-300 text-md font-medium mr-4" do %>
+          みんなのお供
+      <% end %>
+
+      <div class="relative" data-controller="dropdown">
+        <!-- ハンバーガーボタン -->
       <button class="flex items-center justify-center w-10 h-10 text-white hover:text-orange-100 transition duration-300 bg-white/10 rounded-full hover:bg-white/20"
               data-action="click->dropdown#toggle">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,9 +114,18 @@
           <% end %>
         </div>
       </div>
+      </div>
     </div>
   </div>
 <% else %>
-  <%= link_to "ログイン", new_user_session_path,
-              class: "bg-white text-orange-600 px-6 py-2 rounded-full hover:bg-orange-50 transition duration-300 text-sm font-medium shadow-sm border border-orange-200" %>
+  <div class="flex items-center space-x-4">
+    <!-- みんなのお供リンク -->
+    <%= link_to posts_path,
+        class: "text-white hover:text-orange-100 transition duration-300 text-lg font-medium" do %>
+      🍚 <span class="hidden sm:inline">みんなのお供</span>
+    <% end %>
+
+    <%= link_to "ログイン", new_user_session_path,
+                class: "bg-white text-orange-600 px-6 py-2 rounded-full hover:bg-orange-50 transition duration-300 text-sm font-medium shadow-sm border border-orange-200" %>
+  </div>
 <% end %>
