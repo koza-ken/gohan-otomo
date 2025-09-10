@@ -14,24 +14,11 @@
                     class: "text-orange-500 hover:text-orange-700 underline" %>
       </div>
     <% else %>
-      <h1 class="text-3xl font-bold text-orange-600 mb-4">🍚 ご飯のお供掲示板</h1>
-      <p class="text-orange-700">みんなのおすすめお米のお供を見つけよう！</p>
+      <h1 class="text-3xl font-bold text-orange-600 mb-4">🍚 みんなのお供</h1>
+      <%# <p class="text-orange-700">みんなのおすすめお米のお供を見つけよう！</p> %>
     <% end %>
 
-    <% if @user.blank? %>
-      <% if user_signed_in? %>
-        <div class="mt-6">
-          <%= link_to "新しいお供を投稿する", new_post_path,
-                      class: "bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition duration-200 shadow-lg inline-flex items-center" %>
-        </div>
-      <% else %>
-        <div class="mt-6">
-          <p class="text-orange-600 mb-2">投稿するにはログインが必要です</p>
-          <%= link_to "ログイン", new_user_session_path,
-                      class: "bg-white text-orange-600 px-6 py-3 rounded-lg font-medium border border-orange-300 hover:bg-orange-50 transition duration-200 shadow-lg inline-flex items-center" %>
-        </div>
-      <% end %>
-    <% end %>
+    <% # 投稿ボタンは右下のフローティングアクションボタンに移動 %>
   </div>
 
   <!-- 検索・フィルター部分 -->
@@ -158,3 +145,41 @@
     </div>
   <% end %>
 </div>
+
+<!-- フローティングアクションボタン（投稿用） -->
+<% if user_signed_in? %>
+  <div class="fixed bottom-10 right-10 z-50" data-controller="floating-menu">
+    <!-- ＋ボタン -->
+    <button data-action="click->floating-menu#toggle" data-floating-menu-target="button"
+            class="bg-orange-500 hover:bg-orange-600 text-white w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center text-3xl font-bold">
+      <span data-floating-menu-target="icon">+</span>
+    </button>
+
+    <!-- ドロップダウンメニュー -->
+    <div data-floating-menu-target="menu" class="absolute bottom-16 right-0 hidden">
+      <div class="bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-48">
+        <%= link_to new_post_path, class: "flex items-center px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200" do %>
+          <span class="text-xl mr-3">🍚</span>
+          <span class="font-medium">お供を投稿</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <!-- ログインしていない場合のフローティングボタン -->
+  <div class="fixed bottom-6 right-6 z-50" data-controller="floating-menu">
+    <button data-action="click->floating-menu#toggle" data-floating-menu-target="button"
+            class="bg-gray-400 hover:bg-gray-500 text-white w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center text-2xl font-bold">
+      <span data-floating-menu-target="icon">+</span>
+    </button>
+
+    <div data-floating-menu-target="menu" class="absolute bottom-16 right-0 hidden">
+      <div class="bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-48">
+        <%= link_to new_user_session_path, class: "flex items-center px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200" do %>
+          <span class="text-xl mr-3">🔐</span>
+          <span class="font-medium">ログインして投稿</span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
