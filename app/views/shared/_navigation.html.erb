@@ -14,12 +14,7 @@
 
       <%= link_to posts_path(user_id: current_user.id),
           class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-lg font-medium" do %>
-          マイ投稿
-      <% end %>
-
-      <%= link_to user_profile_path(current_user),
-          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-lg font-medium" do %>
-          プロフィール
+          マイページ
       <% end %>
 
       <%= link_to edit_user_registration_path,
@@ -67,24 +62,12 @@
           <!-- 区切り線 -->
           <div class="border-t border-gray-100 my-2"></div>
 
-          <!-- マイ投稿 -->
+          <!-- マイページ -->
           <%= link_to posts_path(user_id: current_user.id),
               class: "flex items-center px-2 py-1 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
             <span class="mr-3 text-lg">📝</span>
             <div>
-              <div class="text-sm font-medium">マイ投稿一覧</div>
-            </div>
-          <% end %>
-
-          <!-- 区切り線 -->
-          <div class="border-t border-gray-100 my-2"></div>
-
-          <!-- プロフィールを見る -->
-          <%= link_to user_profile_path(current_user),
-              class: "flex items-center px-2 py-1 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
-            <span class="mr-3 text-lg">📋</span>
-            <div>
-              <div class="text-sm font-medium">プロフィール</div>
+              <div class="text-sm font-medium">マイページ</div>
             </div>
           <% end %>
 
