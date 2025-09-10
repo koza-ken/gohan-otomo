@@ -3,7 +3,12 @@
   <div class="text-center mb-8">
     <% if @user.present? %>
       <h1 class="text-3xl font-bold text-orange-600 mb-4">📝 <%= @user.display_name %>さんの投稿</h1>
-      <p class="text-orange-700"><%= @user.display_name %>さんのおすすめお米のお供一覧</p>
+
+      <div class="mt-4">
+        <%= link_to "👤 プロフィール", user_profile_path(@user),
+                    class: "bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition duration-200 shadow-lg inline-flex items-center mb-4" %>
+      </div>
+
       <div class="mt-4">
         <%= link_to "← 全ての投稿を見る", posts_path,
                     class: "text-orange-500 hover:text-orange-700 underline" %>
@@ -47,15 +52,11 @@
   <!-- 検索結果情報 -->
   <% if params[:search].present? %>
     <div class="bg-orange-50 rounded-lg p-4 mb-6">
-      <div class="flex flex-wrap items-center justify-between">
-        <div class="text-orange-700">
-          <span class="font-medium">「<%= params[:search] %>」</span>の検索結果:
-          <span class="font-bold"><%= @posts.count %>件</span>の投稿
-        </div>
-        <div>
-          <%= link_to "× 検索をクリア", posts_path(user_id: params[:user_id]),
-                      class: "text-orange-500 hover:text-orange-700 text-sm font-medium transition duration-200" %>
-        </div>
+      <div class="text-orange-700">
+        <span class="font-medium">「<%= params[:search] %>」</span>の検索結果:
+        <span class="font-bold"><%= @posts.count %>件</span>の投稿
+        <%= link_to "× 検索をクリア", posts_path(user_id: params[:user_id]),
+                    class: "ml-4 text-orange-500 hover:text-orange-700 text-sm font-medium transition duration-200" %>
       </div>
     </div>
   <% end %>
