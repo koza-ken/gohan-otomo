@@ -64,22 +64,27 @@
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <% @posts.each do |post| %>
       <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-        <!-- 画像表示（Helperを使用 - thumbnailサイズ） -->
-        <div class="aspect-w-16 aspect-h-12">
-          <%= post_image_tag(post, size: :thumbnail, class: "w-full h-48 object-cover") %>
-        </div>
+        <!-- 画像・タイトル・説明エリア（リンク化） -->
+        <%= link_to post, class: "block hover:bg-gray-50 transition-colors duration-200" do %>
+          <!-- 画像表示（Helperを使用 - thumbnailサイズ） -->
+          <div class="aspect-w-16 aspect-h-12">
+            <%= post_image_tag(post, size: :thumbnail, class: "w-full h-48 object-cover") %>
+          </div>
 
-        <!-- 投稿内容 -->
-        <div class="p-6">
-          <h3 class="text-lg font-bold text-gray-800 mb-2">
-            <%= link_to post.title, post, class: "hover:text-orange-600 transition-colors" %>
-          </h3>
+          <!-- 投稿内容 -->
+          <div class="p-6 pb-4">
+            <h3 class="text-lg font-bold text-gray-800 mb-2 hover:text-orange-600 transition-colors">
+              <%= post.title %>
+            </h3>
 
-          <p class="text-gray-600 text-sm mb-4 line-clamp-3">
-            <%= truncate(post.description, length: 80) %>
-          </p>
+            <p class="text-gray-600 text-sm mb-0 line-clamp-3">
+              <%= truncate(post.description, length: 80) %>
+            </p>
+          </div>
+        <% end %>
 
-          <!-- 統計情報 -->
+        <!-- 統計情報エリア（リンク対象外） -->
+        <div class="px-6 pb-6">
           <div class="flex items-center justify-between text-sm text-gray-500">
             <div class="flex items-center">
               <span class="text-orange-400">👤</span>
