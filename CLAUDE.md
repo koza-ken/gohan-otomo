@@ -105,6 +105,15 @@ docker compose exec web rails generate rspec:install
 - **Xブランドデザイン**: 黒基調のボタンデザインでXらしい外観
 - **Rails 7準拠**: ヘルパーメソッドによる再利用可能な実装
 
+#### **レスポンシブデザイン機能（11_responsive-design_#13進行中）**
+- **検索フォームトグル機能**: モバイル対応の検索フォーム表示切り替え（完成）
+  - TailwindCSS `640px`ブレークポイント準拠
+  - Stimulusコントローラーによる確実な動作制御
+  - `hiddenクラス`の追加/削除によるシンプルなトグル実装
+  - アニメーション付きフェードイン効果
+  - アクセシビリティ対応（aria-expanded、aria-controls）
+- **予定機能**: ボタンテキスト折り返し防止、タッチ操作最適化、カードレイアウト調整
+
 #### **UI/UXシステム**
 - **お米がテーマのデザインシステム**: オレンジを基調とした温かいUI
 - **レスポンシブ対応**: モバイル・タブレット・デスクトップ対応
@@ -164,7 +173,13 @@ docker compose exec web rails generate rspec:install
 - created_at, updated_at
 - ユニーク制約: (user_id, post_id)
 
-## 現在の開発状況（2025年9月9日）
+## 現在の開発状況（2025年9月10日）
+
+### 🚀 最新実装状況
+- **11_responsive-design_#13**: レスポンシブデザイン最適化（**進行中**）
+  - 検索フォームトグル機能完全実装（**完成**）
+  - Stimulusコントローラーによるモバイル対応検索フォーム
+  - TailwindCSS準拠のレスポンシブ設計
 
 ### ✅ 完成済みブランチ（マージ済み）
 - **10_sns_#12**: SNS連携機能完全実装（**完成**）
@@ -423,6 +438,31 @@ has_many :liked_posts, through: :likes, source: :post
   <%= render 'likes/button', post: @post %>
 <% end %>
 ```
+
+#### **Stimulusコントローラーの実装パターン**
+```javascript
+// 基本的なStimulus実装パターン
+export default class extends Controller {
+  static targets = ["form", "button"]  // ターゲット定義
+  
+  connect() {
+    // 初期化処理（HTML初期状態を尊重）
+  }
+  
+  toggle() {
+    // シンプルなクラス操作
+    if (this.formTarget.classList.contains("hidden")) {
+      this.formTarget.classList.remove("hidden")
+      this.buttonTarget.setAttribute("aria-expanded", "true")
+    }
+  }
+}
+```
+
+**重要な学習ポイント**:
+- **コントローラー登録**: `app/javascript/controllers/index.js`への登録必須
+- **TailwindCSS統合**: ブレークポイント一致（640px）が重要
+- **シンプル設計**: 複雑なCSS競合回避より、基本パターンの確実な実装
 
 ## Claude Codeでの開発ルール
 前提：Output styleに従うこと。
