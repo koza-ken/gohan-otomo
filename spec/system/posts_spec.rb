@@ -21,7 +21,7 @@ RSpec.describe "Posts", type: :system do
 
       it "投稿一覧が表示される" do
         visit posts_path
-        expect(page).to have_content("ご飯のお供掲示板")
+        expect(page).to have_content("🍚 みんなのお供")
 
         posts.each do |post|
           expect(page).to have_content(post.title)
