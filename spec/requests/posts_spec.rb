@@ -28,7 +28,7 @@ RSpec.describe "Posts", type: :request do
 
       it "ヘッダータイトルが正しく表示される" do
         get posts_path
-        expect(response.body).to include("ご飯のお供掲示板")
+        expect(response.body).to include("みんなのお供")
       end
     end
 
@@ -51,7 +51,7 @@ RSpec.describe "Posts", type: :request do
 
       it "ユーザー名がヘッダーに表示される" do
         get posts_path, params: { user_id: user.id }
-        expect(response.body).to include("#{user.display_name}さんの投稿")
+        expect(response.body).to include("#{user.display_name}さんのお供")
       end
 
       it "存在しないユーザーIDの場合はリダイレクト" do
@@ -86,7 +86,7 @@ RSpec.describe "Posts", type: :request do
           get posts_path, params: { search: "" }
           expect(response).to have_http_status(:ok)
           expect(response.body).to include(post1.title)
-          expect(response.body).to include(post2.title) 
+          expect(response.body).to include(post2.title)
           expect(response.body).to include(post3.title)
         end
 
@@ -105,7 +105,7 @@ RSpec.describe "Posts", type: :request do
           post2_index = response.body.index(post2.title)
           post3_index = response.body.index(post3.title)
           post1_index = response.body.index(post1.title)
-          
+
           expect(post2_index).to be < post3_index
           expect(post3_index).to be < post1_index
         end
@@ -142,7 +142,7 @@ RSpec.describe "Posts", type: :request do
           get posts_path, params: { page: 2 }
           expect(response).to have_http_status(:ok)
           # 2ページ目に何らかの投稿が表示される
-          expect(response.body).to include("class=\"text-lg font-bold text-gray-800 mb-2\"")
+          expect(response.body).to include("text-lg font-bold text-gray-800 mb-2")
         end
 
         it "存在しないページ番号でもエラーにならない" do
