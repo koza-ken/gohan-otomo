@@ -41,21 +41,21 @@
         <!-- ハンバーガーボタン -->
       <button class="flex items-center justify-center w-10 h-10 text-white hover:text-orange-100 transition duration-300 bg-white/10 rounded-full hover:bg-white/20"
               data-action="click->dropdown#toggle">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
       </button>
 
       <!-- ドロップダウンメニュー -->
-      <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-orange-100 opacity-0 invisible transition-all duration-300 transform translate-y-2 z-50"
+      <div class="absolute right-0 mt-2 pl-2 w-36 bg-white rounded-xl shadow-2xl border border-orange-100 opacity-0 invisible transition-all duration-300 transform translate-y-2 z-50"
            data-dropdown-target="menu">
         <div class="py-2">
           <!-- 新規投稿 -->
           <%= link_to new_post_path,
               class: "flex items-center px-2 py-1 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
-            <span class="mr-3 text-lg">✍️</span>
+            <%# <span class="mr-3 text-lg">✍️</span> %>
             <div>
-              <div class="text-sm font-medium">新しいお供</div>
+              <div class="text-base font-medium">新しいお供</div>
             </div>
           <% end %>
 
@@ -65,9 +65,9 @@
           <!-- マイページ -->
           <%= link_to posts_path(user_id: current_user.id),
               class: "flex items-center px-2 py-1 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
-            <span class="mr-3 text-lg">📝</span>
+            <%# <span class="mr-3 text-lg">📝</span> %>
             <div>
-              <div class="text-sm font-medium">マイページ</div>
+              <div class="text-base font-medium">マイページ</div>
             </div>
           <% end %>
 
@@ -77,9 +77,9 @@
           <!-- アカウント設定 -->
           <%= link_to edit_user_registration_path,
               class: "flex items-center px-2 py-1 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
-            <span class="mr-3 text-lg">⚙️</span>
+            <%# <span class="mr-3 text-lg">⚙️</span> %>
             <div>
-              <div class="text-sm font-medium">アカウント設定</div>
+              <div class="text-base font-medium">アカウント設定</div>
             </div>
           <% end %>
 
@@ -90,9 +90,9 @@
           <%= button_to destroy_user_session_path, method: :delete,
               data: { turbo_confirm: "ログアウトしますか？" },
               class: "flex items-center px-2 py-1 text-gray-700 hover:bg-red-50 hover:text-red-600 transition duration-200 w-full text-left border-0 bg-transparent cursor-pointer" do %>
-            <span class="mr-3 text-lg">🚪</span>
+            <%# <span class="mr-3 text-lg">🚪</span> %>
             <div>
-              <div class="text-sm font-medium">ログアウト</div>
+              <div class="text-base font-medium">ログアウト</div>
             </div>
           <% end %>
         </div>
