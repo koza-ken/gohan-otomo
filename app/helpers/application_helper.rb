@@ -38,8 +38,8 @@ module ApplicationHelper
   def placeholder_image_tag(size, css_class)
     # 透過no_image.pngをオレンジ背景の上に表示
     content_tag(:div,
-                image_tag("/no_image.png", 
-                          alt: "画像がありません", 
+                image_tag("/no_image.png",
+                          alt: "画像がありません",
                           class: "w-full h-full object-contain"),
                 class: "flex items-center justify-center bg-orange-100 #{css_class}")
   end
@@ -91,6 +91,6 @@ module ApplicationHelper
     custom_message = options[:message]
     final_message = custom_message || base_message
 
-    "#{final_message} #ご飯のお供 #gohan_otomo"
+    "#{final_message} #お供だち #ごはんのお供"
   end
 end

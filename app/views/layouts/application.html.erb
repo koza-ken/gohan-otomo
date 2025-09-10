@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "ご飯のお供" %></title>
+    <title><%= content_for(:title) || "お供だち" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <!-- OGPメタタグ -->
-    <meta property="og:title" content="<%= content_for(:og_title) || 'ご飯のお供' %>">
+    <meta property="og:title" content="<%= content_for(:og_title) || 'お供だち' %>">
     <meta property="og:type" content="<%= content_for(:og_type) || 'website' %>">
     <meta property="og:url" content="<%= content_for(:og_url) || request.original_url %>">
     <meta property="og:image" content="<%= content_for(:og_image) || "#{request.base_url}/ogp.png" %>">
     <meta property="og:description" content="<%= content_for(:og_description) || 'ご飯のお供を投稿・共有できるアプリです' %>">
-    <meta property="og:site_name" content="ご飯のお供">
+    <meta property="og:site_name" content="お供だち">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@gohan_otomo">
-    <meta name="twitter:title" content="<%= content_for(:og_title) || 'ご飯のお供' %>">
+    <meta name="twitter:title" content="<%= content_for(:og_title) || 'お供だち' %>">
     <meta name="twitter:description" content="<%= content_for(:og_description) || 'ご飯のお供を投稿・共有できるアプリです' %>">
     <meta name="twitter:image" content="<%= content_for(:og_image) || "#{request.base_url}/ogp.png" %>">
 
