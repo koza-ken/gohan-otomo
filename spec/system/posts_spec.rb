@@ -21,7 +21,7 @@ RSpec.describe "Posts", type: :system do
 
       it "投稿一覧が表示される" do
         visit posts_path
-        expect(page).to have_content("ご飯のお供掲示板")
+        expect(page).to have_content("🍚 みんなのお供")
 
         posts.each do |post|
           expect(page).to have_content(post.title)
@@ -48,7 +48,7 @@ RSpec.describe "Posts", type: :system do
       it "指定ユーザーの投稿のみ表示される" do
         visit posts_path(user_id: user.id)
 
-        expect(page).to have_content("#{user.display_name}さんの投稿")
+        expect(page).to have_content("#{user.display_name}さんのお供")
 
         user_posts.each do |post|
           expect(page).to have_content(post.title)
@@ -218,9 +218,10 @@ RSpec.describe "Posts", type: :system do
       it "適切なナビゲーションが表示される" do
         visit posts_path
 
-        expect(page).to have_link("新しいお供を投稿")
-        expect(page).to have_link("マイ投稿一覧")
-        expect(page).to have_link("プロフィールを見る")
+        expect(page).to have_link("みんなのお供")
+        expect(page).to have_link("お供の投稿")
+        expect(page).to have_link("マイ投稿")
+        expect(page).to have_link("プロフィール")
         expect(page).to have_button("ログアウト")
         expect(page).not_to have_link("ログイン")
       end
@@ -232,7 +233,7 @@ RSpec.describe "Posts", type: :system do
         click_link "マイ投稿一覧"
 
         expect(current_path).to eq(posts_path)
-        expect(page).to have_content("#{user.display_name}さんの投稿")
+        expect(page).to have_content("#{user.display_name}さんのお供")
       end
     end
   end
@@ -246,7 +247,7 @@ RSpec.describe "Posts", type: :system do
       first(:link, user.display_name).click
 
       expect(current_path).to eq(posts_path)
-      expect(page).to have_content("#{user.display_name}さんの投稿")
+      expect(page).to have_content("#{user.display_name}さんのお供")
     end
   end
 

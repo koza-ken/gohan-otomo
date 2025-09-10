@@ -28,9 +28,9 @@ class PostsController < ApplicationController
       @posts = Post.all
     end
 
-    # 検索・ソート・ページネーション・includes適用（パフォーマンス最適化: 検索で絞り込んでからpage、最後にinclude）
+    # 検索・ページネーション・includes適用（パフォーマンス最適化: 検索で絞り込んでからpage、最後にinclude）
     @posts = @posts.search_by_keyword(params[:search])
-                   .order(sort_order)
+                   .order(created_at: :desc)
                    .page(params[:page])
                    .includes(:user, :comments)
   end
@@ -92,14 +92,9 @@ class PostsController < ApplicationController
     params.require(:post).permit(:title, :description, :link, :image_url, :image)
   end
 
-  # 検索・フィルター・ソート・ページネーション用のストロングパラメータ
+  # 検索・フィルター・ページネーション用のストロングパラメータ
   def search_params
-    params.permit(:search, :filter, :sort, :user_id, :page)
-  end
-
-  # ソート順の決定
-  def sort_order
-    params[:sort] == "oldest" ? { created_at: :asc } : { created_at: :desc }
+    params.permit(:search, :filter, :user_id, :page)
   end
 
   # ウェルカムアニメーション表示（ログイン不要）

@@ -11,7 +11,7 @@
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- 戻るリンク -->
     <div class="mb-6">
-      <%= link_to "← 投稿一覧に戻る", posts_path, 
+      <%= link_to "← 投稿一覧に戻る", posts_path,
                   class: "text-orange-500 hover:text-orange-700 font-medium inline-flex items-center" %>
     </div>
 
@@ -25,41 +25,63 @@
       <% end %>
 
       <div class="p-8">
-        <!-- 投稿タイトル -->
-        <h1 class="text-3xl font-bold text-orange-600 mb-4"><%= @post.title %></h1>
-        
-        <!-- 投稿者情報と日時 -->
-        <div class="flex items-center justify-between mb-6 pb-4 border-b border-orange-100">
-          <div class="flex items-center space-x-4 text-sm text-orange-500">
-            <span class="flex items-center">
-              👤 
-              <% if @post.user %>
-                <%= link_to @post.user.display_name, posts_path(user_id: @post.user.id), 
-                            class: "hover:text-orange-700 hover:underline transition-colors" %>
-              <% else %>
-                退会済みユーザー
-              <% end %>
-            </span>
-            <span><%= @post.created_at.strftime("%Y年%m月%d日 %H:%M") %></span>
-          </div>
-          
-          <div class="flex items-center space-x-3">
-            <!-- いいねボタン -->
-            <%= render 'likes/button', post: @post %>
-            
-            <!-- X投稿ボタン -->
-            <%= x_share_button(@post) %>
-            
-            <!-- 編集・削除ボタン（投稿者のみ） -->
-            <% if user_signed_in? && current_user == @post.user %>
-              <div class="flex space-x-2">
-                <%= link_to "編集", edit_post_path(@post), 
-                            class: "bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200" %>
-                <%= link_to "削除", @post, method: :delete,
-                            class: "bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition duration-200",
-                            confirm: "本当に削除しますか？" %>
+        <!-- 投稿タイトルと編集メニュー -->
+        <div class="flex items-start justify-between mb-4">
+          <h1 class="text-3xl font-bold text-orange-600 flex-1 mr-4"><%= truncate(@post.title, length: 50) %></h1>
+
+          <!-- 投稿者のメニューボタン（投稿者のみ） -->
+          <% if user_signed_in? && current_user == @post.user %>
+            <div class="relative inline-block" data-controller="dropdown">
+              <button class="text-gray-400 hover:text-gray-600 transition-colors p-2"
+                      data-action="click->dropdown#toggle">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
+                </svg>
+              </button>
+              <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 opacity-0 invisible transition-all duration-300 transform translate-y-2 z-50"
+                   data-dropdown-target="menu">
+                <div class="py-1">
+                  <%= link_to edit_post_path(@post),
+                      class: "flex items-center px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
+                    <span class="mr-2">✏️</span>編集
+                  <% end %>
+                  <%= link_to @post, method: :delete,
+                      data: { turbo_confirm: "本当に削除しますか？" },
+                      class: "flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition duration-200" do %>
+                    <span class="mr-2">🗑️</span>削除
+                  <% end %>
+                </div>
               </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- 投稿者情報と日時、ボタン類 -->
+        <div class="mb-6 pb-4 border-b border-orange-100">
+          <!-- 投稿者情報 -->
+          <div class="flex items-center text-orange-500 mb-2">
+            👤
+            <% if @post.user %>
+              <%= link_to truncate(@post.user.display_name, length: 18), posts_path(user_id: @post.user.id),
+                          class: "ml-1 hover:text-orange-700 hover:underline transition-colors font-medium" %>
+            <% else %>
+              <span class="ml-1">退会済みユーザー</span>
             <% end %>
+          </div>
+
+          <!-- 投稿日時といいね・Xボタン（横並び） -->
+          <div class="flex items-center justify-between">
+            <div class="text-sm text-gray-500">
+              <%= @post.created_at.strftime("%Y年%m月%d日") %>
+            </div>
+
+            <div class="flex items-center space-x-3">
+              <!-- いいねボタン -->
+              <%= render 'likes/button', post: @post %>
+
+              <!-- X投稿ボタン -->
+              <%= x_share_button(@post) %>
+            </div>
           </div>
         </div>
 
@@ -78,7 +100,7 @@
               🔗 購入リンク
             </h3>
             <%# safe_linkメソッドでjavascript:やdata:スキームなどの危険なURLは既にフィルタリング済み %>
-            <%= link_to "この商品を見る", @post.safe_link, 
+            <%= link_to "この商品を見る", @post.safe_link,
                         class: "text-orange-500 hover:text-orange-700 underline font-medium",
                         target: "_blank", rel: "noopener noreferrer" %>
           </div>
@@ -98,12 +120,12 @@
           <h4 class="text-lg font-medium text-orange-600 mb-4">コメントを投稿</h4>
           <%= form_with model: [@post, @comment], local: true, html: { class: "space-y-4" } do |f| %>
             <div>
-              <%= f.text_area :content, rows: 3, 
-                              class: "w-full px-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200", 
+              <%= f.text_area :content, rows: 3,
+                              class: "w-full px-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
                               placeholder: "感想やコメントを入力してください..." %>
             </div>
             <div class="text-right">
-              <%= f.submit "コメント投稿", 
+              <%= f.submit "コメント投稿",
                           class: "bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition duration-200 shadow-lg" %>
             </div>
           <% end %>
@@ -111,7 +133,7 @@
       <% else %>
         <div class="mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-200 text-center">
           <p class="text-gray-600 mb-4">コメントを投稿するにはログインが必要です</p>
-          <%= link_to "ログイン", new_user_session_path, 
+          <%= link_to "ログイン", new_user_session_path,
                       class: "bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
         </div>
       <% end %>

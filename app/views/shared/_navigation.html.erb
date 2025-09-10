@@ -1,8 +1,49 @@
 <% if user_signed_in? %>
   <div class="flex items-center space-x-4">
-    <!-- ハンバーガーメニュー -->
-    <div class="relative" data-controller="dropdown">
-      <!-- ハンバーガーボタン -->
+    <!-- デスクトップ用メニュー（md以上で表示） -->
+    <div class="hidden md:flex items-center space-x-4">
+      <%= link_to posts_path,
+          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-lg font-medium" do %>
+          みんなのお供
+      <% end %>
+
+      <%= link_to new_post_path,
+          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-lg font-medium" do %>
+          お供の投稿
+      <% end %>
+
+      <%= link_to posts_path(user_id: current_user.id),
+          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-lg font-medium" do %>
+          マイ投稿
+      <% end %>
+
+      <%= link_to user_profile_path(current_user),
+          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-lg font-medium" do %>
+          プロフィール
+      <% end %>
+
+      <%= link_to edit_user_registration_path,
+          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-lg font-medium" do %>
+          設定
+      <% end %>
+
+      <%= button_to destroy_user_session_path, method: :delete,
+          data: { turbo_confirm: "ログアウトしますか？" },
+          class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-red-500/20 text-lg font-medium border-0 bg-transparent cursor-pointer" do %>
+          ログアウト
+      <% end %>
+    </div>
+
+    <!-- スマホ用ハンバーガーメニュー（md未満で表示） -->
+    <div class="flex items-center space-x-3 md:hidden">
+      <!-- みんなのお供リンク -->
+      <%= link_to posts_path,
+          class: "text-white hover:text-orange-100 transition duration-300 text-md font-medium mr-4" do %>
+          みんなのお供
+      <% end %>
+
+      <div class="relative" data-controller="dropdown">
+        <!-- ハンバーガーボタン -->
       <button class="flex items-center justify-center w-10 h-10 text-white hover:text-orange-100 transition duration-300 bg-white/10 rounded-full hover:bg-white/20"
               data-action="click->dropdown#toggle">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -11,7 +52,7 @@
       </button>
 
       <!-- ドロップダウンメニュー -->
-      <div class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-orange-100 opacity-0 invisible transition-all duration-300 transform translate-y-2 z-50"
+      <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-orange-100 opacity-0 invisible transition-all duration-300 transform translate-y-2 z-50"
            data-dropdown-target="menu">
         <div class="py-2">
           <!-- 新規投稿 -->
@@ -19,9 +60,12 @@
               class: "flex items-center px-2 py-1 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
             <span class="mr-3 text-lg">✍️</span>
             <div>
-              <div class="text-sm font-medium">新しいお供を投稿</div>
+              <div class="text-sm font-medium">新しいお供</div>
             </div>
           <% end %>
+
+          <!-- 区切り線 -->
+          <div class="border-t border-gray-100 my-2"></div>
 
           <!-- マイ投稿 -->
           <%= link_to posts_path(user_id: current_user.id),
@@ -40,7 +84,7 @@
               class: "flex items-center px-2 py-1 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
             <span class="mr-3 text-lg">📋</span>
             <div>
-              <div class="text-sm font-medium">プロフィールを見る</div>
+              <div class="text-sm font-medium">プロフィール</div>
             </div>
           <% end %>
 
@@ -70,9 +114,18 @@
           <% end %>
         </div>
       </div>
+      </div>
     </div>
   </div>
 <% else %>
-  <%= link_to "ログイン", new_user_session_path,
-              class: "bg-white text-orange-600 px-6 py-2 rounded-full hover:bg-orange-50 transition duration-300 text-sm font-medium shadow-sm border border-orange-200" %>
+  <div class="flex items-center space-x-4">
+    <!-- みんなのお供リンク -->
+    <%= link_to posts_path,
+        class: "text-white hover:text-orange-100 transition duration-300 text-lg font-medium" do %>
+      🍚 <span class="hidden sm:inline">みんなのお供</span>
+    <% end %>
+
+    <%= link_to "ログイン", new_user_session_path,
+                class: "bg-white text-orange-600 px-6 py-2 rounded-full hover:bg-orange-50 transition duration-300 text-sm font-medium shadow-sm border border-orange-200" %>
+  </div>
 <% end %>
