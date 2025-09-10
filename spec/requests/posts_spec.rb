@@ -110,34 +110,14 @@ RSpec.describe "Posts", type: :request do
           expect(post3_index).to be < post1_index
         end
 
-        it "古い順（created_at ASC）で表示される" do
-          get posts_path, params: { sort: "oldest" }
-          expect(response).to have_http_status(:ok)
-          expect(response.body).to include("（古い順）")
-          
-          # レスポンスボディで投稿の順序を確認（古い順: post1 > post3 > post2）
-          post1_index = response.body.index(post1.title)
-          post3_index = response.body.index(post3.title)
-          post2_index = response.body.index(post2.title)
-          
-          expect(post1_index).to be < post3_index
-          expect(post3_index).to be < post2_index
-        end
-
-        it "oldest指定の場合は古い順ラベルが表示される" do
-          get posts_path, params: { sort: "oldest" }
-          expect(response).to have_http_status(:ok)
-          expect(response.body).to include("（古い順）")
-        end
       end
 
-      describe "検索とソートの組み合わせ" do
-        it "検索結果をソートできる" do
-          get posts_path, params: { search: "明太子", sort: "oldest" }
+      describe "検索機能" do
+        it "検索結果が表示される" do
+          get posts_path, params: { search: "明太子" }
           expect(response).to have_http_status(:ok)
           expect(response.body).to include("明太子")
           expect(response.body).to include("の検索結果")
-          expect(response.body).to include("（古い順）")
           expect(response.body).to include(post1.title)
           expect(response.body).to include(post3.title)
         end
@@ -181,12 +161,11 @@ RSpec.describe "Posts", type: :request do
         end
 
         it "パラメータが保持される（検索+ページネーション）" do
-          get posts_path, params: { search: "追加", sort: "oldest", page: 1 }
+          get posts_path, params: { search: "追加", page: 1 }
           expect(response).to have_http_status(:ok)
-          # 検索結果とソート情報が表示されることでパラメータ保持を確認
+          # 検索結果が表示されることでパラメータ保持を確認
           expect(response.body).to include("追加")
           expect(response.body).to include("の検索結果")
-          expect(response.body).to include("（古い順）")
         end
       end
     end

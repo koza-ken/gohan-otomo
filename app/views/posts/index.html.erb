@@ -30,78 +30,27 @@
   </div>
 
   <!-- 検索・フィルター部分 -->
-  <div class="bg-white rounded-lg shadow-md mb-8" data-controller="search-toggle">
-    <!-- 検索トグルボタン（モバイルのみ表示） -->
-    <div class="block sm:hidden p-4 border-b border-gray-100">
-      <button data-action="click->search-toggle#toggle"
-              data-search-toggle-target="button"
-              aria-expanded="false"
-              aria-controls="search-form"
-              class="flex items-center justify-center w-full py-3 px-4 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition duration-200 shadow-sm">
-        <!-- 検索アイコン -->
-        <svg data-search-icon class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-        </svg>
-        <!-- 閉じるアイコン（初期状態では非表示） -->
-        <svg data-close-icon class="w-5 h-5 mr-2 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-        <span>検索</span>
-      </button>
-    </div>
-
+  <div class="bg-white rounded-lg shadow-md mb-8">
     <!-- 検索フォーム本体 -->
-    <div id="search-form" data-search-toggle-target="form" class="p-6 hidden sm:block">
-      <%= form_with url: posts_path, method: :get, local: true, class: "space-y-4" do |form| %>
-        <!-- 検索フィールド -->
-        <div>
-          <%= form.label :search, "🔍 キーワード検索", class: "block text-sm font-medium text-orange-700 mb-2" %>
-          <%= form.text_field :search,
-                              value: params[:search],
-                              placeholder: "商品名・おすすめポイントで検索...",
-                              class: "w-full px-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition duration-200" %>
-        </div>
-
-        <!-- ソート・検索ボタン -->
-        <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-4 space-y-4 sm:space-y-0">
-          <!-- ソート選択 -->
-          <div class="flex-1">
-            <%= form.label :sort, "📊 並び順", class: "block text-sm font-medium text-orange-700 mb-2" %>
-            <%= form.select :sort,
-                            options_for_select([
-                              ['新着順', ''],
-                              ['古い順', 'oldest']
-                            ], params[:sort]),
-                            {},
-                            { class: "w-full px-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition duration-200" } %>
-          </div>
-
-          <!-- 検索ボタン -->
-          <div>
-            <%= form.submit "検索", class: "w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition duration-200 shadow-lg" %>
-          </div>
-        </div>
-
-        <!-- user_idパラメータの保持 -->
+    <div class="p-2">
+      <%= form_with url: posts_path, method: :get, local: true, class: "flex space-x-2" do |form| %>
+        <%= form.text_field :search,
+                            value: params[:search],
+                            placeholder: "商品名・おすすめポイントで検索...",
+                            class: "flex-1 px-3 py-2 text-sm border border-orange-200 rounded-lg focus:ring-1 focus:ring-orange-400 focus:border-orange-400 transition duration-200" %>
+        <%= form.submit "検索", class: "px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm rounded-lg font-medium transition duration-200 shadow-sm" %>
         <%= form.hidden_field :user_id, value: params[:user_id] if params[:user_id].present? %>
       <% end %>
     </div>
   </div>
 
   <!-- 検索結果情報 -->
-  <% if params[:search].present? || params[:sort].present? %>
+  <% if params[:search].present? %>
     <div class="bg-orange-50 rounded-lg p-4 mb-6">
       <div class="flex flex-wrap items-center justify-between">
         <div class="text-orange-700">
-          <% if params[:search].present? %>
-            <span class="font-medium">「<%= params[:search] %>」</span>の検索結果:
-          <% end %>
+          <span class="font-medium">「<%= params[:search] %>」</span>の検索結果:
           <span class="font-bold"><%= @posts.count %>件</span>の投稿
-          <% if params[:sort] == 'oldest' %>
-            <span class="text-sm">（古い順）</span>
-          <% else %>
-            <span class="text-sm">（新着順）</span>
-          <% end %>
         </div>
         <div>
           <%= link_to "× 検索をクリア", posts_path(user_id: params[:user_id]),
@@ -182,7 +131,7 @@
     <div class="mt-12">
       <div class="flex justify-center items-center space-x-1">
         <%= paginate @posts,
-            params: { search: params[:search], sort: params[:sort], user_id: params[:user_id] }.compact,
+            params: { search: params[:search], user_id: params[:user_id] }.compact,
             class: "flex items-center space-x-1" %>
       </div>
 
