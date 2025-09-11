@@ -15,11 +15,11 @@ export default class extends Controller {
     if (passwordField.type === "password") {
       // パスワードを表示
       passwordField.type = "text"
-      iconElement.textContent = "🙈"  // 非表示アイコン
+      iconElement.src = "/icons/eye_hide.svg"  // 非表示アイコン
     } else {
       // パスワードを非表示
       passwordField.type = "password"
-      iconElement.textContent = "👁"  // 表示アイコン
+      iconElement.src = "/icons/eye_show.svg"  // 表示アイコン
     }
   }
 }
