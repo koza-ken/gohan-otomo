@@ -71,6 +71,20 @@ class Post < ApplicationRecord
     image.variant(resize_to_fill: [ 800, 600 ], quality: 85)
   end
 
+  # WebP形式のvariant: サムネイル画像（投稿一覧用）
+  def thumbnail_image_webp
+    return nil unless image.attached?
+
+    image.variant(resize_to_fill: [ 400, 300 ], quality: 85, format: :webp)
+  end
+
+  # WebP形式のvariant: 中サイズ画像（投稿詳細用）
+  def medium_image_webp
+    return nil unless image.attached?
+
+    image.variant(resize_to_fill: [ 800, 600 ], quality: 85, format: :webp)
+  end
+
   # ハイブリッド画像表示: 優先順位に従って適切な画像を返す
   # 1. Active Storageの画像（最優先）
   # 2. image_urlの外部画像（次優先）
