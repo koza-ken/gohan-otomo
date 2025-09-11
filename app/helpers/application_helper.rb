@@ -104,4 +104,36 @@ module ApplicationHelper
 
     "#{final_message} #お供だち #ごはんのお供"
   end
+
+  # WebP対応ブラウザかどうかを判定
+  def supports_webp?
+    return false unless request.present?
+    
+    accept_header = request.headers['HTTP_ACCEPT'] || ''
+    accept_header.include?('image/webp')
+  end
+
+  # WebP対応に基づいて最適な画像を返すヘルパー
+  def optimized_post_image_tag(post, options = {})
+    css_class = options[:class] || ""
+    alt_text = options[:alt] || post.title
+    size = options[:size] || :medium
+
+    # WebP対応ブラウザの場合はWebP版を優先
+    if supports_webp? && post.image.attached?
+      case size
+      when :thumbnail
+        webp_variant = post.thumbnail_image_webp
+      when :medium, :large
+        webp_variant = post.medium_image_webp
+      end
+
+      if webp_variant
+        return image_tag(webp_variant, alt: alt_text, class: css_class)
+      end
+    end
+
+    # フォールバック: 従来の画像表示
+    post_image_tag(post, options)
+  end
 end
