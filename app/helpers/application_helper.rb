@@ -10,21 +10,21 @@ module ApplicationHelper
               class: css_class)
   end
 
-  # 投稿画像を表示するヘルパーメソッド（シンプル版）
-  # まずは基本的な機能から実装
+  # 投稿画像を表示するヘルパーメソッド（WebP対応統合版）
   def post_image_tag(post, options = {})
     # デフォルト値の設定
     css_class = options[:class] || ""
     alt_text = options[:alt] || post.title
-    size = options[:size] || :medium  # 新しくsizeオプションを追加
+    size = options[:size] || :medium
 
-    # Modelのdisplay_imageメソッドに優先順位制御を委譲
-    image_source = post.display_image(size)
+    # WebP対応ブラウザ判定を行い、統合されたdisplay_imageメソッドを呼び出し
+    webp_support = supports_webp?
+    image_source = post.display_image(size, webp_support)
 
     if image_source.present?
       # 画像が存在する場合（Active Storage variant または 外部URL）
       if image_source.is_a?(ActiveStorage::VariantWithRecord)
-        # Active Storage variant の場合
+        # Active Storage variant の場合（JPEG/PNG/WebP対応）
         image_tag(image_source, alt: alt_text, class: css_class)
       else
         # 外部URL画像の場合（Stimulusエラーハンドリング付き）
@@ -115,26 +115,5 @@ module ApplicationHelper
     accept_header.include?('image/webp')
   end
 
-  # WebP対応画像表示ヘルパー（シンプル版）
-  def optimized_post_image_tag(post, options = {})
-    css_class = options[:class] || ""
-    alt_text = options[:alt] || post.title
-    size = options[:size] || :medium
-
-    # WebP対応ブラウザかつ画像添付ありの場合はWebP版を使用
-    if supports_webp? && post.image.attached?
-      case size
-      when :thumbnail
-        webp_variant = post.thumbnail_image_webp
-      when :medium, :large
-        webp_variant = post.medium_image_webp
-      end
-
-      return image_tag(webp_variant, alt: alt_text, class: css_class) if webp_variant
-    end
-
-    # フォールバック: 従来の画像表示（非対応ブラウザ、外部URL、プレースホルダー）
-    post_image_tag(post, options)
-  end
 
 end
