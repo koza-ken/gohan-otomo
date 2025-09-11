@@ -19,15 +19,18 @@
 
       <div>
         <%= f.label :password, "パスワード", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
+        <div class="relative" data-controller="password-toggle">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <span class="text-orange-500">🔒</span>
           </div>
           <%= f.password_field :password, autocomplete: "current-password", 
                               class: "w-full pl-10 pr-10 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
-                              placeholder: "パスワード" %>
+                              placeholder: "パスワード",
+                              data: { password_toggle_target: "password" } %>
           <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-            <span class="text-orange-400 cursor-pointer">👁</span>
+            <span class="text-orange-400 cursor-pointer"
+                  data-password-toggle-target="icon"
+                  data-action="click->password-toggle#toggle">👁</span>
           </div>
         </div>
       </div>

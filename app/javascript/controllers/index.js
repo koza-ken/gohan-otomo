@@ -16,3 +16,6 @@ application.register("image-preview", ImagePreviewController)
 import FloatingMenuController from "./floating_menu_controller"
 application.register("floating-menu", FloatingMenuController)
 
+import PasswordToggleController from "./password_toggle_controller"
+application.register("password-toggle", PasswordToggleController)
+
