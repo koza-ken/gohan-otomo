@@ -64,11 +64,11 @@ RSpec.describe Post, type: :model do
         expect(post.errors[:link]).to include("正しいURLを入力してください")
       end
 
-      it "500文字以上の場合は無効" do
-        long_url = "https://example.com/" + "a" * 500
+      it "1000文字以上の場合は無効" do
+        long_url = "https://example.com/" + "a" * 1000
         post = Post.new(title: "テスト商品", description: "テスト", link: long_url, user: user)
         expect(post.valid?).to be false
-        expect(post.errors[:link]).to include("is too long (maximum is 500 characters)")
+        expect(post.errors[:link]).to include("is too long (maximum is 1000 characters)")
       end
     end
 
