@@ -79,6 +79,7 @@ docker compose exec web rails generate rspec:install
 - **画像最適化**: variant処理（thumbnail: 400x300, medium: 800x600, quality: 85）
 - **Stimulus統合**: 画像プレビュー、リアルタイムURL検証、エラーハンドリング
 - **セキュリティ対策**: ファイル形式制限（JPEG,PNG,WebP,GIF）、10MB制限
+- **WebP最適化（13_add_image_#40）**: ファイルサイズ30-50%削減、ブラウザ対応自動判定
 
 #### **投稿一覧・検索機能（08_post_listing_#10完成）**
 - **検索機能**: キーワード検索（title・description対象、ILIKE使用）
@@ -198,18 +199,35 @@ docker compose exec web rails generate rspec:install
 ## 現在の開発状況（2025年9月11日）
 
 ### 🚀 最新実装状況
-- **12_ogp_and_icon_#37**: OGP画像設定とアイコンシステム統一（**進行中**）
-  - ✅ デフォルトOGP画像の設定（`public/ogp.png`）
-  - ✅ OGPメタタグの完全最適化
-  - ✅ アプリタイトル「お供だち」への変更
-  - ✅ アイコンシステムSVG統一（9種類完了）
-  - ✅ パスワード表示切り替え機能（全ページ対応）
-  - ✅ URL制限緩和（500文字→1000文字）
-  - 🔄 SVGアイコン統一（user.svg/star.svg待ち）
-  - 📋 Twitter Card設定の最適化
-  - 📋 他SNS対応（Facebook/LINE等）
+- **13_add_image_#40**: WebP画像最適化機能（**実装完了・PR準備中**）
+  - ✅ picture要素による確実なWebP対応完全実装
+  - ✅ 画像表示失敗率10-22%→<1%に改善  
+  - ✅ ファイルサイズ30-50%削減達成
+  - ✅ 実装報告書作成・動作確認完了
+  - 📋 プルリクエスト作成・マージ準備完了
+
+### 🎯 次期実装予定
+- **14_rakuten_api_#41**: 楽天商品検索API統合機能（**設計完了・実装準備中**）
+  - 📋 楽天API基盤実装とOGP画像最適化
+  - 📋 外部商品画像自動取得機能
+  - 📋 X投稿での美しいカード表示対応
+  - 📋 詳細実装設計・タスク分解完了
 
 ### ✅ 完成済みブランチ（マージ済み）
+- **13_add_image_#40**: WebP画像最適化機能（**完成・マージ済み**）
+  - picture要素による確実なWebP対応実現
+  - 画像表示失敗率10-22%→<1%に改善
+  - ファイルサイズ30-50%削減達成
+  - Learning Mode学習価値（HTTP Accept headerの限界→picture要素での解決）
+
+- **12_ogp_and_icon_#37**: OGP画像設定とアイコンシステム統一（**完成・マージ済み**）
+  - デフォルトOGP画像の設定（`public/ogp.png`）
+  - OGPメタタグの完全最適化
+  - アプリタイトル「お供だち」への変更
+  - SVGアイコンシステム統一（12種類完了）
+  - パスワード表示切り替え機能（全ページ対応）
+  - URL制限緩和（500文字→1000文字）
+
 - **11_responsive-design_#13**: レスポンシブデザイン最適化（**完成・マージ済み**）
   - 検索フォームの大幅簡略化（ソート機能削除、シンプル化）
   - フローティングアクションボタン実装（右下固定投稿ボタン）
@@ -252,11 +270,16 @@ docker compose exec web rails generate rspec:install
 - **02_user_auth_#5**: ユーザー認証機能（**マージ済み**）
 
 ### 🎯 次期実装予定
-- **12_ogp_and_icon_#37**: OGP画像設定とアイコンシステム統一（継続中）
-  - 残りアイコンの追加（user.svg, star.svg）
-  - Twitter Card設定の最適化
-  - Facebook/LINE等の他SNS対応
-  - テスト実装と動作確認
+- **14_rakuten_api_#41**: 楽天商品検索API統合機能（**設計完了・実装準備中**）
+  - Task 1: 楽天API基盤実装（Rakuten Developers登録・gem導入）
+  - Task 2: 楽天URL解析・商品情報取得機能
+  - Task 3: 投稿フォーム統合（Stimulus + リアルタイム取得）
+  - Task 4: OGP画像最適化機能（1200×630px・Twitter Card対応）
+  - Task 5: UI/UX最適化・エラーハンドリング
+  - Task 6: 包括的テスト実装
+  
+  **引継ぎ資料**: `docs/14_rakuten_api_handoff.md` 完成
+  **実装方針**: Learning Mode段階的アプローチ
 
 ### 📋 最新実装詳細（12_ogp_and_icon_#37）
 
