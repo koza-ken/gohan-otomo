@@ -79,6 +79,7 @@ docker compose exec web rails generate rspec:install
 - **画像最適化**: variant処理（thumbnail: 400x300, medium: 800x600, quality: 85）
 - **Stimulus統合**: 画像プレビュー、リアルタイムURL検証、エラーハンドリング
 - **セキュリティ対策**: ファイル形式制限（JPEG,PNG,WebP,GIF）、10MB制限
+- **WebP最適化（13_add_image_#40）**: ファイルサイズ30-50%削減、ブラウザ対応自動判定
 
 #### **投稿一覧・検索機能（08_post_listing_#10完成）**
 - **検索機能**: キーワード検索（title・description対象、ILIKE使用）
@@ -198,18 +199,24 @@ docker compose exec web rails generate rspec:install
 ## 現在の開発状況（2025年9月11日）
 
 ### 🚀 最新実装状況
-- **12_ogp_and_icon_#37**: OGP画像設定とアイコンシステム統一（**進行中**）
-  - ✅ デフォルトOGP画像の設定（`public/ogp.png`）
-  - ✅ OGPメタタグの完全最適化
-  - ✅ アプリタイトル「お供だち」への変更
-  - ✅ アイコンシステムSVG統一（9種類完了）
-  - ✅ パスワード表示切り替え機能（全ページ対応）
-  - ✅ URL制限緩和（500文字→1000文字）
-  - 🔄 SVGアイコン統一（user.svg/star.svg待ち）
-  - 📋 Twitter Card設定の最適化
-  - 📋 他SNS対応（Facebook/LINE等）
+- **13_add_image_#40**: WebP画像最適化機能（**実装中**）
+  - ✅ WebP変換基盤実装（ImageMagick libwebp 1.2.4対応）
+  - ✅ Active StorageのWebP variant機能
+  - ✅ ブラウザ対応自動判定システム
+  - ✅ プレースホルダー画像WebP化（32KB→6KB、80%削減）
+  - ✅ 投稿一覧・詳細ページWebP対応
+  - ✅ シンプルで実用的な実装に整理完了
+  - 📋 Task 3以降（画像メソッド拡張、ビュー最適化等）
 
 ### ✅ 完成済みブランチ（マージ済み）
+- **12_ogp_and_icon_#37**: OGP画像設定とアイコンシステム統一（**完成・マージ済み**）
+  - デフォルトOGP画像の設定（`public/ogp.png`）
+  - OGPメタタグの完全最適化
+  - アプリタイトル「お供だち」への変更
+  - SVGアイコンシステム統一（12種類完了）
+  - パスワード表示切り替え機能（全ページ対応）
+  - URL制限緩和（500文字→1000文字）
+
 - **11_responsive-design_#13**: レスポンシブデザイン最適化（**完成・マージ済み**）
   - 検索フォームの大幅簡略化（ソート機能削除、シンプル化）
   - フローティングアクションボタン実装（右下固定投稿ボタン）
