@@ -45,11 +45,13 @@ module ApplicationHelper
 
   private
 
-  # プレースホルダー画像のHTMLを生成（サイズ対応）
+  # プレースホルダー画像のHTMLを生成（WebP対応）
   def placeholder_image_tag(size, css_class)
-    # 透過no_image.pngをオレンジ背景の上に表示
+    # WebP対応ブラウザなら軽量なWebP版を使用
+    image_path = supports_webp? ? "/no_image.webp" : "/no_image.png"
+    
     content_tag(:div,
-                image_tag("/no_image.png",
+                image_tag(image_path,
                           alt: "画像がありません",
                           class: "w-full h-full object-contain"),
                 class: "flex items-center justify-center bg-orange-100 #{css_class}")
@@ -113,13 +115,13 @@ module ApplicationHelper
     accept_header.include?('image/webp')
   end
 
-  # WebP対応に基づいて最適な画像を返すヘルパー
+  # WebP対応画像表示ヘルパー（シンプル版）
   def optimized_post_image_tag(post, options = {})
     css_class = options[:class] || ""
     alt_text = options[:alt] || post.title
     size = options[:size] || :medium
 
-    # WebP対応ブラウザの場合はWebP版を優先
+    # WebP対応ブラウザかつ画像添付ありの場合はWebP版を使用
     if supports_webp? && post.image.attached?
       case size
       when :thumbnail
@@ -128,12 +130,11 @@ module ApplicationHelper
         webp_variant = post.medium_image_webp
       end
 
-      if webp_variant
-        return image_tag(webp_variant, alt: alt_text, class: css_class)
-      end
+      return image_tag(webp_variant, alt: alt_text, class: css_class) if webp_variant
     end
 
-    # フォールバック: 従来の画像表示
+    # フォールバック: 従来の画像表示（非対応ブラウザ、外部URL、プレースホルダー）
     post_image_tag(post, options)
   end
+
 end
