@@ -34,6 +34,9 @@ gem "html2haml"
 # Authentication
 gem "devise"
 
+# Rakuten API client
+gem "rakuten_web_service"
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 
