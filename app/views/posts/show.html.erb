@@ -20,7 +20,7 @@
       <!-- 画像表示（Helperを使用 - mediumサイズ） -->
       <% if @post.has_image? %>
         <div class="h-64 md:h-80 bg-gray-200 overflow-hidden">
-          <%= optimized_post_image_tag(@post, size: :medium, class: "w-full h-full object-cover") %>
+          <%= post_image_tag(@post, size: :medium, class: "w-full h-full object-cover") %>
         </div>
       <% end %>
 
