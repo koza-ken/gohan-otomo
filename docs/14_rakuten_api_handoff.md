@@ -115,13 +115,24 @@ end
 ```ruby
 def self.format_product_info(rakuten_item)
   {
-    title: rakuten_item.item_name,
-    description: strip_html(rakuten_item.item_caption),
-    image_url: rakuten_item.medium_image_url,
-    price: rakuten_item.item_price,
-    rakuten_url: rakuten_item.item_url,
-    shop_name: rakuten_item.shop_name
+    title: rakuten_item.name,                    # ✅ 修正: item_name → name
+    description: strip_html(rakuten_item.caption), # ✅ 修正: item_caption → caption  
+    image_url: get_first_image_url(rakuten_item), # ✅ 修正: medium_image_url → 配列処理
+    price: rakuten_item.price,                   # ✅ 修正: item_price → price
+    rakuten_url: rakuten_item.url,              # ✅ 修正: item_url → url
+    shop_name: rakuten_item.shop_name           # ✅ 変更なし
   }
+end
+
+private
+
+def self.get_first_image_url(item)
+  return nil unless item.medium_image_urls&.any?
+  item.medium_image_urls.first["imageUrl"]
+end
+
+def self.strip_html(html)
+  html&.gsub(/<\/?[^>]*>/, '')&.strip
 end
 ```
 
@@ -498,6 +509,42 @@ end
 - ✅ 非同期処理実装経験
 - ✅ OGP最適化知識
 - ✅ エラーハンドリング設計
+
+## 🔧 実装中の重要な修正（2025年9月11日）
+
+### **楽天API メソッド名の正しい命名**
+
+**動作確認により判明した正しいメソッド名**：
+```ruby
+# ❌ 引継ぎ資料の想定（間違い）
+item.item_name        # 存在しない
+item.item_price       # 存在しない  
+item.item_caption     # 存在しない
+item.medium_image_url # 存在しない
+item.item_url         # 存在しない
+
+# ✅ 実際のメソッド名（Rails console で確認済み）
+item.name             # 商品名
+item.price            # 価格
+item.caption          # 商品説明（HTML含む）
+item.medium_image_urls # 画像URL配列 [{"imageUrl" => "https://..."}]
+item.url              # 商品URL
+item.shop_name        # ショップ名（変更なし）
+```
+
+**画像URL取得の正しい方法**：
+```ruby
+# medium_image_urls は配列で、各要素がハッシュ
+def get_first_image_url(item)
+  return nil unless item.medium_image_urls&.any?
+  item.medium_image_urls.first["imageUrl"]
+end
+```
+
+**実装修正状況**：
+- ✅ docs/14_rakuten_api_handoff.md のコード例を修正
+- ✅ format_product_info メソッドの修正完了
+- ✅ Rails console での動作確認済み
 
 ## 📚 参考資料
 
