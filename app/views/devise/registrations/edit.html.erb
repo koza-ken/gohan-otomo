@@ -21,7 +21,10 @@
 
           <!-- 表示名 -->
           <div>
-            <%= f.label :display_name, "👤 表示名", class: "block text-sm font-medium text-orange-700 mb-2" %>
+            <%= f.label :display_name, class: "flex items-center text-sm font-medium text-orange-700 mb-2" do %>
+              <%= icon_tag :user, class: "w-4 h-4 mr-2", alt: "ユーザー" %>
+              表示名
+            <% end %>
             <%= f.text_field :display_name,
                               autofocus: true,
                               class: "w-full px-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition duration-200" %>
@@ -29,7 +32,7 @@
 
           <!-- メールアドレス -->
           <div>
-            <%= f.label :email, "📧 メールアドレス", class: "block text-sm font-medium text-orange-700 mb-2" %>
+            <%= f.label :email, raw("#{icon_tag :mail, class: 'inline w-4 h-4 mr-1'} メールアドレス"), class: "block text-sm font-medium text-orange-700 mb-2" %>
             <%= f.email_field :email,
                                autocomplete: "email",
                                class: "w-full px-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition duration-200" %>
@@ -40,16 +43,20 @@
 
             <!-- 現在のパスワード -->
           <div>
-            <%= f.label :current_password, "🔐 現在のパスワード", class: "block text-sm font-medium text-orange-700 mb-2" %>
+            <%= f.label :current_password, raw("#{icon_tag :lock, class: 'inline w-4 h-4 mr-1'} 現在のパスワード"), class: "block text-sm font-medium text-orange-700 mb-2" %>
             <div class="relative" data-controller="password-toggle">
               <%= f.password_field :current_password,
                                    autocomplete: "current-password",
                                    class: "w-full px-4 py-3 pr-10 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition duration-200",
                                    data: { password_toggle_target: "password" } %>
               <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <span class="text-orange-400 cursor-pointer"
-                      data-password-toggle-target="icon"
-                      data-action="click->password-toggle#toggle">👁</span>
+                <%= image_tag "/icons/eye_show.svg", 
+                            alt: "パスワード表示",
+                            class: "text-orange-400 cursor-pointer w-5 h-5",
+                            data: { 
+                              password_toggle_target: "icon",
+                              action: "click->password-toggle#toggle"
+                            } %>
               </div>
             </div>
             <p class="text-xs text-gray-500 mt-1">変更を確認するため、現在のパスワードを入力してください</p>
@@ -57,16 +64,20 @@
 
           <!-- パスワード -->
           <div>
-            <%= f.label :password, "🔑 新しいパスワード", class: "block text-sm font-medium text-orange-700 mb-2" %>
+            <%= f.label :password, raw("#{icon_tag :key, class: 'inline w-4 h-4 mr-1'} 新しいパスワード"), class: "block text-sm font-medium text-orange-700 mb-2" %>
             <div class="relative" data-controller="password-toggle">
               <%= f.password_field :password,
                                    autocomplete: "new-password",
                                    class: "w-full px-4 py-3 pr-10 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition duration-200",
                                    data: { password_toggle_target: "password" } %>
               <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <span class="text-orange-400 cursor-pointer"
-                      data-password-toggle-target="icon"
-                      data-action="click->password-toggle#toggle">👁</span>
+                <%= image_tag "/icons/eye_show.svg", 
+                            alt: "パスワード表示",
+                            class: "text-orange-400 cursor-pointer w-5 h-5",
+                            data: { 
+                              password_toggle_target: "icon",
+                              action: "click->password-toggle#toggle"
+                            } %>
               </div>
             </div>
             <p class="text-xs text-gray-500 mt-1">
@@ -79,16 +90,20 @@
 
           <!-- パスワード確認 -->
           <div>
-            <%= f.label :password_confirmation, "🔑 新しいパスワード（確認）", class: "block text-sm font-medium text-orange-700 mb-2" %>
+            <%= f.label :password_confirmation, raw("#{icon_tag :key, class: 'inline w-4 h-4 mr-1'} 新しいパスワード（確認）"), class: "block text-sm font-medium text-orange-700 mb-2" %>
             <div class="relative" data-controller="password-toggle">
               <%= f.password_field :password_confirmation,
                                    autocomplete: "new-password",
                                    class: "w-full px-4 py-3 pr-10 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition duration-200",
                                    data: { password_toggle_target: "password" } %>
               <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <span class="text-orange-400 cursor-pointer"
-                      data-password-toggle-target="icon"
-                      data-action="click->password-toggle#toggle">👁</span>
+                <%= image_tag "/icons/eye_show.svg", 
+                            alt: "パスワード表示",
+                            class: "text-orange-400 cursor-pointer w-5 h-5",
+                            data: { 
+                              password_toggle_target: "icon",
+                              action: "click->password-toggle#toggle"
+                            } %>
               </div>
             </div>
           </div>
@@ -108,7 +123,7 @@
     <%# <div class="mt-8 bg-white rounded-2xl shadow-lg border border-red-200 overflow-hidden">
       <div class="px-6 py-4 bg-red-50 border-b border-red-200">
         <h3 class="text-lg font-semibold text-red-700 flex items-center">
-          <span class="mr-2">⚠️</span>危険な操作
+          <%= icon_tag :alert, class: "mr-2 w-5 h-5 inline" %>危険な操作
         </h3>
       </div>
       <div class="p-6">

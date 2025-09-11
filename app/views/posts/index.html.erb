@@ -80,7 +80,7 @@
         <div class="px-6 pb-6 mt-auto">
           <div class="flex items-center justify-between text-sm text-gray-500">
             <div class="flex items-center">
-              <span class="text-orange-400">👤</span>
+              <%= icon_tag :user, class: "w-4 h-4 text-orange-400", alt: "ユーザー" %>
               <% if post.user %>
                 <%= link_to truncate(post.user.display_name, length: 12), posts_path(user_id: post.user.id),
                             class: "ml-1 hover:text-orange-600 hover:underline transition-colors" %>
@@ -90,11 +90,11 @@
             </div>
             <div class="flex items-center space-x-3">
               <div class="flex items-center">
-                <span class="text-red-400">🕐</span>
+                <%= icon_tag :clock, class: "text-red-400 w-4 h-4" %>
                 <span class="ml-1"><%= time_ago_in_words(post.created_at) %>前</span>
               </div>
               <div class="flex items-center">
-                <span class="text-red-400">💬</span>
+                <%= icon_tag :hukidashi, class: "text-red-400 w-4 h-4" %>
                 <span class="ml-1"><%= post.comments_count %></span>
               </div>
               <!-- いいねボタン -->
@@ -168,7 +168,7 @@
     <div data-floating-menu-target="menu" class="absolute bottom-16 right-0 hidden">
       <div class="bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-48">
         <%= link_to new_user_session_path, class: "flex items-center px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200" do %>
-          <span class="text-xl mr-3">🔐</span>
+          <%= icon_tag :lock, class: "w-6 h-6 mr-3", alt: "ロック" %>
           <span class="font-medium">ログインして投稿</span>
         <% end %>
       </div>
