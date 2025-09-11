@@ -1,4 +1,15 @@
 module ApplicationHelper
+  # アイコン表示ヘルパーメソッド
+  def icon_tag(icon_name, options = {})
+    css_class = options[:class] || "w-5 h-5"
+    alt_text = options[:alt] || icon_name.to_s
+    
+    # SVGファイルとして表示
+    image_tag("/icons/#{icon_name}.svg", 
+              alt: alt_text, 
+              class: css_class)
+  end
+
   # 投稿画像を表示するヘルパーメソッド（シンプル版）
   # まずは基本的な機能から実装
   def post_image_tag(post, options = {})
@@ -36,10 +47,11 @@ module ApplicationHelper
 
   # プレースホルダー画像のHTMLを生成（サイズ対応）
   def placeholder_image_tag(size, css_class)
-    icon_size = size == :thumbnail ? "text-4xl" : "text-6xl"
-
+    # 透過no_image.pngをオレンジ背景の上に表示
     content_tag(:div,
-                content_tag(:span, "🍚", class: "text-orange-400 #{icon_size}"),
+                image_tag("/no_image.png",
+                          alt: "画像がありません",
+                          class: "w-full h-full object-contain"),
                 class: "flex items-center justify-center bg-orange-100 #{css_class}")
   end
 
@@ -90,6 +102,6 @@ module ApplicationHelper
     custom_message = options[:message]
     final_message = custom_message || base_message
 
-    "#{final_message} #ご飯のお供 #gohan_otomo"
+    "#{final_message} #お供だち #ごはんのお供"
   end
 end

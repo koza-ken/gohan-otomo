@@ -2,14 +2,14 @@
   <!-- ヘッダー部分 -->
   <div class="text-center mb-8">
     <% if @user.present? %>
-      <h1 class="text-3xl font-bold text-orange-600 mb-4"><%= @user.display_name %>さんのお供</h1>
+      <h1 class="text-3xl font-bold text-orange-600 mb-4"><%= @user.display_name %>さんのお供だち</h1>
 
       <div class="mt-4">
         <%= link_to "プロフィール", user_profile_path(@user),
                     class: "bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition duration-200 shadow-lg inline-flex items-center mb-4" %>
       </div>
     <% else %>
-      <h1 class="text-3xl font-bold text-orange-600 mb-4">みんなのお供</h1>
+      <h1 class="text-3xl font-bold text-orange-600 mb-4">みんなのお供だち</h1>
       <%# <p class="text-orange-700">みんなのおすすめお米のお供を見つけよう！</p> %>
     <% end %>
 
@@ -80,7 +80,7 @@
         <div class="px-6 pb-6 mt-auto">
           <div class="flex items-center justify-between text-sm text-gray-500">
             <div class="flex items-center">
-              <span class="text-orange-400">👤</span>
+              <%= icon_tag :user, class: "w-4 h-4 text-orange-400", alt: "ユーザー" %>
               <% if post.user %>
                 <%= link_to truncate(post.user.display_name, length: 12), posts_path(user_id: post.user.id),
                             class: "ml-1 hover:text-orange-600 hover:underline transition-colors" %>
@@ -90,11 +90,11 @@
             </div>
             <div class="flex items-center space-x-3">
               <div class="flex items-center">
-                <span class="text-red-400">🕐</span>
+                <%= icon_tag :clock, class: "text-red-400 w-4 h-4" %>
                 <span class="ml-1"><%= time_ago_in_words(post.created_at) %>前</span>
               </div>
               <div class="flex items-center">
-                <span class="text-red-400">💬</span>
+                <%= icon_tag :hukidashi, class: "text-red-400 w-4 h-4" %>
                 <span class="ml-1"><%= post.comments_count %></span>
               </div>
               <!-- いいねボタン -->
@@ -109,10 +109,8 @@
   <!-- 投稿がない場合 -->
   <% if @posts.empty? %>
     <div class="text-center py-12">
-      <div class="text-6xl mb-4">🍚</div>
       <% if @user.present? %>
         <h3 class="text-xl font-medium text-orange-600 mb-2"><%= @user.display_name %>さんの投稿はまだありません</h3>
-        <p class="text-orange-500 mb-6">まだ投稿されていません</p>
       <% else %>
         <h3 class="text-xl font-medium text-orange-600 mb-2">まだ投稿がありません</h3>
         <p class="text-orange-500 mb-6">最初の投稿をしてみませんか？</p>
@@ -152,10 +150,9 @@
 
     <!-- ドロップダウンメニュー -->
     <div data-floating-menu-target="menu" class="absolute bottom-16 right-0 hidden">
-      <div class="bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-48">
+      <div class="bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-40">
         <%= link_to new_post_path, class: "flex items-center px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200" do %>
-          <span class="text-xl mr-3">🍚</span>
-          <span class="font-medium">お供を投稿</span>
+          <span class="font-medium">お供だちを紹介</span>
         <% end %>
       </div>
     </div>
@@ -171,7 +168,7 @@
     <div data-floating-menu-target="menu" class="absolute bottom-16 right-0 hidden">
       <div class="bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-48">
         <%= link_to new_user_session_path, class: "flex items-center px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200" do %>
-          <span class="text-xl mr-3">🔐</span>
+          <%= icon_tag :lock, class: "w-6 h-6 mr-3", alt: "ロック" %>
           <span class="font-medium">ログインして投稿</span>
         <% end %>
       </div>

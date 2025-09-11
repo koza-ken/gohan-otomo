@@ -1,7 +1,7 @@
 <div class="min-h-screen bg-gradient-to-br from-orange-50 via-orange-100 to-yellow-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
   <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-orange-200">
     <div class="text-center mb-8">
-      <h2 class="text-2xl font-bold text-orange-600 mb-6">新しいお米のお供を投稿</h2>
+      <h2 class="text-2xl font-bold text-orange-600 mb-6">新しいお供だちを紹介</h2>
     </div>
 
     <%= form_with model: @post, local: true, html: { class: "space-y-5" } do |f| %>
@@ -11,11 +11,10 @@
         <%= f.label :title, "商品名", class: "block text-sm font-medium text-orange-700 mb-2" %>
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span class="text-orange-500">🍚</span>
+            <%# <span class="text-orange-500">🍚</span> %>
           </div>
-          <%= f.text_field :title, 
-                          class: "w-full pl-10 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200", 
-                          placeholder: "例：明太子、昆布佃煮、海苔の佃煮" %>
+          <%= f.text_field :title,
+                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200" %>
         </div>
       </div>
 
@@ -23,11 +22,10 @@
         <%= f.label :description, "おすすめポイント", class: "block text-sm font-medium text-orange-700 mb-2" %>
         <div class="relative">
           <div class="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
-            <span class="text-orange-500">⭐</span>
+            <%# <span class="text-orange-500">⭐</span> %>
           </div>
           <%= f.text_area :description, rows: 4,
-                          class: "w-full pl-10 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200", 
-                          placeholder: "どんな風に美味しいか、なぜおすすめなのかを教えてください" %>
+                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200" %>
         </div>
       </div>
 
@@ -35,10 +33,10 @@
         <%= f.label :link, "通販リンク（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span class="text-orange-500">🔗</span>
+            <%# <span class="text-orange-500">🔗</span> %>
           </div>
-          <%= f.url_field :link, 
-                          class: "w-full pl-10 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200", 
+          <%= f.url_field :link,
+                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
                           placeholder: "https://amazon.co.jp/..." %>
         </div>
       </div>
@@ -47,10 +45,10 @@
         <%= f.label :image, "画像をアップロード（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span class="text-orange-500">📷</span>
+            <%# <span class="text-orange-500">📷</span> %>
           </div>
-          <%= f.file_field :image, 
-                           class: "w-full pl-10 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
+          <%= f.file_field :image,
+                           class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
                            accept: "image/*",
                            data: {
                              "image-preview-target": "input",
@@ -59,14 +57,14 @@
         </div>
         <!-- 画像プレビュー表示 -->
         <div class="mt-3">
-          <img data-image-preview-target="preview" 
-               class="hidden max-w-xs rounded-lg border border-orange-200 shadow-sm" 
+          <img data-image-preview-target="preview"
+               class="hidden max-w-xs rounded-lg border border-orange-200 shadow-sm"
                alt="画像プレビュー">
         </div>
         <!-- ファイル制限の案内 -->
         <div class="mt-2">
           <p class="text-xs text-gray-500">
-            📝 JPEG、PNG、GIF、WebP形式で10MB以下のファイルをご利用ください
+            JPEG、PNG、GIF、WebP形式で10MB以下のファイルをご利用ください
           </p>
         </div>
       </div>
@@ -75,24 +73,24 @@
         <%= f.label :image_url, "画像URL（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
         <div class="relative">
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span class="text-orange-500">📸</span>
+            <%# <span class="text-orange-500">📸</span> %>
           </div>
-          <%= f.url_field :image_url, 
-                          class: "w-full pl-10 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200", 
+          <%= f.url_field :image_url,
+                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
                           placeholder: "https://...",
                           data: {
                             "image-preview-target": "urlInput",
                             "action": "input->image-preview#validateImageUrl"
                           } %>
         </div>
-        
+
         <!-- URL画像プレビュー -->
         <div class="mt-3">
-          <img data-image-preview-target="urlPreview" 
-               class="hidden max-w-xs rounded-lg border border-orange-200 shadow-sm" 
+          <img data-image-preview-target="urlPreview"
+               class="hidden max-w-xs rounded-lg border border-orange-200 shadow-sm"
                alt="URL画像プレビュー">
         </div>
-        
+
         <!-- URL検証状態表示 -->
         <div data-image-preview-target="urlStatus"></div>
       </div>

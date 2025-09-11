@@ -207,7 +207,7 @@ RSpec.describe "Posts", type: :request do
 
       it "投稿フォームが表示される" do
         get new_post_path
-        expect(response.body).to include("新しいお米のお供を投稿")
+        expect(response.body).to include("新しいお供だちを紹介")
         expect(response.body).to include("商品名")
         expect(response.body).to include("おすすめポイント")
       end

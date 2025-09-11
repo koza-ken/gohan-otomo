@@ -1,5 +1,5 @@
 <% content_for :title, @post.title %>
-<% content_for :og_title, "「#{@post.title}」- ご飯のお供" %>
+<% content_for :og_title, "「#{@post.title}」- お供だち" %>
 <% content_for :og_type, "article" %>
 <% content_for :og_url, request.original_url %>
 <% content_for :og_description, truncate(@post.description, length: 100) %>
@@ -38,17 +38,17 @@
                   <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"></path>
                 </svg>
               </button>
-              <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-100 opacity-0 invisible transition-all duration-300 transform translate-y-2 z-50"
+              <div class="absolute right-0 mt-2 w-24 bg-white rounded-lg shadow-xl border border-gray-100 opacity-0 invisible transition-all duration-300 transform translate-y-2 z-50"
                    data-dropdown-target="menu">
                 <div class="py-1">
                   <%= link_to edit_post_path(@post),
                       class: "flex items-center px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
-                    <span class="mr-2">✏️</span>編集
+                    <%= icon_tag :pen, class: "mr-2 w-4 h-4" %>編集
                   <% end %>
                   <%= link_to @post, method: :delete,
                       data: { turbo_confirm: "本当に削除しますか？" },
                       class: "flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition duration-200" do %>
-                    <span class="mr-2">🗑️</span>削除
+                    <%= icon_tag :gomibako, class: "mr-2 w-4 h-4" %>削除
                   <% end %>
                 </div>
               </div>
@@ -60,7 +60,7 @@
         <div class="mb-6 pb-4 border-b border-orange-100">
           <!-- 投稿者情報 -->
           <div class="flex items-center text-orange-500 mb-2">
-            👤
+            <%= icon_tag :user, class: "w-5 h-5", alt: "ユーザー" %>
             <% if @post.user %>
               <%= link_to truncate(@post.user.display_name, length: 18), posts_path(user_id: @post.user.id),
                           class: "ml-1 hover:text-orange-700 hover:underline transition-colors font-medium" %>
@@ -88,7 +88,7 @@
         <!-- おすすめポイント -->
         <div class="mb-6">
           <h3 class="text-lg font-semibold text-orange-600 mb-3 flex items-center">
-            ⭐ おすすめポイント
+            おすすめポイント
           </h3>
           <p class="text-gray-700 leading-relaxed"><%= simple_format(@post.description) %></p>
         </div>
@@ -97,7 +97,7 @@
         <% if @post.safe_link.present? %>
           <div class="mb-6 p-4 bg-orange-50 rounded-lg border border-orange-200">
             <h3 class="text-lg font-semibold text-orange-600 mb-2 flex items-center">
-              🔗 購入リンク
+              <%= icon_tag :clip, class: "inline-block w-5 h-5 mr-2" %>購入リンク
             </h3>
             <%# safe_linkメソッドでjavascript:やdata:スキームなどの危険なURLは既にフィルタリング済み %>
             <%= link_to "この商品を見る", @post.safe_link,
@@ -111,7 +111,7 @@
     <!-- コメント一覧 -->
     <div class="bg-white rounded-3xl shadow-lg border border-orange-200 p-8">
       <h3 class="text-xl font-semibold text-orange-600 mb-6 flex items-center">
-        💬 コメント（<%= @comments.count %>件）
+        <%= icon_tag :hukidashi, class: "inline-block w-5 h-5 mr-2" %>コメント（<%= @comments.count %>件）
       </h3>
 
       <!-- コメント投稿フォーム（ログイン時） -->
@@ -145,7 +145,7 @@
             <div class="flex items-start space-x-4">
               <div class="flex-shrink-0">
                 <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                  <span class="text-orange-500">👤</span>
+                  <%= icon_tag :user, class: "w-6 h-6 text-orange-500", alt: "ユーザー" %>
                 </div>
               </div>
               <div class="flex-1">
@@ -166,7 +166,9 @@
         <!-- コメントがない場合 -->
         <% if @comments.empty? %>
           <div class="text-center py-8">
-            <div class="text-4xl mb-3">💬</div>
+            <div class="mb-3">
+              <%= icon_tag :hukidashi, class: "w-12 h-12 text-gray-400 mx-auto" %>
+            </div>
             <p class="text-gray-500">まだコメントがありません</p>
           </div>
         <% end %>

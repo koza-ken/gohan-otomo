@@ -8,13 +8,14 @@
       <%= render "devise/shared/error_messages", resource: resource %>
 
       <div>
-        <%= f.label :display_name, "表示名", class: "block text-sm font-medium text-orange-700 mb-2" %>
+        <%= f.label :display_name, class: "flex items-center text-sm font-medium text-orange-700 mb-2" do %>
+          <%= icon_tag :user, class: "w-4 h-4 mr-2", alt: "ユーザー" %>
+          表示名
+        <% end %>
         <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span class="text-orange-500">👤</span>
-          </div>
-          <%= f.text_field :display_name, autofocus: true, 
-                          class: "w-full pl-10 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200", 
+
+          <%= f.text_field :display_name, autofocus: true,
+                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
                           placeholder: "みんなに表示される名前" %>
         </div>
       </div>
@@ -22,11 +23,9 @@
       <div>
         <%= f.label :email, "メールアドレス", class: "block text-sm font-medium text-orange-700 mb-2" %>
         <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span class="text-orange-500">📧</span>
-          </div>
-          <%= f.email_field :email, autocomplete: "email", 
-                            class: "w-full pl-10 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200", 
+
+          <%= f.email_field :email, autocomplete: "email",
+                            class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
                             placeholder: "example@email.com" %>
         </div>
       </div>
@@ -36,30 +35,40 @@
         <% if @minimum_password_length %>
           <p class="text-xs text-orange-600 mb-2">(<%= @minimum_password_length %>文字以上)</p>
         <% end %>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span class="text-orange-500">🔒</span>
-          </div>
-          <%= f.password_field :password, autocomplete: "new-password", 
-                              class: "w-full pl-10 pr-10 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
-                              placeholder: "パスワードを入力" %>
+        <div class="relative" data-controller="password-toggle">
+
+          <%= f.password_field :password, autocomplete: "new-password",
+                              class: "w-full pl-4 pr-10 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
+                              placeholder: "パスワードを入力",
+                              data: { password_toggle_target: "password" } %>
           <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-            <span class="text-orange-400 cursor-pointer">👁</span>
+            <%= image_tag "/icons/eye_show.svg",
+                      alt: "パスワード表示",
+                      class: "text-orange-400 cursor-pointer w-5 h-5",
+                      data: {
+                        password_toggle_target: "icon",
+                        action: "click->password-toggle#toggle"
+                      } %>
           </div>
         </div>
       </div>
 
       <div>
         <%= f.label :password_confirmation, "パスワード確認", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span class="text-orange-500">🔒</span>
-          </div>
-          <%= f.password_field :password_confirmation, autocomplete: "new-password", 
-                              class: "w-full pl-10 pr-10 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
-                              placeholder: "もう一度パスワードを入力" %>
+        <div class="relative" data-controller="password-toggle">
+
+          <%= f.password_field :password_confirmation, autocomplete: "new-password",
+                              class: "w-full pl-4 pr-10 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
+                              placeholder: "もう一度パスワードを入力",
+                              data: { password_toggle_target: "password" } %>
           <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-            <span class="text-orange-400 cursor-pointer">👁</span>
+            <%= image_tag "/icons/eye_show.svg",
+                      alt: "パスワード表示",
+                      class: "text-orange-400 cursor-pointer w-5 h-5",
+                      data: {
+                        password_toggle_target: "icon",
+                        action: "click->password-toggle#toggle"
+                      } %>
           </div>
         </div>
       </div>
@@ -71,9 +80,9 @@
 
     <div class="mt-8 text-center">
       <p class="text-orange-600 mb-4">既にアカウントをお持ちの方</p>
-      <%= link_to "ログイン", new_session_path(resource_name), 
+      <%= link_to "ログイン", new_session_path(resource_name),
                   class: "w-full block bg-white text-orange-600 py-3 px-6 rounded-lg border border-orange-300 hover:bg-orange-50 transition duration-200 font-medium" %>
-      
+
       <div class="mt-4">
         <%= link_to "戻る", root_path, class: "text-orange-500 hover:text-orange-700 underline text-sm" %>
       </div>
