@@ -27,8 +27,8 @@ module ApplicationHelper
        fallback_image.is_a?(ActiveStorage::VariantWithRecord)
       # Active Storage画像の場合：picture要素でWebP + 従来形式
       content_tag(:picture) do
-        tag(:source, srcset: url_for(webp_image), type: "image/webp") +
-        tag(:source, srcset: url_for(fallback_image), type: "image/jpeg") +
+        tag.source(srcset: url_for(webp_image), type: "image/webp") +
+        tag.source(srcset: url_for(fallback_image), type: "image/jpeg") +
         image_tag(fallback_image, alt: alt_text, class: css_class)
       end
     elsif fallback_image.present?
@@ -151,11 +151,9 @@ module ApplicationHelper
 
   # WebP対応ブラウザかどうかを判定
   def supports_webp?
-    return false unless request.present?
+    return false if request.blank?
 
-    accept_header = request.headers['HTTP_ACCEPT'] || ''
-    accept_header.include?('image/webp')
+    accept_header = request.headers["HTTP_ACCEPT"] || ""
+    accept_header.include?("image/webp")
   end
-
-
 end
