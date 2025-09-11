@@ -2,14 +2,14 @@
   <!-- ヘッダー部分 -->
   <div class="text-center mb-8">
     <% if @user.present? %>
-      <h1 class="text-3xl font-bold text-orange-600 mb-4"><%= @user.display_name %>さんのお供</h1>
+      <h1 class="text-3xl font-bold text-orange-600 mb-4"><%= @user.display_name %>さんのお供だち</h1>
 
       <div class="mt-4">
         <%= link_to "プロフィール", user_profile_path(@user),
                     class: "bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-medium transition duration-200 shadow-lg inline-flex items-center mb-4" %>
       </div>
     <% else %>
-      <h1 class="text-3xl font-bold text-orange-600 mb-4">みんなのお供</h1>
+      <h1 class="text-3xl font-bold text-orange-600 mb-4">みんなのお供だち</h1>
       <%# <p class="text-orange-700">みんなのおすすめお米のお供を見つけよう！</p> %>
     <% end %>
 
@@ -109,10 +109,8 @@
   <!-- 投稿がない場合 -->
   <% if @posts.empty? %>
     <div class="text-center py-12">
-      <div class="text-6xl mb-4">🍚</div>
       <% if @user.present? %>
         <h3 class="text-xl font-medium text-orange-600 mb-2"><%= @user.display_name %>さんの投稿はまだありません</h3>
-        <p class="text-orange-500 mb-6">まだ投稿されていません</p>
       <% else %>
         <h3 class="text-xl font-medium text-orange-600 mb-2">まだ投稿がありません</h3>
         <p class="text-orange-500 mb-6">最初の投稿をしてみませんか？</p>
@@ -155,7 +153,7 @@
       <div class="bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-48">
         <%= link_to new_post_path, class: "flex items-center px-4 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-colors duration-200" do %>
           <span class="text-xl mr-3">🍚</span>
-          <span class="font-medium">お供を投稿</span>
+          <span class="font-medium">お供だちを紹介</span>
         <% end %>
       </div>
     </div>

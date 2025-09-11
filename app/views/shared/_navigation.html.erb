@@ -4,12 +4,12 @@
     <div class="hidden md:flex items-center space-x-4">
       <%= link_to posts_path,
           class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-lg font-medium" do %>
-          みんなのお供
+          みんなのお供だち
       <% end %>
 
       <%= link_to new_post_path,
           class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-lg font-medium" do %>
-          お供の投稿
+          お供だちを紹介
       <% end %>
 
       <%= link_to posts_path(user_id: current_user.id),
@@ -34,7 +34,7 @@
       <!-- みんなのお供リンク -->
       <%= link_to posts_path,
           class: "text-white hover:text-orange-100 transition duration-300 text-md font-medium mr-4" do %>
-          みんなのお供
+          みんなのお供だち
       <% end %>
 
       <div class="relative" data-controller="dropdown">
@@ -55,7 +55,7 @@
               class: "flex items-center px-2 py-1 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
             <%# <span class="mr-3 text-lg">✍️</span> %>
             <div>
-              <div class="text-base font-medium">新しいお供</div>
+              <div class="text-base font-medium">新しいお供だち</div>
             </div>
           <% end %>
 
@@ -105,7 +105,7 @@
     <!-- みんなのお供リンク -->
     <%= link_to posts_path,
         class: "text-white hover:text-orange-100 transition duration-300 text-lg font-medium mr-10" do %>
-        <span class="hidden sm:inline">みんなのお供</span>
+        <span class="hidden sm:inline">みんなのお供だち</span>
     <% end %>
 
     <%= link_to "ログイン", new_user_session_path,
