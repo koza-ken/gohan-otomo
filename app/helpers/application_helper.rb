@@ -3,14 +3,56 @@ module ApplicationHelper
   def icon_tag(icon_name, options = {})
     css_class = options[:class] || "w-5 h-5"
     alt_text = options[:alt] || icon_name.to_s
-    
+
     # SVGファイルとして表示
-    image_tag("/icons/#{icon_name}.svg", 
-              alt: alt_text, 
+    image_tag("/icons/#{icon_name}.svg",
+              alt: alt_text,
               class: css_class)
   end
 
-  # 投稿画像を表示するヘルパーメソッド（WebP対応統合版）
+  # 投稿画像を表示するヘルパーメソッド（picture要素 + WebP対応）
+  def picture_post_image_tag(post, options = {})
+    # デフォルト値の設定
+    css_class = options[:class] || ""
+    alt_text = options[:alt] || post.title
+    size = options[:size] || :medium
+
+    # Modelのdisplay_imageメソッドで、WebP版と従来版の画像を取得
+    webp_image = post.display_image(size, true)   # WebP版
+    fallback_image = post.display_image(size, false) # 従来版（JPEG/PNG）
+
+    # 条件分岐によるHTML生成
+    if webp_image.present? && fallback_image.present? &&
+       webp_image.is_a?(ActiveStorage::VariantWithRecord) &&
+       fallback_image.is_a?(ActiveStorage::VariantWithRecord)
+      # Active Storage画像の場合：picture要素でWebP + 従来形式
+      content_tag(:picture) do
+        tag(:source, srcset: url_for(webp_image), type: "image/webp") +
+        tag(:source, srcset: url_for(fallback_image), type: "image/jpeg") +
+        image_tag(fallback_image, alt: alt_text, class: css_class)
+      end
+    elsif fallback_image.present?
+      # 外部URL画像またはプレースホルダーの場合：通常のimg要素
+      if fallback_image.is_a?(ActiveStorage::VariantWithRecord)
+        image_tag(fallback_image, alt: alt_text, class: css_class)
+      else
+        # 外部URL画像（Stimulusエラーハンドリング付き）
+        image_tag(fallback_image,
+                  alt: alt_text,
+                  class: css_class,
+                  data: {
+                    controller: "image-preview",
+                    size: size,
+                    action: "error->image-preview#handleImageError"
+                  })
+      end
+    else
+      # プレースホルダーを表示
+      placeholder_image_tag(size, css_class)
+    end
+  end
+
+  # 投稿画像を表示するヘルパーメソッド（WebP対応統合版・旧実装）
   def post_image_tag(post, options = {})
     # デフォルト値の設定
     css_class = options[:class] || ""
@@ -49,7 +91,7 @@ module ApplicationHelper
   def placeholder_image_tag(size, css_class)
     # WebP対応ブラウザなら軽量なWebP版を使用
     image_path = supports_webp? ? "/no_image.webp" : "/no_image.png"
-    
+
     content_tag(:div,
                 image_tag(image_path,
                           alt: "画像がありません",
@@ -110,7 +152,7 @@ module ApplicationHelper
   # WebP対応ブラウザかどうかを判定
   def supports_webp?
     return false unless request.present?
-    
+
     accept_header = request.headers['HTTP_ACCEPT'] || ''
     accept_header.include?('image/webp')
   end
