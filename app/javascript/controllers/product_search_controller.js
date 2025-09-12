@@ -92,10 +92,10 @@ export default class extends Controller {
            data-product-search-product-title="${this.escapeHtml(product.title)}"
            data-product-search-price="${product.price}">
         ${product.image_url ?
-          `<div class="relative w-full h-24 bg-gray-100 rounded mb-2 flex items-center justify-center">
+          `<div class="relative w-full h-32 lg:h-40 bg-gray-100 rounded mb-2 flex items-center justify-center">
              <img src="/api/rakuten/proxy_image?url=${encodeURIComponent(product.image_url)}"
                   alt="${this.escapeHtml(product.title)}"
-                  class="w-full h-24 object-cover rounded absolute inset-0"
+                  class="w-full h-32 lg:h-40 object-cover rounded absolute inset-0"
                   loading="lazy"
                   style="display: block;"
                   onload="this.nextElementSibling.style.display='none';"
@@ -107,7 +107,7 @@ export default class extends Controller {
                </div>
              </div>
            </div>` :
-          `<div class="bg-gray-100 h-24 flex items-center justify-center rounded mb-2 text-gray-500 text-xs">
+          `<div class="bg-gray-100 h-32 lg:h-40 flex items-center justify-center rounded mb-2 text-gray-500 text-xs">
              <div class="text-center">
                <div class="mb-1">📷</div>
                <div>画像なし</div>
