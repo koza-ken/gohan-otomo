@@ -59,21 +59,23 @@ class RakutenProductService
     }
   end
 
-  # 商品の最初の画像URLを取得（実際の楽天API構造に対応）
+  # 商品の最初の画像URLを取得（高画質優先・URLパラメータ最適化）
   #
   # @param item [RakutenWebService::Ichiba::Item] 楽天商品オブジェクト
   # @return [String, nil] 画像URL、または nil
   def self.get_first_image_url(item)
-    # 方法1: medium_image_urls から取得（文字列配列）
+    # 方法1: medium_image_urls から取得してパラメータ最適化（400x400px）
     if item.medium_image_urls&.any?
       image_url = item.medium_image_urls.first
       if image_url.is_a?(String) && image_url.present?
-        Rails.logger.debug "✅ 画像URL取得成功: #{item.name}"
-        return image_url
+        # URLパラメータを128x128から400x400に変更して高画質化
+        high_quality_url = image_url.gsub(/_ex=\d+x\d+/, '_ex=400x400')
+        Rails.logger.debug "✅ 画像URL取得成功（高画質化）: #{item.name} → 400x400"
+        return high_quality_url
       end
     end
     
-    # 方法2: small_image_urls から取得（フォールバック）
+    # 方法3: small_image_urls から取得（低画質 64x64px）
     if item.respond_to?(:small_image_urls) && item.small_image_urls&.any?
       image_url = item.small_image_urls.first
       if image_url.is_a?(String) && image_url.present?
@@ -82,7 +84,7 @@ class RakutenProductService
       end
     end
     
-    # 最終フォールバック
+    # 最終フォールバック: 直接image_urlプロパティ
     if item.respond_to?(:image_url) && item.image_url.present?
       Rails.logger.debug "✅ 画像URL取得成功（直接）: #{item.name}"
       return item.image_url
