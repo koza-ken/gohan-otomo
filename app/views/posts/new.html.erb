@@ -18,6 +18,44 @@
         </div>
       </div>
 
+      <!-- 楽天商品検索セクション -->
+      <div class="border border-orange-200 rounded-lg p-4 bg-orange-50" data-controller="product-search">
+        <h3 class="text-lg font-medium text-orange-600 mb-3 flex items-center">
+          商品画像を自動取得
+        </h3>
+
+        <p class="text-sm text-orange-600 mb-3">
+          商品名を入力して「検索」を押すと、楽天から商品画像を取得できます
+        </p>
+
+        <div class="flex gap-2 mb-3">
+          <button type="button"
+                  data-action="click->product-search#searchProducts"
+                  class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center">
+            <span data-product-search-target="titlePreview">商品名</span>で画像を検索
+          </button>
+
+          <button type="button"
+                  data-action="click->product-search#clearResults"
+                  class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+            クリア
+          </button>
+        </div>
+
+        <!-- 検索状態表示 -->
+        <div data-product-search-target="status" class="hidden mb-3">
+          <!-- ローディング・エラー・成功メッセージがここに表示される -->
+        </div>
+
+        <!-- 商品候補表示エリア -->
+        <div data-product-search-target="candidates" class="hidden">
+          <h4 class="font-medium text-orange-600 mb-3">📷 見つかった商品画像（クリックで選択）</h4>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3" data-product-search-target="candidatesList">
+            <!-- 商品候補がここに動的表示される -->
+          </div>
+        </div>
+      </div>
+
       <div>
         <%= f.label :description, "おすすめポイント", class: "block text-sm font-medium text-orange-700 mb-2" %>
         <div class="relative">
