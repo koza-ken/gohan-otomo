@@ -17,7 +17,7 @@ class RakutenProductService
 
     begin
       Rails.logger.info "🛒 楽天API検索開始: #{title}"
-      
+
       # 楽天商品検索API呼び出し
       items = RakutenWebService::Ichiba::Item.search(
         keyword: title,
@@ -69,27 +69,27 @@ class RakutenProductService
       image_url = item.medium_image_urls.first
       if image_url.is_a?(String) && image_url.present?
         # URLパラメータを128x128から400x400に変更して高画質化
-        high_quality_url = image_url.gsub(/_ex=\d+x\d+/, '_ex=400x400')
-        Rails.logger.debug "✅ 画像URL取得成功（高画質化）: #{item.name} → 400x400"
+        high_quality_url = image_url.gsub(/_ex=\d+x\d+/, "_ex=400x400")
+        Rails.logger.debug { "✅ 画像URL取得成功（高画質化）: #{item.name} → 400x400" }
         return high_quality_url
       end
     end
-    
+
     # 方法3: small_image_urls から取得（低画質 64x64px）
     if item.respond_to?(:small_image_urls) && item.small_image_urls&.any?
       image_url = item.small_image_urls.first
       if image_url.is_a?(String) && image_url.present?
-        Rails.logger.debug "✅ 画像URL取得成功（small）: #{item.name}"
+        Rails.logger.debug { "✅ 画像URL取得成功（small）: #{item.name}" }
         return image_url
       end
     end
-    
+
     # 最終フォールバック: 直接image_urlプロパティ
     if item.respond_to?(:image_url) && item.image_url.present?
-      Rails.logger.debug "✅ 画像URL取得成功（直接）: #{item.name}"
+      Rails.logger.debug { "✅ 画像URL取得成功（直接）: #{item.name}" }
       return item.image_url
     end
-    
+
     Rails.logger.warn "⚠️ 画像URL取得失敗: #{item.name}"
     nil
   end
@@ -100,10 +100,10 @@ class RakutenProductService
   # @return [String, nil] プレーンテキスト
   def self.strip_html(html)
     return nil if html.blank?
-    
+
     # HTMLタグを除去し、連続した空白を単一空白に変換
-    html.gsub(/<\/?[^>]*>/, '')
-        .gsub(/\s+/, ' ')
+    html.gsub(/<\/?[^>]*>/, "")
+        .gsub(/\s+/, " ")
         .strip
   end
 end

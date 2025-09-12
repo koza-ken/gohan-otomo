@@ -5,7 +5,7 @@ class Post < ApplicationRecord
 
   # Active Storage: 画像アップロード機能
   has_one_attached :image
-  
+
   # 仮想属性: 画像選択方法
   attr_accessor :image_source
 
@@ -96,9 +96,9 @@ class Post < ApplicationRecord
     # image_sourceが明示的に設定されている場合は、それに従う
     if respond_to?(:image_source) && image_source.present?
       case image_source
-      when 'url'
+      when "url"
         return image_url if image_url.present?
-      when 'file'
+      when "file"
         if image.attached?
           return get_file_image(size, webp_support)
         end
@@ -107,7 +107,7 @@ class Post < ApplicationRecord
 
     # フォールバック: URL画像を優先、次にファイル画像
     return image_url if image_url.present?
-    
+
     if image.attached?
       return get_file_image(size, webp_support)
     end
@@ -127,9 +127,9 @@ class Post < ApplicationRecord
   def get_file_image(size, webp_support)
     case size
     when :thumbnail
-      return webp_support ? thumbnail_image_webp : thumbnail_image
+      webp_support ? thumbnail_image_webp : thumbnail_image
     when :medium, :large
-      return webp_support ? medium_image_webp : medium_image
+      webp_support ? medium_image_webp : medium_image
     end
   end
 
