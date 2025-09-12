@@ -22,3 +22,6 @@ application.register("password-toggle", PasswordToggleController)
 import ProductSearchController from "./product_search_controller"
 application.register("product-search", ProductSearchController)
 
+import UnifiedPreviewController from "./unified_preview_controller"
+application.register("unified-preview", UnifiedPreviewController)
+
