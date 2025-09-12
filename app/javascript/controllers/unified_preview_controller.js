@@ -4,8 +4,8 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   // 指定した要素を参照する
   static targets = [
-    "activePreviewArea", "activePreviewImage", "activeImageSource", "activeImageInfo",
-    "placeholder", "urlInput", "fileInput", "urlSection", "fileSection", "imageSourceRadio", "fileLabel"
+    "activePreviewArea", "activePreviewImage", "activeImageInfo",
+    "placeholder", "urlInput", "fileInput", "urlSection", "fileSection", "imageSourceRadio", "fileLabel", "clearButton"
   ]
 
   connect() {
@@ -187,8 +187,6 @@ export default class extends Controller {
   // URL画像プレビューを表示
   showUrlPreview(url, info) {
     this.activePreviewImageTarget.src = url
-    this.activeImageSourceTarget.textContent = 'URL画像'
-    this.activeImageSourceTarget.className = 'text-xs px-2 py-1 rounded-full bg-blue-200 text-blue-700'
     this.activeImageInfoTarget.textContent = info
     this.showActivePreview()
   }
@@ -196,8 +194,6 @@ export default class extends Controller {
   // ファイル画像プレビューを表示
   showFilePreview(dataUrl, info) {
     this.activePreviewImageTarget.src = dataUrl
-    this.activeImageSourceTarget.textContent = 'ファイル画像'
-    this.activeImageSourceTarget.className = 'text-xs px-2 py-1 rounded-full bg-green-200 text-green-700'
     this.activeImageInfoTarget.textContent = info
     this.showActivePreview()
   }
@@ -206,42 +202,44 @@ export default class extends Controller {
   showActivePreview() {
     this.activePreviewAreaTarget.classList.remove('hidden')
     this.placeholderTarget.classList.add('hidden')
+    // 削除ボタンも表示
+    if (this.hasClearButtonTarget) {
+      this.clearButtonTarget.classList.remove('hidden')
+    }
   }
 
   // プレースホルダーを表示
   showPlaceholder() {
     this.activePreviewAreaTarget.classList.add('hidden')
     this.placeholderTarget.classList.remove('hidden')
+    // 削除ボタンも隠す
+    if (this.hasClearButtonTarget) {
+      this.clearButtonTarget.classList.add('hidden')
+    }
   }
 
   // URLローディング表示
   showUrlLoading(message) {
     this.activeImageInfoTarget.textContent = message
-    this.activeImageSourceTarget.textContent = 'URL画像読み込み中'
-    this.activeImageSourceTarget.className = 'text-xs px-2 py-1 rounded-full bg-orange-200 text-orange-700'
     this.showActivePreview()
   }
 
   // ファイルローディング表示
   showFileLoading(message) {
     this.activeImageInfoTarget.textContent = message
-    this.activeImageSourceTarget.textContent = 'ファイル読み込み中'
-    this.activeImageSourceTarget.className = 'text-xs px-2 py-1 rounded-full bg-orange-200 text-orange-700'
     this.showActivePreview()
   }
 
   // URLエラー表示
   showUrlError(message) {
     this.activeImageInfoTarget.textContent = message
-    this.activeImageSourceTarget.textContent = 'URL画像エラー'
-    this.activeImageSourceTarget.className = 'text-xs px-2 py-1 rounded-full bg-red-200 text-red-700'
+    this.showActivePreview()
   }
 
   // ファイルエラー表示
   showFileError(message) {
     this.activeImageInfoTarget.textContent = message
-    this.activeImageSourceTarget.textContent = 'ファイルエラー'
-    this.activeImageSourceTarget.className = 'text-xs px-2 py-1 rounded-full bg-red-200 text-red-700'
+    this.showActivePreview()
   }
 
   // アクティブ画像削除

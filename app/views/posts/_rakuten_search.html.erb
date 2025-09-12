@@ -20,24 +20,26 @@
     商品名を入力して「検索」を押すと、楽天市場の商品画像を取得できます
   </p>
 
-  <div class="flex gap-2 mb-<%= is_desktop ? '4' : '3' %>">
-    <button type="button"
-            data-action="click->product-search#searchProducts"
-            class="bg-orange-500 hover:bg-orange-600 text-white <%= button_size %> rounded-lg text-sm font-medium transition flex items-center">
-      検索
-    </button>
+  <div class="flex gap-2">
+    <div class="flex gap-2 mb-<%= is_desktop ? '4' : '3' %>">
+      <button type="button"
+              data-action="click->product-search#searchProducts"
+              class="bg-orange-500 hover:bg-orange-600 text-white <%= button_size %> rounded-lg text-sm font-medium transition flex items-center">
+        検索
+      </button>
 
-    <button type="button"
-            data-action="click->product-search#clearResults"
-            class="bg-gray-400 hover:bg-gray-500 text-white <%= button_size %> rounded-lg text-sm font-medium transition">
-      クリア
-    </button>
+      <button type="button"
+              data-action="click->product-search#clearResults"
+              class="bg-gray-400 hover:bg-gray-500 text-white <%= button_size %> rounded-lg text-sm font-medium transition">
+        クリア
+      </button>
+    </div>
+    <!-- 検索状態表示 -->
+    <div data-product-search-target="status" class="hidden <%= status_margin %>">
+      <!-- ローディング・エラー・成功メッセージがここに表示される -->
+    </div>
   </div>
 
-  <!-- 検索状態表示 -->
-  <div data-product-search-target="status" class="hidden <%= status_margin %>">
-    <!-- ローディング・エラー・成功メッセージがここに表示される -->
-  </div>
 
   <!-- 商品候補表示エリア -->
   <div data-product-search-target="candidates" class="hidden">

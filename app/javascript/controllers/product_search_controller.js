@@ -175,7 +175,7 @@ export default class extends Controller {
     selectedCard.classList.add('border-green-500', 'bg-green-50')
 
     // 選択成功メッセージ
-    this.showMessage(`「${this.truncateText(productTitle, 25)}」の画像を設定しました`, 'success')
+    this.showMessage('画像を設定しました', 'success')
   }
 
   // 検索結果をクリア（統合版）
@@ -200,8 +200,8 @@ export default class extends Controller {
   // エラーメッセージ表示
   showError(message) {
     this.showStatus(`
-      <div class="bg-red-50 border border-red-200 rounded-lg p-3">
-        <p class="text-red-600 text-sm">⚠️ ${message}</p>
+      <div class="bg-red-50 border border-red-200 rounded-lg p-2">
+        <p class="text-red-600 text-sm">${message}</p>
       </div>
     `)
   }
@@ -209,16 +209,16 @@ export default class extends Controller {
   // 情報メッセージ表示
   showMessage(message, type = 'info') {
     const colors = {
-      success: 'bg-green-50 border-green-200 text-green-600',
-      info: 'bg-blue-50 border-blue-200 text-blue-600',
-      warning: 'bg-yellow-50 border-yellow-200 text-yellow-600'
+      success: 'border-green-200 text-green-700',
+      info: 'border-blue-200 text-blue-600',
+      warning: 'border-yellow-200 text-yellow-600'
     }
 
     const colorClass = colors[type] || colors.info
 
     this.showStatus(`
-      <div class="${colorClass} border rounded-lg p-3">
-        <p class="text-sm">✅ ${message}</p>
+      <div class="${colorClass} border rounded-lg p-2">
+        <p class="text-sm">${message}</p>
       </div>
     `)
 
