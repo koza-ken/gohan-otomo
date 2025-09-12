@@ -192,7 +192,7 @@ export default class extends Controller {
     this.showStatus(`
       <div class="flex items-center space-x-2 text-orange-600">
         <div class="animate-spin inline-block w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full"></div>
-        <span>商品を検索中...</span>
+        <span>検索中...</span>
       </div>
     `)
   }
