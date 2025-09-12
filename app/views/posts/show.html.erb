@@ -45,8 +45,8 @@
                       class: "flex items-center px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
                     <%= icon_tag :pen, class: "mr-2 w-4 h-4" %>編集
                   <% end %>
-                  <%= link_to @post, method: :delete,
-                      data: { turbo_confirm: "本当に削除しますか？" },
+                  <%= link_to post_path(@post),
+                      data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" },
                       class: "flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition duration-200" do %>
                     <%= icon_tag :gomibako, class: "mr-2 w-4 h-4" %>削除
                   <% end %>
