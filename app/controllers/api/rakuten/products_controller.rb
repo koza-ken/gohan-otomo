@@ -70,6 +70,63 @@ class Api::Rakuten::ProductsController < ApplicationController
     end
   end
   
+  # 楽天画像のCORSエラーを回避するためのプロキシエンドポイント
+  #
+  # GET /api/rakuten/proxy_image?url=https://...
+  def proxy_image
+    image_url = params[:url]
+    
+    # バリデーション
+    if image_url.blank?
+      render json: { error: '画像URLが指定されていません' }, status: :bad_request
+      return
+    end
+    
+    # 楽天ドメインのみ許可（セキュリティ対策）
+    unless image_url.match?(%r{^https://thumbnail\.image\.rakuten\.co\.jp/})
+      render json: { error: '許可されていない画像URLです' }, status: :forbidden
+      return
+    end
+    
+    begin
+      Rails.logger.debug "🖼️ 画像プロキシ要求: #{image_url}"
+      
+      # 楽天サーバーから画像を取得
+      require 'net/http'
+      require 'uri'
+      
+      uri = URI.parse(image_url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.open_timeout = 10
+      http.read_timeout = 10
+      
+      request = Net::HTTP::Get.new(uri.request_uri)
+      # リファラーを楽天ドメインに設定
+      request['Referer'] = 'https://www.rakuten.co.jp/'
+      request['User-Agent'] = 'Mozilla/5.0 (compatible; RakutenImageProxy/1.0)'
+      
+      response = http.request(request)
+      
+      if response.code == '200'
+        Rails.logger.debug "✅ 画像プロキシ成功: #{response.content_type}, #{response.body.length}bytes"
+        
+        # 画像データをそのまま返す
+        send_data response.body, 
+                  type: response.content_type || 'image/jpeg',
+                  disposition: 'inline',
+                  filename: 'rakuten_image.jpg'
+      else
+        Rails.logger.warn "⚠️ 画像プロキシ失敗: #{response.code} #{response.message}"
+        head :not_found
+      end
+      
+    rescue => e
+      Rails.logger.error "❌ 画像プロキシエラー: #{e.message}"
+      head :internal_server_error
+    end
+  end
+  
   private
   
   # API専用のエラーハンドリング
