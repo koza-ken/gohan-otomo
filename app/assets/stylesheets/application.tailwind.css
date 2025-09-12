@@ -1,3 +1,18 @@
 @import "tailwindcss";
 @import "./rice_theme.css";
 
+/* はんなり明朝フォントを読み込み */
+@font-face {
+  font-family: 'Hannari';
+  src: url('/assets/HannariMincho-Regular.otf') format('otf');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Tailwind の utilities で使えるようにする */
+@layer base {
+  .font-hannari {
+    font-family: 'Hannari', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+  }
+}
