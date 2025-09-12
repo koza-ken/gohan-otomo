@@ -25,8 +25,8 @@
               <%= picture_post_image_tag(@post, size: :medium, class: "w-full h-full object-cover") %>
             <% else %>
               <picture class="w-full h-full flex items-center justify-center">
-                <source srcset="<%= asset_path('no_image.webp') %>" type="image/webp">
-                <img src="<%= asset_path('no_image.png') %>" alt="画像なし" class="w-full h-full object-cover">
+                <source srcset="/no_image.webp" type="image/webp">
+                <img src="/no_image.png" alt="画像なし" class="w-full h-full object-cover">
               </picture>
             <% end %>
           </div>

@@ -7,7 +7,7 @@ class Comment < ApplicationRecord
   # 特定のユーザーがこのコメントを削除できるかチェック
   def deletable_by?(user)
     return false unless user
-    
+
     # コメント作成者本人のみ削除可能
     self.user == user
   end
@@ -15,7 +15,7 @@ class Comment < ApplicationRecord
   # 相対的な投稿時間を表示（例: "3分前", "2時間前"）
   def time_ago_in_words_japanese
     time_diff = Time.current - created_at
-    
+
     case time_diff
     when 0..59
       "#{time_diff.to_i}秒前"

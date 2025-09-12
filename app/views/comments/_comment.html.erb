@@ -18,14 +18,14 @@
 
     <% if comment.deletable_by?(current_user) %>
       <%= link_to post_comment_path(comment.post, comment),
-          method: :delete,
           data: {
             confirm: "このコメントを削除しますか？",
             turbo_method: :delete
           },
           class: "text-gray-400 hover:text-red-500 transition duration-200 text-sm",
-          title: "コメントを削除" %>
-      <%= icon_tag :gomibako, class: "inline-block w-7 h-7 mr-2" %>
+          title: "コメントを削除" do %>
+        <%= icon_tag :gomibako, class: "inline-block w-7 h-7" %>
+      <% end %>
     <% end %>
   </div>
 
