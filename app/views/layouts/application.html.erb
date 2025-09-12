@@ -14,7 +14,7 @@
     <meta property="og:image" content="<%= content_for(:og_image) || "#{request.base_url}/ogp.png" %>">
     <meta property="og:description" content="<%= content_for(:og_description) || 'ご飯のお供を投稿・共有できるアプリです' %>">
     <meta property="og:site_name" content="お供だち">
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@gohan_otomo">
@@ -32,7 +32,7 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
   </head>
 
-  <body class="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+  <body class="min-h-screen bg-amber-50">
     <%= render "shared/header" %>
     <%= render "shared/flash_messages" %>
 
