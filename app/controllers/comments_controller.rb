@@ -11,21 +11,10 @@ class CommentsController < ApplicationController
 
     respond_to do |format|
       if @comment.save
-        format.turbo_stream do
-          render turbo_stream: [
-            # 新しいコメントをリストの先頭に追加
-            turbo_stream.prepend("comments_list", partial: "comments/comment", locals: { comment: @comment }),
-            # フォームをリセット
-            turbo_stream.replace("comment_form", partial: "comments/form", locals: { post: @post, comment: Comment.new }),
-            # コメント数を更新
-            turbo_stream.replace("comments_count", @post.comments.count)
-          ]
-        end
+        format.turbo_stream  # create.turbo_stream.erb を使用
         format.html { redirect_to @post, notice: 'コメントを投稿しました。' }
       else
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace("comment_form", partial: "comments/form", locals: { post: @post, comment: @comment })
-        end
+        format.turbo_stream  # エラー用のレスポンス
         format.html { redirect_to @post, alert: 'コメントの投稿に失敗しました。' }
       end
     end
@@ -36,14 +25,7 @@ class CommentsController < ApplicationController
     @comment.destroy
 
     respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: [
-          # コメントを削除
-          turbo_stream.remove("comment_#{@comment.id}"),
-          # コメント数を更新
-          turbo_stream.replace("comments_count", @post.comments.count)
-        ]
-      end
+      format.turbo_stream  # destroy.turbo_stream.erb を使用
       format.html { redirect_to @post, notice: 'コメントを削除しました。' }
     end
   end
