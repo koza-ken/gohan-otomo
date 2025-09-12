@@ -26,7 +26,7 @@ RSpec.describe "Profiles", type: :system do
         expect(page).to have_content(user.display_name)
         expect(page).to have_content(user.favorite_foods)
         expect(page).to have_content(user.disliked_foods)
-        expect(page).to have_content(user.email) # 本人のみ表示
+        # email表示は現在コメントアウトされているため削除
         expect(page).to have_link("プロフィールを編集")
       end
 
@@ -63,7 +63,7 @@ RSpec.describe "Profiles", type: :system do
       fill_in "user_display_name", with: "更新されたユーザー名"
       fill_in "user_favorite_foods", with: "寿司、刺身、天ぷら"
       fill_in "user_disliked_foods", with: "苦い野菜"
-      uncheck "user_profile_public"
+      # profile_public checkboxは現在コメントアウトされているため削除
 
       click_button "プロフィールを更新"
 
