@@ -15,4 +15,12 @@ Rails.application.routes.draw do
   resources :users, only: [] do
     resource :profile, only: [:show, :edit, :update]
   end
+  
+  # API エンドポイント
+  namespace :api do
+    namespace :rakuten do
+      post 'search_products', to: 'products#search_products'
+      get 'proxy_image', to: 'products#proxy_image'
+    end
+  end
 end

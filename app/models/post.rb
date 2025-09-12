@@ -6,6 +6,9 @@ class Post < ApplicationRecord
   # Active Storage: 画像アップロード機能
   has_one_attached :image
 
+  # 仮想属性: 画像選択方法
+  attr_accessor :image_source
+
   validates :title, presence: true, length: { maximum: 100 }
   validates :description, presence: true, length: { maximum: 200 }
   validates :link, length: { maximum: 1000 }, allow_blank: true
@@ -85,24 +88,32 @@ class Post < ApplicationRecord
     image.variant(resize_to_fill: [ 800, 600 ], quality: 85, format: :webp)
   end
 
-  # ハイブリッド画像表示: 優先順位に従って適切な画像を返す
-  # 1. Active Storageの画像（最優先） - WebP対応
-  # 2. image_urlの外部画像（次優先）
-  # 3. プレースホルダー（最終手段）
+  # ハイブリッド画像表示: ユーザーの選択に基づく画像表示
+  # image_source フィールド: 'url', 'file'
+  # 1. ユーザー選択優先（image_sourceに基づく）
+  # 2. フォールバック: URL画像 → ファイル画像の順
   def display_image(size = :medium, webp_support = false)
-    case size
-    when :thumbnail
-      if image.attached?
-        return webp_support ? thumbnail_image_webp : thumbnail_image
-      end
-    when :medium, :large
-      if image.attached?
-        return webp_support ? medium_image_webp : medium_image
+    # image_sourceが明示的に設定されている場合は、それに従う
+    if respond_to?(:image_source) && image_source.present?
+      case image_source
+      when "url"
+        return image_url if image_url.present?
+      when "file"
+        if image.attached?
+          return get_file_image(size, webp_support)
+        end
       end
     end
 
-    # Active Storageに画像がない場合は外部URLを使用
-    image_url.presence
+    # フォールバック: URL画像を優先、次にファイル画像
+    return image_url if image_url.present?
+
+    if image.attached?
+      return get_file_image(size, webp_support)
+    end
+
+    # 両方ともない場合はnilを返す（プレースホルダーは呼び出し元で処理）
+    nil
   end
 
   # 画像が存在するかチェック
@@ -111,6 +122,16 @@ class Post < ApplicationRecord
   end
 
   private
+
+  # ファイル画像の取得（サイズ・WebP対応）
+  def get_file_image(size, webp_support)
+    case size
+    when :thumbnail
+      webp_support ? thumbnail_image_webp : thumbnail_image
+    when :medium, :large
+      webp_support ? medium_image_webp : medium_image
+    end
+  end
 
   # 画像形式のバリデーション
   def image_format

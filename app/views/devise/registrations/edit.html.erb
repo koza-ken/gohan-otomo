@@ -50,10 +50,10 @@
                                    class: "w-full px-4 py-3 pr-10 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition duration-200",
                                    data: { password_toggle_target: "password" } %>
               <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <%= image_tag "/icons/eye_show.svg", 
+                <%= image_tag "/icons/eye_show.svg",
                             alt: "パスワード表示",
                             class: "text-orange-400 cursor-pointer w-5 h-5",
-                            data: { 
+                            data: {
                               password_toggle_target: "icon",
                               action: "click->password-toggle#toggle"
                             } %>
@@ -71,10 +71,10 @@
                                    class: "w-full px-4 py-3 pr-10 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition duration-200",
                                    data: { password_toggle_target: "password" } %>
               <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <%= image_tag "/icons/eye_show.svg", 
+                <%= image_tag "/icons/eye_show.svg",
                             alt: "パスワード表示",
                             class: "text-orange-400 cursor-pointer w-5 h-5",
-                            data: { 
+                            data: {
                               password_toggle_target: "icon",
                               action: "click->password-toggle#toggle"
                             } %>
@@ -97,10 +97,10 @@
                                    class: "w-full px-4 py-3 pr-10 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition duration-200",
                                    data: { password_toggle_target: "password" } %>
               <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <%= image_tag "/icons/eye_show.svg", 
+                <%= image_tag "/icons/eye_show.svg",
                             alt: "パスワード表示",
                             class: "text-orange-400 cursor-pointer w-5 h-5",
-                            data: { 
+                            data: {
                               password_toggle_target: "icon",
                               action: "click->password-toggle#toggle"
                             } %>
@@ -119,25 +119,6 @@
       </div>
     </div>
 
-    <!-- アカウント削除 -->
-    <%# <div class="mt-8 bg-white rounded-2xl shadow-lg border border-red-200 overflow-hidden">
-      <div class="px-6 py-4 bg-red-50 border-b border-red-200">
-        <h3 class="text-lg font-semibold text-red-700 flex items-center">
-          <%= icon_tag :alert, class: "mr-2 w-5 h-5 inline" %>危険な操作
-        </h3>
-      </div>
-      <div class="p-6">
-        <p class="text-gray-600 mb-4">
-          アカウントを削除すると、すべての投稿とデータが永久に削除されます。この操作は取り消せません。
-        </p>
-        <%= button_to "アカウントを削除", registration_path(resource_name),
-                      method: :delete,
-                      data: {
-                        confirm: "本当にアカウントを削除しますか？この操作は取り消せません。",
-                        turbo_confirm: "本当にアカウントを削除しますか？この操作は取り消せません。"
-                      },
-                      class: "bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-medium transition duration-200" %>
-      <%# </div> %>
-    <%# </div> %>
+    
   </div>
 </div>

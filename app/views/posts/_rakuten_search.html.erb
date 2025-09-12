@@ -1,0 +1,53 @@
+<%
+  # desktop: true の場合はPC版スタイル、falseまたは未定義はモバイル版
+  is_desktop = defined?(desktop) && desktop
+
+  # デバイス別スタイル設定
+  container_class = is_desktop ? "border border-orange-200 rounded-lg p-6 bg-orange-50 h-full" : "border border-orange-200 rounded-lg p-4 bg-orange-50"
+  title_class = is_desktop ? "text-xl font-medium text-orange-600 mb-4 flex items-center" : "text-lg font-medium text-orange-600 mb-3 flex items-center"
+  button_size = is_desktop ? "px-6 py-3" : "px-4 py-2"
+  grid_cols = is_desktop ? "grid-cols-3 xl:grid-cols-4" : "grid-cols-2"
+  max_height = is_desktop ? "max-h-[36rem]" : "max-h-[32rem]"
+  status_margin = is_desktop ? "mb-4" : "mb-3"
+%>
+
+<div class="<%= container_class %>">
+  <h3 class="<%= title_class %>">
+    商品画像を自動取得
+  </h3>
+
+  <p class="text-sm text-orange-600 mb-<%= is_desktop ? '4' : '3' %>">
+    商品名を入力して「検索」を押すと、楽天市場の商品画像を取得できます
+  </p>
+
+  <div class="flex gap-2">
+    <div class="flex gap-2 mb-<%= is_desktop ? '4' : '3' %>">
+      <button type="button"
+              data-action="click->product-search#searchProducts"
+              class="bg-orange-500 hover:bg-orange-600 text-white <%= button_size %> rounded-lg text-sm font-medium transition flex items-center">
+        検索
+      </button>
+
+      <button type="button"
+              data-action="click->product-search#clearResults"
+              class="bg-gray-400 hover:bg-gray-500 text-white <%= button_size %> rounded-lg text-sm font-medium transition">
+        クリア
+      </button>
+    </div>
+    <!-- 検索状態表示 -->
+    <div data-product-search-target="status" class="hidden <%= status_margin %>">
+      <!-- ローディング・エラー・成功メッセージがここに表示される -->
+    </div>
+  </div>
+
+
+  <!-- 商品候補表示エリア -->
+  <div data-product-search-target="candidates" class="hidden">
+    <h4 class="font-medium text-orange-600 mb-3">見つかった商品画像（クリックで選択）</h4>
+    <div class="<%= max_height %> overflow-y-auto border border-orange-200 rounded-lg p-<%= is_desktop ? '4' : '3' %> bg-white">
+      <div class="grid <%= grid_cols %> gap-3" data-product-search-target="candidatesList">
+        <!-- 商品候補がここに動的表示される -->
+      </div>
+    </div>
+  </div>
+</div>

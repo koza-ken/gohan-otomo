@@ -1,107 +1,15 @@
-<div class="min-h-screen bg-gradient-to-br from-orange-50 via-orange-100 to-yellow-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-orange-200">
-    <div class="text-center mb-8">
-      <h2 class="text-2xl font-bold text-orange-600 mb-6">新しいお供だちを紹介</h2>
+<div class="min-h-screen bg-gradient-to-br from-orange-50 via-orange-100 to-yellow-50 flex items-center justify-center py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md lg:max-w-6xl w-full p-6">
+    <!-- 戻るリンク -->
+    <div class="mb-6">
+      <%= link_to "← 投稿一覧に戻る", posts_path,
+                  class: "text-orange-500 hover:text-orange-700 font-medium inline-flex items-center" %>
     </div>
-
-    <%= form_with model: @post, local: true, html: { class: "space-y-5" } do |f| %>
-      <%= render "shared/error_messages", resource: @post %>
-
-      <div>
-        <%= f.label :title, "商品名", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <%# <span class="text-orange-500">🍚</span> %>
-          </div>
-          <%= f.text_field :title,
-                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200" %>
-        </div>
+    <div class="max-w-md lg:max-w-6xl w-full bg-white rounded-3xl shadow-2xl p-6 lg:p-10 border border-orange-200">
+      <div class="text-center mb-8">
+        <h2 class="text-2xl font-bold text-orange-600 mb-6">新しいお供だちを紹介</h2>
       </div>
-
-      <div>
-        <%= f.label :description, "おすすめポイント", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
-          <div class="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
-            <%# <span class="text-orange-500">⭐</span> %>
-          </div>
-          <%= f.text_area :description, rows: 4,
-                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200" %>
-        </div>
-      </div>
-
-      <div>
-        <%= f.label :link, "通販リンク（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <%# <span class="text-orange-500">🔗</span> %>
-          </div>
-          <%= f.url_field :link,
-                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
-                          placeholder: "https://amazon.co.jp/..." %>
-        </div>
-      </div>
-
-      <div data-controller="image-preview">
-        <%= f.label :image, "画像をアップロード（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <%# <span class="text-orange-500">📷</span> %>
-          </div>
-          <%= f.file_field :image,
-                           class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
-                           accept: "image/*",
-                           data: {
-                             "image-preview-target": "input",
-                             "action": "change->image-preview#preview"
-                           } %>
-        </div>
-        <!-- 画像プレビュー表示 -->
-        <div class="mt-3">
-          <img data-image-preview-target="preview"
-               class="hidden max-w-xs rounded-lg border border-orange-200 shadow-sm"
-               alt="画像プレビュー">
-        </div>
-        <!-- ファイル制限の案内 -->
-        <div class="mt-2">
-          <p class="text-xs text-gray-500">
-            JPEG、PNG、GIF、WebP形式で10MB以下のファイルをご利用ください
-          </p>
-        </div>
-      </div>
-
-      <div data-controller="image-preview">
-        <%= f.label :image_url, "画像URL（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <%# <span class="text-orange-500">📸</span> %>
-          </div>
-          <%= f.url_field :image_url,
-                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
-                          placeholder: "https://...",
-                          data: {
-                            "image-preview-target": "urlInput",
-                            "action": "input->image-preview#validateImageUrl"
-                          } %>
-        </div>
-
-        <!-- URL画像プレビュー -->
-        <div class="mt-3">
-          <img data-image-preview-target="urlPreview"
-               class="hidden max-w-xs rounded-lg border border-orange-200 shadow-sm"
-               alt="URL画像プレビュー">
-        </div>
-
-        <!-- URL検証状態表示 -->
-        <div data-image-preview-target="urlStatus"></div>
-      </div>
-
-      <div class="pt-2">
-        <%= f.submit "投稿する", class: "w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-lg font-medium transition duration-200 shadow-lg" %>
-      </div>
-    <% end %>
-
-    <div class="mt-8 text-center">
-      <%= link_to "戻る", posts_path, class: "text-orange-500 hover:text-orange-700 underline text-sm" %>
+      <%= render 'form', post: @post %>
     </div>
   </div>
 </div>

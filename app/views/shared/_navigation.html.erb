@@ -1,7 +1,7 @@
 <% if user_signed_in? %>
   <div class="flex items-center space-x-4">
-    <!-- デスクトップ用メニュー（md以上で表示） -->
-    <div class="hidden md:flex items-center space-x-4">
+    <!-- デスクトップ用メニュー（lg以上で表示） -->
+    <div class="hidden lg:flex items-center space-x-4">
       <%= link_to posts_path,
           class: "text-white hover:text-orange-100 transition duration-300 px-3 py-2 rounded-full hover:bg-white/10 text-lg font-medium" do %>
           みんなのお供だち
@@ -29,8 +29,8 @@
       <% end %>
     </div>
 
-    <!-- スマホ用ハンバーガーメニュー（md未満で表示） -->
-    <div class="flex items-center space-x-3 md:hidden">
+    <!-- タブレット・スマホ用ハンバーガーメニュー（lg未満で表示） -->
+    <div class="flex items-center space-x-3 lg:hidden">
       <!-- みんなのお供リンク -->
       <%= link_to posts_path,
           class: "text-white hover:text-orange-100 transition duration-300 text-md font-medium mr-4" do %>

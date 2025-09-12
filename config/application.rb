@@ -30,5 +30,8 @@ module Myapp
     
     # Active Storage: ImageMagick (mini_magick) を使用
     config.active_storage.variant_processor = :mini_magick
+    
+    # app/services ディレクトリをオートロードパスに追加
+    config.autoload_paths << Rails.root.join("app", "services")
   end
 end

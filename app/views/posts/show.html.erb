@@ -16,15 +16,19 @@
     </div>
 
     <!-- 投稿詳細 -->
-    <div class="bg-white rounded-3xl shadow-2xl border border-orange-200 overflow-hidden mb-8">
-      <!-- 画像表示（Helperを使用 - mediumサイズ） -->
-      <% if @post.has_image? %>
-        <div class="h-64 md:h-80 bg-gray-200 overflow-hidden">
-          <%= picture_post_image_tag(@post, size: :medium, class: "w-full h-full object-cover") %>
-        </div>
-      <% end %>
+    <div class="bg-white rounded-3xl shadow-2xl border border-orange-200 overflow-hidden mb-8 mx-auto w-full" style="max-width: 800px;">
+      <div class="flex flex-col sm:flex-row">
+        <!-- 画像表示（スマホ: 100%幅、タブレット以上: 50%幅） -->
+        <% if @post.has_image? %>
+          <div class="w-full sm:w-1/2 flex-shrink-0">
+            <div class="aspect-square w-full bg-gray-200 overflow-hidden">
+              <%= picture_post_image_tag(@post, size: :medium, class: "w-full h-full object-cover") %>
+            </div>
+          </div>
+        <% end %>
 
-      <div class="p-8">
+        <!-- 商品情報（スマホ: 100%幅、タブレット以上: 50%幅） -->
+        <div class="w-full sm:w-1/2 flex-shrink-0 p-4 lg:p-8">
         <!-- 投稿タイトルと編集メニュー -->
         <div class="flex items-start justify-between mb-4">
           <h1 class="text-3xl font-bold text-orange-600 flex-1 mr-4"><%= truncate(@post.title, length: 50) %></h1>
@@ -45,8 +49,8 @@
                       class: "flex items-center px-4 py-2 text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition duration-200" do %>
                     <%= icon_tag :pen, class: "mr-2 w-4 h-4" %>編集
                   <% end %>
-                  <%= link_to @post, method: :delete,
-                      data: { turbo_confirm: "本当に削除しますか？" },
+                  <%= link_to post_path(@post),
+                      data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" },
                       class: "flex items-center px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 transition duration-200" do %>
                     <%= icon_tag :gomibako, class: "mr-2 w-4 h-4" %>削除
                   <% end %>
@@ -105,19 +109,20 @@
                         target: "_blank", rel: "noopener noreferrer" %>
           </div>
         <% end %>
+        </div>
       </div>
     </div>
 
     <!-- コメント一覧 -->
-    <div class="bg-white rounded-3xl shadow-lg border border-orange-200 p-8">
-      <h3 class="text-xl font-semibold text-orange-600 mb-6 flex items-center">
+    <div class="bg-white rounded-3xl shadow-lg border border-orange-200 p-6 mx-auto" style="max-width: 800px;">
+      <h3 class="text-xl font-semibold text-orange-600 mb-4 flex items-center">
         <%= icon_tag :hukidashi, class: "inline-block w-5 h-5 mr-2" %>コメント（<%= @comments.count %>件）
       </h3>
 
       <!-- コメント投稿フォーム（ログイン時） -->
       <% if user_signed_in? %>
-        <div class="mb-8 p-6 bg-orange-50 rounded-2xl border border-orange-200">
-          <h4 class="text-lg font-medium text-orange-600 mb-4">コメントを投稿</h4>
+        <div class="mb-4 p-4 bg-orange-50 rounded-2xl border border-orange-200">
+          <h4 class="text-lg font-medium text-orange-600 mb-2">コメントを投稿</h4>
           <%= form_with model: [@post, @comment], local: true, html: { class: "space-y-4" } do |f| %>
             <div>
               <%= f.text_area :content, rows: 3,

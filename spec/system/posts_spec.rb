@@ -263,8 +263,11 @@ RSpec.describe "Posts", type: :system do
         fill_in "商品名", with: "画像付きテスト商品"
         fill_in "おすすめポイント", with: "美味しそうな見た目です"
         
+        # ファイルアップロードのラジオボタンを選択
+        choose "post_image_source_file"
+        
         # 画像ファイルをアップロード
-        attach_file "画像をアップロード（任意）", Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg')
+        attach_file "post_image", Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg')
 
         expect {
           click_button "投稿する"
