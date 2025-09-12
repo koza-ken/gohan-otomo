@@ -38,7 +38,7 @@ class Api::Rakuten::ProductsController < ApplicationController
       Rails.logger.info "API商品検索開始: user_id=#{current_user.id}, title=#{title}"
       
       # RakutenProductService を使用して商品検索
-      products = RakutenProductService.fetch_product_candidates(title, limit: 5)
+      products = RakutenProductService.fetch_product_candidates(title, limit: 12)
       
       if products.any?
         Rails.logger.info "API商品検索成功: #{products.count}件取得"
