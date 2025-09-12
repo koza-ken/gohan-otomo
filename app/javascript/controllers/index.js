@@ -19,3 +19,6 @@ application.register("floating-menu", FloatingMenuController)
 import PasswordToggleController from "./password_toggle_controller"
 application.register("password-toggle", PasswordToggleController)
 
+import ProductSearchController from "./product_search_controller"
+application.register("product-search", ProductSearchController)
+
