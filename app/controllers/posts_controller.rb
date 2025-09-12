@@ -89,7 +89,7 @@ class PostsController < ApplicationController
 
   # ストロングパラメータ
   def post_params
-    params.require(:post).permit(:title, :description, :link, :image_url, :image)
+    params.require(:post).permit(:title, :description, :link, :image_url, :image, :image_source)
   end
 
   # 検索・フィルター・ページネーション用のストロングパラメータ
