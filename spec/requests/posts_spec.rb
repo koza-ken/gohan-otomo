@@ -304,7 +304,7 @@ RSpec.describe "Posts", type: :request do
 
       it "編集フォームが表示される" do
         get edit_post_path(post_record)
-        expect(response.body).to include("投稿を編集")
+        expect(response.body).to include("お供だちを編集")
         expect(response.body).to include("商品名")
         expect(response.body).to include(post_record.title)
         expect(response.body).to include(post_record.description)
