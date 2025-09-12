@@ -4,7 +4,7 @@
 # 商品名から商品候補を検索し、投稿フォーム用のデータ構造に変換
 class RakutenProductService
   # デフォルト設定
-  DEFAULT_LIMIT = 5
+  DEFAULT_LIMIT = 12
   TIMEOUT_SECONDS = 10
 
   # 商品名で楽天商品を検索し、候補リストを返す
