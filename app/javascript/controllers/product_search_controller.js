@@ -2,64 +2,56 @@ import { Controller } from "@hotwired/stimulus"
 
 // 楽天商品検索機能を提供するStimulusコントローラー
 // 商品名からAPI経由で商品候補を取得し、ユーザーが選択した画像URLを自動設定
+// 統合版: モバイル・PC版で同一のターゲットを使用
 export default class extends Controller {
   static targets = [
-    "titlePreview",    // ボタン内の商品名表示
-    "status",          // ローディング・エラー・成功メッセージ表示
-    "candidates",      // 候補表示エリア全体
-    "candidatesList"   // 候補グリッド
+    "status",        // ローディング・エラー・成功メッセージ表示
+    "candidates",    // 候補表示エリア全体
+    "candidatesList" // 候補グリッド
   ]
 
   // コントローラー初期化時に実行
   connect() {
     console.log("🛒 商品検索コントローラー初期化")
-    
-    // 商品名フィールドの変更を監視してプレビューを更新
-    this.updateTitlePreview()
-    this.setupTitleFieldListener()
+
+    // Enter キー対応のためのイベントリスナー追加
+    this.setupEnterKeyListener()
   }
-  
-  // 商品名フィールドの変更を監視
-  setupTitleFieldListener() {
+
+  // 商品名フィールドでのEnter キー検索対応
+  setupEnterKeyListener() {
     const titleField = this.getTitleField()
     if (titleField) {
-      titleField.addEventListener('input', () => {
-        this.updateTitlePreview()
+      titleField.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault() // フォーム送信を防ぐ
+          this.searchProducts()   // 商品検索を実行
+        }
       })
     }
   }
-  
-  // ボタン内の商品名プレビューを更新
-  updateTitlePreview() {
-    const titleField = this.getTitleField()
-    const title = titleField?.value?.trim()
-    
-    if (this.hasTitlePreviewTarget) {
-      this.titlePreviewTarget.textContent = title || '商品名'
-    }
-  }
-  
+
   // 商品検索を実行
   async searchProducts() {
     const titleField = this.getTitleField()
     const title = titleField?.value?.trim()
-    
+
     // バリデーション
     if (!title) {
       this.showError('商品名を入力してください')
       return
     }
-    
+
     if (title.length > 100) {
       this.showError('商品名は100文字以内で入力してください')
       return
     }
-    
+
     this.showLoading()
-    
+
     try {
       console.log(`🔍 商品検索開始: ${title}`)
-      
+
       // APIエンドポイントに商品検索リクエスト
       const response = await fetch('/api/rakuten/search_products', {
         method: 'POST',
@@ -69,9 +61,9 @@ export default class extends Controller {
         },
         body: JSON.stringify({ title: title })
       })
-      
+
       const result = await response.json()
-      
+
       if (response.ok && result.success) {
         if (result.products && result.products.length > 0) {
           console.log(`✅ 商品検索成功: ${result.count}件取得`)
@@ -82,27 +74,27 @@ export default class extends Controller {
       } else {
         this.showError(result.error || '商品検索に失敗しました')
       }
-      
+
     } catch (error) {
       console.error('🚨 商品検索エラー:', error)
       this.showError('ネットワークエラーが発生しました。時間をおいて再試行してください。')
     }
   }
-  
-  // 商品候補を表示
+
+  // 商品候補を表示（統合版）
   displayCandidates(products) {
     console.log(`🛒 楽天API検索成功: ${products.length}件の商品を表示`)
-    
-    const candidatesHtml = products.map((product, index) => `
+
+    const productCardHtml = (product) => `
       <div class="border rounded-lg p-3 cursor-pointer hover:bg-orange-100 transition-colors"
            data-action="click->product-search#selectProduct"
            data-product-search-image-url="${product.image_url || ''}"
            data-product-search-product-title="${this.escapeHtml(product.title)}"
            data-product-search-price="${product.price}">
-        ${product.image_url ? 
+        ${product.image_url ?
           `<div class="relative w-full h-24 bg-gray-100 rounded mb-2 flex items-center justify-center">
-             <img src="/api/rakuten/proxy_image?url=${encodeURIComponent(product.image_url)}" 
-                  alt="${this.escapeHtml(product.title)}" 
+             <img src="/api/rakuten/proxy_image?url=${encodeURIComponent(product.image_url)}"
+                  alt="${this.escapeHtml(product.title)}"
                   class="w-full h-24 object-cover rounded absolute inset-0"
                   loading="lazy"
                   style="display: block;"
@@ -128,65 +120,73 @@ export default class extends Controller {
         <p class="text-xs text-orange-600 font-medium">¥${product.price.toLocaleString()}</p>
         <p class="text-xs text-gray-500">${this.escapeHtml(product.shop_name)}</p>
       </div>
-    `).join('')
-    
-    this.candidatesListTarget.innerHTML = candidatesHtml
-    this.candidatesTarget.classList.remove('hidden')
+    `
+
+    // 統合版: 全ての楽天検索UI（モバイル・PC両方）に同じ内容を表示
+    this.candidatesListTargets.forEach(target => {
+      target.innerHTML = products.map(productCardHtml).join('')
+    })
+
+    this.candidatesTargets.forEach(target => {
+      target.classList.remove('hidden')
+    })
+
     this.hideStatus()
-    
-    this.showMessage(`${products.length}件の商品候補が見つかりました`, 'success')
+    // this.showMessage(`${products.length}件の商品候補が見つかりました`, 'success')
   }
-  
+
   // 商品を選択（画像URLを自動設定）
   selectProduct(event) {
     const card = event.currentTarget
     const imageUrl = card.dataset.productSearchImageUrl
     const productTitle = card.dataset.productSearchProductTitle
     const price = card.dataset.productSearchPrice
-    
+
     if (!imageUrl) {
       this.showError('この商品には画像がありません')
       return
     }
-    
+
     // 画像URLフィールドに自動設定
     const imageUrlField = this.getImageUrlField()
     if (imageUrlField) {
       imageUrlField.value = imageUrl
-      
+
       // 画像URLフィールドのchangeイベントを発火（既存のプレビュー機能を動作させる）
       imageUrlField.dispatchEvent(new Event('input', { bubbles: true }))
     }
-    
+
     // 選択状態を視覚的に表示
     this.showSelectedState(card, productTitle, price)
-    
+
     console.log(`🎯 商品選択: ${productTitle}`)
   }
-  
-  // 選択状態の表示
+
+  // 選択状態の表示（統合版）
   showSelectedState(selectedCard, productTitle, price) {
-    // 全てのカードの選択状態をリセット
-    this.candidatesListTarget.querySelectorAll('.border-green-500').forEach(card => {
-      card.classList.remove('border-green-500', 'bg-green-50')
+    // 全ての楽天検索UI内のカードの選択状態をリセット
+    this.candidatesListTargets.forEach(target => {
+      target.querySelectorAll('.border-green-500').forEach(card => {
+        card.classList.remove('border-green-500', 'bg-green-50')
+      })
     })
-    
+
     // 選択されたカードをハイライト
     selectedCard.classList.add('border-green-500', 'bg-green-50')
-    
+
     // 選択成功メッセージ
     this.showMessage(`「${this.truncateText(productTitle, 25)}」の画像を設定しました`, 'success')
   }
-  
-  // 検索結果をクリア
+
+  // 検索結果をクリア（統合版）
   clearResults() {
-    if (this.hasCandidatesTarget) {
-      this.candidatesTarget.classList.add('hidden')
-    }
+    this.candidatesTargets.forEach(target => {
+      target.classList.add('hidden')
+    })
     this.hideStatus()
     console.log('🗑️ 検索結果をクリア')
   }
-  
+
   // ローディング表示
   showLoading() {
     this.showStatus(`
@@ -196,7 +196,7 @@ export default class extends Controller {
       </div>
     `)
   }
-  
+
   // エラーメッセージ表示
   showError(message) {
     this.showStatus(`
@@ -205,7 +205,7 @@ export default class extends Controller {
       </div>
     `)
   }
-  
+
   // 情報メッセージ表示
   showMessage(message, type = 'info') {
     const colors = {
@@ -213,58 +213,58 @@ export default class extends Controller {
       info: 'bg-blue-50 border-blue-200 text-blue-600',
       warning: 'bg-yellow-50 border-yellow-200 text-yellow-600'
     }
-    
+
     const colorClass = colors[type] || colors.info
-    
+
     this.showStatus(`
       <div class="${colorClass} border rounded-lg p-3">
         <p class="text-sm">✅ ${message}</p>
       </div>
     `)
-    
+
     // 3秒後に自動的にメッセージを隠す
     setTimeout(() => {
       this.hideStatus()
     }, 3000)
   }
-  
-  // ステータス表示（共通）
+
+  // ステータス表示（統合版）
   showStatus(html) {
-    if (this.hasStatusTarget) {
-      this.statusTarget.innerHTML = html
-      this.statusTarget.classList.remove('hidden')
-    }
+    this.statusTargets.forEach(target => {
+      target.innerHTML = html
+      target.classList.remove('hidden')
+    })
   }
-  
-  // ステータス非表示
+
+  // ステータス非表示（統合版）
   hideStatus() {
-    if (this.hasStatusTarget) {
-      this.statusTarget.classList.add('hidden')
-    }
+    this.statusTargets.forEach(target => {
+      target.classList.add('hidden')
+    })
   }
-  
+
   // 商品名フィールドを取得
   getTitleField() {
     return this.element.closest('form')?.querySelector('input[name*="title"]')
   }
-  
+
   // 画像URLフィールドを取得
   getImageUrlField() {
     return this.element.closest('form')?.querySelector('input[name*="image_url"]')
   }
-  
+
   // CSRFトークンを取得
   getCSRFToken() {
     return document.querySelector('[name="csrf-token"]')?.content || ''
   }
-  
+
   // HTMLエスケープ
   escapeHtml(text) {
     const div = document.createElement('div')
     div.textContent = text
     return div.innerHTML
   }
-  
+
   // テキスト省略
   truncateText(text, length) {
     return text.length > length ? text.substring(0, length) + '...' : text
