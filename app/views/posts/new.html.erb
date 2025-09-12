@@ -1,140 +1,94 @@
 <div class="min-h-screen bg-gradient-to-br from-orange-50 via-orange-100 to-yellow-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-  <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border border-orange-200">
+  <div class="max-w-md lg:max-w-6xl w-full bg-white rounded-3xl shadow-2xl p-6 lg:p-10 border border-orange-200">
     <div class="text-center mb-8">
       <h2 class="text-2xl font-bold text-orange-600 mb-6">新しいお供だちを紹介</h2>
     </div>
 
-    <%= form_with model: @post, local: true, html: { class: "space-y-5" } do |f| %>
+    <%= form_with model: @post, local: true, html: { class: "space-y-6" }, data: { controller: "product-search" } do |f| %>
       <%= render "shared/error_messages", resource: @post %>
 
-      <div>
-        <%= f.label :title, "商品名", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <%# <span class="text-orange-500">🍚</span> %>
+      <div class="lg:grid lg:grid-cols-5 lg:gap-8 space-y-6 lg:space-y-0">
+        <!-- 左側: 基本情報 (PC時2/5幅) -->
+        <div class="lg:col-span-2 space-y-5">
+          <div>
+            <%= f.label :title, "商品名", class: "block text-sm font-medium text-orange-700 mb-2" %>
+            <div class="relative">
+              <%= f.text_field :title,
+                              class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200" %>
+            </div>
           </div>
-          <%= f.text_field :title,
-                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200" %>
+
+          <!-- スマホ時のみ表示: 商品名直下の楽天検索 -->
+          <div class="lg:hidden">
+            <%= render 'rakuten_search' %>
+          </div>
+
+          <div>
+            <%= f.label :description, "おすすめポイント", class: "block text-sm font-medium text-orange-700 mb-2" %>
+            <div class="relative">
+              <%= f.text_area :description, rows: 4,
+                              class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200 resize-none" %>
+            </div>
+          </div>
+
+          <div>
+            <%= f.label :link, "通販リンク（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
+            <div class="relative">
+              <%= f.url_field :link,
+                              placeholder: "https://example.com/product",
+                              class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200" %>
+            </div>
+          </div>
+
+          <div>
+            <%= f.label :image_url, "画像URL（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
+            <div class="relative">
+              <%= f.url_field :image_url,
+                              placeholder: "https://example.com/image.jpg",
+                              class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
+                              data: {
+                                controller: "image-preview",
+                                action: "input->image-preview#updatePreview"
+                              } %>
+            </div>
+          </div>
+
+          <div data-controller="image-preview">
+            <%= f.label :image, "画像をアップロード（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
+            <div class="relative">
+              <%= f.file_field :image,
+                               class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
+                               accept: "image/*",
+                               data: {
+                                 "image-preview-target": "input",
+                                 "action": "change->image-preview#preview"
+                               } %>
+            </div>
+            <!-- 画像プレビュー表示 -->
+            <div class="mt-3">
+              <img data-image-preview-target="preview"
+                   class="hidden max-w-xs rounded-lg border border-orange-200 shadow-sm"
+                   alt="画像プレビュー">
+            </div>
+            <!-- ファイル制限の案内 -->
+            <div class="mt-2">
+              <p class="text-xs text-gray-500">
+                JPEG、PNG、GIF、WebP形式で10MB以下のファイルをご利用ください
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PC時のみ表示: 右側の拡大楽天検索 (PC時3/5幅) -->
+        <div class="hidden lg:block lg:col-span-3">
+          <%= render 'rakuten_search', desktop: true %>
         </div>
       </div>
 
-      <!-- 楽天商品検索セクション -->
-      <div class="border border-orange-200 rounded-lg p-4 bg-orange-50" data-controller="product-search">
-        <h3 class="text-lg font-medium text-orange-600 mb-3 flex items-center">
-          商品画像を自動取得
-        </h3>
-
-        <p class="text-sm text-orange-600 mb-3">
-          商品名を入力して「検索」を押すと、楽天から商品画像を取得できます
-        </p>
-
-        <div class="flex gap-2 mb-3">
-          <button type="button"
-                  data-action="click->product-search#searchProducts"
-                  class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center">
-            <span data-product-search-target="titlePreview">商品名</span>で画像を検索
-          </button>
-
-          <button type="button"
-                  data-action="click->product-search#clearResults"
-                  class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
-            クリア
-          </button>
-        </div>
-
-        <!-- 検索状態表示 -->
-        <div data-product-search-target="status" class="hidden mb-3">
-          <!-- ローディング・エラー・成功メッセージがここに表示される -->
-        </div>
-
-        <!-- 商品候補表示エリア -->
-        <div data-product-search-target="candidates" class="hidden">
-          <h4 class="font-medium text-orange-600 mb-3">📷 見つかった商品画像（クリックで選択）</h4>
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-3" data-product-search-target="candidatesList">
-            <!-- 商品候補がここに動的表示される -->
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <%= f.label :description, "おすすめポイント", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
-          <div class="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
-            <%# <span class="text-orange-500">⭐</span> %>
-          </div>
-          <%= f.text_area :description, rows: 4,
-                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200" %>
-        </div>
-      </div>
-
-      <div>
-        <%= f.label :link, "通販リンク（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <%# <span class="text-orange-500">🔗</span> %>
-          </div>
-          <%= f.url_field :link,
-                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
-                          placeholder: "https://amazon.co.jp/..." %>
-        </div>
-      </div>
-
-      <div data-controller="image-preview">
-        <%= f.label :image, "画像をアップロード（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <%# <span class="text-orange-500">📷</span> %>
-          </div>
-          <%= f.file_field :image,
-                           class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
-                           accept: "image/*",
-                           data: {
-                             "image-preview-target": "input",
-                             "action": "change->image-preview#preview"
-                           } %>
-        </div>
-        <!-- 画像プレビュー表示 -->
-        <div class="mt-3">
-          <img data-image-preview-target="preview"
-               class="hidden max-w-xs rounded-lg border border-orange-200 shadow-sm"
-               alt="画像プレビュー">
-        </div>
-        <!-- ファイル制限の案内 -->
-        <div class="mt-2">
-          <p class="text-xs text-gray-500">
-            JPEG、PNG、GIF、WebP形式で10MB以下のファイルをご利用ください
-          </p>
-        </div>
-      </div>
-
-      <div data-controller="image-preview">
-        <%= f.label :image_url, "画像URL（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <%# <span class="text-orange-500">📸</span> %>
-          </div>
-          <%= f.url_field :image_url,
-                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
-                          placeholder: "https://...",
-                          data: {
-                            "image-preview-target": "urlInput",
-                            "action": "input->image-preview#validateImageUrl"
-                          } %>
-        </div>
-
-        <!-- URL画像プレビュー -->
-        <div class="mt-3">
-          <img data-image-preview-target="urlPreview"
-               class="hidden max-w-xs rounded-lg border border-orange-200 shadow-sm"
-               alt="URL画像プレビュー">
-        </div>
-
-        <!-- URL検証状態表示 -->
-        <div data-image-preview-target="urlStatus"></div>
-      </div>
-
-      <div class="pt-2">
-        <%= f.submit "投稿する", class: "w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-lg font-medium transition duration-200 shadow-lg" %>
+      <!-- フォーム送信ボタン -->
+      <div class="mt-8 text-center">
+        <%= f.submit "投稿する",
+            class: "w-full lg:w-auto bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 px-8 rounded-lg text-lg transition duration-200 shadow-lg hover:shadow-xl" %>
       </div>
     <% end %>
 
