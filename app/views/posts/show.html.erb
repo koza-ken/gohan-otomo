@@ -7,8 +7,8 @@
   <% content_for :og_image, url_for(@post.display_image(:medium)) %>
 <% end %>
 
-<div class="min-h-screen bg-gradient-to-br from-orange-50 via-orange-100 to-yellow-50 py-8">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-amber-50 py-8">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 px-4 lg:px-8">
     <!-- 戻るリンク -->
     <div class="mb-6">
       <%= link_to "← 投稿一覧に戻る", posts_path,
@@ -19,16 +19,21 @@
     <div class="bg-white rounded-3xl shadow-2xl border border-orange-200 overflow-hidden mb-8 mx-auto w-full" style="max-width: 800px;">
       <div class="flex flex-col sm:flex-row">
         <!-- 画像表示（スマホ: 100%幅、タブレット以上: 50%幅） -->
-        <% if @post.has_image? %>
-          <div class="w-full sm:w-1/2 flex-shrink-0">
-            <div class="aspect-square w-full bg-gray-200 overflow-hidden">
+        <div class="w-full sm:w-1/2 flex-shrink-0">
+          <div class="aspect-square w-full bg-gray-200 overflow-hidden">
+            <% if @post.has_image? %>
               <%= picture_post_image_tag(@post, size: :medium, class: "w-full h-full object-cover") %>
-            </div>
+            <% else %>
+              <picture class="w-full h-full flex items-center justify-center">
+                <source srcset="/no_image.webp" type="image/webp">
+                <img src="/no_image.png" alt="画像なし" class="w-full h-full object-cover">
+              </picture>
+            <% end %>
           </div>
-        <% end %>
+        </div>
 
         <!-- 商品情報（スマホ: 100%幅、タブレット以上: 50%幅） -->
-        <div class="w-full sm:w-1/2 flex-shrink-0 p-4 lg:p-8">
+        <div class="w-full sm:w-1/2 flex-shrink-0 px-4 py-2 lg:px-4">
         <!-- 投稿タイトルと編集メニュー -->
         <div class="flex items-start justify-between mb-4">
           <h1 class="text-3xl font-bold text-orange-600 flex-1 mr-4"><%= truncate(@post.title, length: 50) %></h1>
@@ -90,94 +95,24 @@
         </div>
 
         <!-- おすすめポイント -->
-        <div class="mb-6">
-          <h3 class="text-lg font-semibold text-orange-600 mb-3 flex items-center">
-            おすすめポイント
-          </h3>
-          <p class="text-gray-700 leading-relaxed"><%= simple_format(@post.description) %></p>
-        </div>
-
-        <!-- 通販リンク -->
-        <% if @post.safe_link.present? %>
-          <div class="mb-6 p-4 bg-orange-50 rounded-lg border border-orange-200">
-            <h3 class="text-lg font-semibold text-orange-600 mb-2 flex items-center">
-              <%= icon_tag :clip, class: "inline-block w-5 h-5 mr-2" %>購入リンク
+        <div class="mb-2">
+          <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 mb-2">
+            <h3 class="text-lg font-semibold text-orange-600 flex items-center">
+              おすすめポイント
             </h3>
-            <%# safe_linkメソッドでjavascript:やdata:スキームなどの危険なURLは既にフィルタリング済み %>
             <%= link_to "この商品を見る", @post.safe_link,
-                        class: "text-orange-500 hover:text-orange-700 underline font-medium",
-                        target: "_blank", rel: "noopener noreferrer" %>
+                          class: "text-sm sm:text-lg text-orange-500 hover:text-orange-700 underline font-medium",
+                          target: "_blank", rel: "noopener noreferrer" %>
           </div>
-        <% end %>
+          <div class="text-gray-700 leading-relaxed whitespace-pre-line break-words line-clamp-4 max-h-24 overflow-hidden"><%= @post.description %></div>
+        </div>
         </div>
       </div>
     </div>
 
-    <!-- コメント一覧 -->
+    <!-- コメント一覧（Turbo Stream対応） -->
     <div class="bg-white rounded-3xl shadow-lg border border-orange-200 p-6 mx-auto" style="max-width: 800px;">
-      <h3 class="text-xl font-semibold text-orange-600 mb-4 flex items-center">
-        <%= icon_tag :hukidashi, class: "inline-block w-5 h-5 mr-2" %>コメント（<%= @comments.count %>件）
-      </h3>
-
-      <!-- コメント投稿フォーム（ログイン時） -->
-      <% if user_signed_in? %>
-        <div class="mb-4 p-4 bg-orange-50 rounded-2xl border border-orange-200">
-          <h4 class="text-lg font-medium text-orange-600 mb-2">コメントを投稿</h4>
-          <%= form_with model: [@post, @comment], local: true, html: { class: "space-y-4" } do |f| %>
-            <div>
-              <%= f.text_area :content, rows: 3,
-                              class: "w-full px-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200",
-                              placeholder: "感想やコメントを入力してください..." %>
-            </div>
-            <div class="text-right">
-              <%= f.submit "コメント投稿",
-                          class: "bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition duration-200 shadow-lg" %>
-            </div>
-          <% end %>
-        </div>
-      <% else %>
-        <div class="mb-8 p-6 bg-gray-50 rounded-2xl border border-gray-200 text-center">
-          <p class="text-gray-600 mb-4">コメントを投稿するにはログインが必要です</p>
-          <%= link_to "ログイン", new_user_session_path,
-                      class: "bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium transition duration-200" %>
-        </div>
-      <% end %>
-
-      <!-- コメント表示 -->
-      <div class="space-y-6">
-        <% @comments.each do |comment| %>
-          <div class="border-b border-orange-100 pb-6 last:border-b-0 last:pb-0">
-            <div class="flex items-start space-x-4">
-              <div class="flex-shrink-0">
-                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                  <%= icon_tag :user, class: "w-6 h-6 text-orange-500", alt: "ユーザー" %>
-                </div>
-              </div>
-              <div class="flex-1">
-                <div class="flex items-center space-x-2 mb-2">
-                  <span class="font-medium text-orange-600">
-                    <%= comment.user&.display_name || "退会済みユーザー" %>
-                  </span>
-                  <span class="text-sm text-gray-500">
-                    <%= comment.created_at.strftime("%Y年%m月%d日 %H:%M") %>
-                  </span>
-                </div>
-                <p class="text-gray-700 leading-relaxed"><%= simple_format(comment.content) %></p>
-              </div>
-            </div>
-          </div>
-        <% end %>
-
-        <!-- コメントがない場合 -->
-        <% if @comments.empty? %>
-          <div class="text-center py-8">
-            <div class="mb-3">
-              <%= icon_tag :hukidashi, class: "w-12 h-12 text-gray-400 mx-auto" %>
-            </div>
-            <p class="text-gray-500">まだコメントがありません</p>
-          </div>
-        <% end %>
-      </div>
+      <%= render 'comments/list', post: @post %>
     </div>
   </div>
 </div>

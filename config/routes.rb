@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   
   # 投稿機能（認証必須）
   resources :posts do
-    resources :comments, only: [:create]
+    resources :comments, only: [:create, :destroy]
     resources :likes, only: [:create, :destroy]
   end
   

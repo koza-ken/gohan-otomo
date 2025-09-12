@@ -1,0 +1,16 @@
+
+---------------------------------------------------------------------------
+
+本アプリでは、以下のフォントを使用しています。
+
+フォント名: はんなり明朝
+Copyright (c) 2003-2011 Information-technology Promotion Agency, Japan (IPA)
+Licensed under the IPA Font License Agreement v1.0
+
+このフォントは IPAフォント（IPA明朝体/IPAゴシック体）を基に改変された派生フォントです。
+ライセンスの詳細については以下をご確認ください。
+
+IPAフォントライセンス v1.0
+http://ipafont.ipa.go.jp/ipa_font_license_v1.html
+
+---------------------------------------------------------------------------

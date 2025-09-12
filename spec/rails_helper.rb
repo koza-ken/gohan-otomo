@@ -14,13 +14,45 @@ require 'rspec/rails'
 require 'capybara/rails'
 require 'capybara/rspec'
 
-# Use rack_test driver (no browser needed)
+# Use rack_test driver for non-JavaScript tests
 Capybara.default_driver = :rack_test
-Capybara.javascript_driver = :rack_test
+# Use headless chrome for JavaScript tests  
+Capybara.javascript_driver = :selenium_chrome_headless
 
 # System test 用のドライバー設定
 Capybara.register_driver :rack_test do |app|
   Capybara::RackTest::Driver.new(app, headers: { 'HTTP_USER_AGENT' => 'Capybara' })
+end
+
+# Headless Chrome driver設定
+Capybara.register_driver :selenium_chrome_headless do |app|
+  options = Selenium::WebDriver::Chrome::Options.new
+  options.add_argument('--headless')
+  options.add_argument('--no-sandbox')
+  options.add_argument('--disable-dev-shm-usage')
+  options.add_argument('--disable-gpu')
+  options.add_argument('--remote-debugging-port=9222')
+  options.add_argument('--window-size=1400,1400')
+  
+  Capybara::Selenium::Driver.new(
+    app,
+    browser: :chrome,
+    options: options
+  )
+end
+
+# JavaScript テスト用の設定
+Capybara.server = :puma, { Silent: true }
+
+# System tests configuration
+RSpec.configure do |config|
+  config.before(:each, type: :system) do |example|
+    if example.metadata[:js]
+      driven_by :selenium_chrome_headless
+    else
+      driven_by :rack_test
+    end
+  end
 end
 
 # Requires supporting ruby files with custom matchers and macros, etc, in

@@ -141,8 +141,9 @@ RSpec.describe "Posts", type: :request do
         it "2ページ目が正常に表示される" do
           get posts_path, params: { page: 2 }
           expect(response).to have_http_status(:ok)
-          # 2ページ目に何らかの投稿が表示される
-          expect(response.body).to include("text-lg font-bold text-gray-800 mb-2")
+          # 2ページ目に投稿が表示される（現在のカード構造）
+          expect(response.body).to include("bg-white rounded-xl shadow-lg")
+          expect(response.body).to include("Displaying 投稿s")
         end
 
         it "存在しないページ番号でもエラーにならない" do

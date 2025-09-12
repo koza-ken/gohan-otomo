@@ -1,9 +1,9 @@
-<div class="min-h-screen bg-gradient-to-b from-orange-100 to-orange-200 flex flex-col items-center justify-center p-4">
+<div class="min-h-screen bg-orange-200 flex flex-col items-center justify-center p-4">
   <div class="text-center">
     <h1 class="text-4xl md:text-6xl font-bold text-orange-800 mb-8">
       お供だちへようこそ
     </h1>
-    
+
     <div class="mb-8">
       <p class="text-xl text-orange-700 mb-4">
         美味しいご飯のお供を見つけよう！
@@ -12,9 +12,9 @@
         みんなのおすすめを見て、自分の発見もシェアしよう
       </p>
     </div>
-    
+
     <div class="space-y-4">
-      <%= link_to "始める", posts_path, method: :get, 
+      <%= link_to "始める", posts_path, method: :get,
                   onclick: "fetch('/skip_animation', {method: 'POST', headers: {'X-CSRF-Token': document.querySelector('meta[name=csrf-token]').getAttribute('content')}})",
                   class: "inline-block bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-200 text-lg" %>
     </div>

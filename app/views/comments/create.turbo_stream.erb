@@ -1,0 +1,27 @@
+<% if @comment.persisted? %>
+  <!-- コメント投稿成功時のレスポンス -->
+
+  <!-- 新しいコメントをリストの先頭に追加 -->
+  <%= turbo_stream.prepend "comments_list" do %>
+    <%= render 'comments/comment', comment: @comment %>
+  <% end %>
+
+  <!-- コメントフォームをリセット -->
+  <%= turbo_stream.replace "comment_form" do %>
+    <%= render 'comments/form', post: @post, comment: Comment.new %>
+  <% end %>
+
+  <!-- コメント数を更新 -->
+  <%= turbo_stream.replace "comments_count" do %>
+    <%= @post.comments.count %>
+  <% end %>
+
+<% else %>
+  <!-- コメント投稿エラー時のレスポンス -->
+  
+  <!-- エラー付きフォームを表示 -->
+  <%= turbo_stream.replace "comment_form" do %>
+    <%= render 'comments/form', post: @post, comment: @comment %>
+  <% end %>
+
+<% end %>
