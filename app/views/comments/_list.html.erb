@@ -1,0 +1,39 @@
+<!-- コメント一覧 -->
+<div class="mb-6">
+  <div class="flex items-center justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+      <%= icon_tag :hukidashi, class: "inline-block w-5 h-5 mr-2" %>コメント
+      <span id="comments_count" class="ml-2 bg-orange-400 text-white text-xs font-medium px-2 py-1 rounded-full">
+        <%= post.comments.count %>
+      </span>
+    </h3>
+  </div>
+
+  <!-- コメント投稿フォーム（ログイン時のみ表示） -->
+  <% if user_signed_in? %>
+    <%= render 'comments/form', post: post, comment: Comment.new %>
+  <% else %>
+    <div class="bg-gray-50 rounded-xl p-4 mb-6 text-center border border-gray-200">
+      <p class="text-gray-600">
+        コメントを投稿するには
+        <%= link_to "ログイン", new_user_session_path, class: "text-orange-600 hover:text-orange-700 font-medium underline" %>
+        が必要です
+      </p>
+    </div>
+  <% end %>
+
+  <!-- コメント一覧 -->
+  <div id="comments_list" class="space-y-3">
+    <% if post.comments.any? %>
+      <%= render partial: 'comments/comment', collection: post.comments.order(created_at: :desc) %>
+    <% else %>
+      <div class="text-center py-8 text-gray-500">
+        <%= icon_tag :hukidashi, class: "inline-block w-10 h-10 mr-2" %>
+        <p class="text-sm">まだコメントがありません</p>
+        <% if user_signed_in? %>
+          <p class="text-xs mt-1">最初のコメントを投稿してみませんか？</p>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
