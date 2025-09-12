@@ -32,6 +32,6 @@ class Comment < ApplicationRecord
 
   # コメント内容の表示用メソッド（改行対応）
   def formatted_content
-    content.gsub(/\r\n|\r|\n/, "<br>").html_safe
+    ActionController::Base.helpers.simple_format(content, {}, wrapper_tag: nil)
   end
 end

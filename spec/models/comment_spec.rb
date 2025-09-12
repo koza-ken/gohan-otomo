@@ -118,16 +118,16 @@ RSpec.describe Comment, type: :model do
       context "単一行コンテンツの場合" do
         let(:comment) { create(:comment, content: 'これは一行のコメントです', user: user, post: post_record) }
 
-        it "内容をそのまま返す" do
-          expect(comment.formatted_content).to eq('これは一行のコメントです')
+        it "simple_formatでp要素に変換する" do
+          expect(comment.formatted_content).to eq('<p>これは一行のコメントです</p>')
         end
       end
 
       context "改行を含むコンテンツの場合" do
         let(:comment) { create(:comment, content: "一行目\n二行目\n三行目", user: user, post: post_record) }
 
-        it "改行を<br>タグに変換する" do
-          expected = "一行目<br>二行目<br>三行目"
+        it "改行を<br />タグに変換し、p要素で囲む" do
+          expected = "<p>一行目\n<br />二行目\n<br />三行目</p>"
           expect(comment.formatted_content).to eq(expected)
         end
       end
