@@ -1,0 +1,9 @@
+<!-- コメント削除時のTurbo Stream レスポンス -->
+
+<!-- 削除されたコメントを DOM から削除 -->
+<%= turbo_stream.remove "comment_#{@comment.id}" %>
+
+<!-- コメント数を更新 -->
+<%= turbo_stream.replace "comments_count" do %>
+  <%= @post.comments.count %>
+<% end %>

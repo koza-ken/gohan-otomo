@@ -1,0 +1,16 @@
+<!-- コメント投稿成功時のTurbo Stream レスポンス -->
+
+<!-- 新しいコメントをリストの先頭に追加 -->
+<%= turbo_stream.prepend "comments_list" do %>
+  <%= render 'comments/comment', comment: @comment %>
+<% end %>
+
+<!-- コメントフォームをリセット -->
+<%= turbo_stream.replace "comment_form" do %>
+  <%= render 'comments/form', post: @post, comment: Comment.new %>
+<% end %>
+
+<!-- コメント数を更新 -->
+<%= turbo_stream.replace "comments_count" do %>
+  <%= @post.comments.count %>
+<% end %>
