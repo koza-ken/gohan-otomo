@@ -1,7 +1,19 @@
 <!-- コメント削除時のTurbo Stream レスポンス -->
 
-<!-- 削除されたコメントを DOM から削除 -->
-<%= turbo_stream.remove "comment_#{@comment.id}" %>
+<!-- コメント一覧全体を更新（最後のコメント削除時の「まだコメントがありません」表示対応） -->
+<%= turbo_stream.replace "comments_list" do %>
+  <% if @post.comments.any? %>
+    <%= render partial: 'comments/comment', collection: @post.comments.order(created_at: :desc) %>
+  <% else %>
+    <div class="text-center py-8 text-gray-500">
+      <%= icon_tag :hukidashi, class: "inline-block w-10 h-10 mr-2" %>
+      <p class="text-sm">まだコメントがありません</p>
+      <% if user_signed_in? %>
+        <p class="text-xs mt-1">最初のコメントを投稿してみませんか？</p>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
 
 <!-- コメント数を更新 -->
 <%= turbo_stream.replace "comments_count" do %>

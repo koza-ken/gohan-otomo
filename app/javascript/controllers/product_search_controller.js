@@ -90,7 +90,8 @@ export default class extends Controller {
            data-action="click->product-search#selectProduct"
            data-product-search-image-url="${product.image_url || ''}"
            data-product-search-product-title="${this.escapeHtml(product.title)}"
-           data-product-search-price="${product.price}">
+           data-product-search-price="${product.price}"
+           data-product-search-rakuten-url="${product.rakuten_url || ''}">
         ${product.image_url ?
           `<div class="relative w-full h-32 lg:h-40 bg-gray-100 rounded mb-2 flex items-center justify-center">
              <img src="/api/rakuten/proxy_image?url=${encodeURIComponent(product.image_url)}"
@@ -135,12 +136,13 @@ export default class extends Controller {
     // this.showMessage(`${products.length}件の商品候補が見つかりました`, 'success')
   }
 
-  // 商品を選択（画像URLを自動設定）
+  // 商品を選択（画像URLと通販リンクを自動設定）
   selectProduct(event) {
     const card = event.currentTarget
     const imageUrl = card.dataset.productSearchImageUrl
     const productTitle = card.dataset.productSearchProductTitle
     const price = card.dataset.productSearchPrice
+    const rakutenUrl = card.dataset.productSearchRakutenUrl
 
     if (!imageUrl) {
       this.showError('この商品には画像がありません')
@@ -154,6 +156,13 @@ export default class extends Controller {
 
       // 画像URLフィールドのchangeイベントを発火（既存のプレビュー機能を動作させる）
       imageUrlField.dispatchEvent(new Event('input', { bubbles: true }))
+    }
+
+    // 通販リンクフィールドに自動設定
+    const linkField = this.getLinkField()
+    if (linkField && rakutenUrl) {
+      linkField.value = rakutenUrl
+      console.log(`🔗 通販リンク設定: ${rakutenUrl}`)
     }
 
     // 選択状態を視覚的に表示
@@ -174,8 +183,11 @@ export default class extends Controller {
     // 選択されたカードをハイライト
     selectedCard.classList.add('border-green-500', 'bg-green-50')
 
-    // 選択成功メッセージ
-    this.showMessage('画像を設定しました', 'success')
+    // 選択成功メッセージ（通販リンクも設定されたかに応じてメッセージを変更）
+    const linkField = this.getLinkField()
+    const linkSet = linkField && linkField.value
+    const message = linkSet ? '画像と通販リンクを設定しました' : '画像を設定しました'
+    this.showMessage(message, 'success')
   }
 
   // 検索結果をクリア（統合版）
@@ -251,6 +263,11 @@ export default class extends Controller {
   // 画像URLフィールドを取得
   getImageUrlField() {
     return this.element.closest('form')?.querySelector('input[name*="image_url"]')
+  }
+
+  // 通販リンクフィールドを取得
+  getLinkField() {
+    return this.element.closest('form')?.querySelector('input[name*="link"]')
   }
 
   // CSRFトークンを取得

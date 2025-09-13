@@ -16,6 +16,10 @@ Rails.application.routes.draw do
     resource :profile, only: [:show, :edit, :update]
   end
   
+  # 静的ページ
+  get 'terms_of_service', to: 'static_pages#terms_of_service'
+  get 'privacy_policy', to: 'static_pages#privacy_policy'
+  
   # API エンドポイント
   namespace :api do
     namespace :rakuten do

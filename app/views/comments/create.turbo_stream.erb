@@ -1,9 +1,9 @@
 <% if @comment.persisted? %>
   <!-- コメント投稿成功時のレスポンス -->
 
-  <!-- 新しいコメントをリストの先頭に追加 -->
-  <%= turbo_stream.prepend "comments_list" do %>
-    <%= render 'comments/comment', comment: @comment %>
+  <!-- コメント一覧全体を更新（「まだコメントがありません」問題を解決） -->
+  <%= turbo_stream.replace "comments_list" do %>
+    <%= render partial: 'comments/comment', collection: @post.comments.order(created_at: :desc) %>
   <% end %>
 
   <!-- コメントフォームをリセット -->

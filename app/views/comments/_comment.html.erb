@@ -1,5 +1,5 @@
 <!-- 個別コメント表示 -->
-<div id="comment_<%= comment.id %>" class="bg-white rounded-lg p-4 border border-gray-200 hover:border-orange-200 transition duration-200">
+<div id="comment_<%= comment.id %>" class="bg-white rounded-lg px-4 py-2 border border-gray-200 hover:border-orange-200 transition duration-200">
   <div class="flex justify-between items-start mb-3">
     <div class="flex items-center space-x-3">
       <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm">
@@ -19,7 +19,7 @@
     <% if comment.deletable_by?(current_user) %>
       <%= link_to post_comment_path(comment.post, comment),
           data: {
-            confirm: "このコメントを削除しますか？",
+            turbo_confirm: "このコメントを削除しますか？",
             turbo_method: :delete
           },
           class: "text-gray-400 hover:text-red-500 transition duration-200 text-sm",
@@ -29,7 +29,5 @@
     <% end %>
   </div>
 
-  <div class="text-gray-800 text-sm leading-relaxed">
-    <%= comment.formatted_content %>
-  </div>
+  <div class="text-gray-800 text-sm leading-relaxed whitespace-pre-line break-all overflow-wrap-anywhere max-h-20 overflow-y-auto"><%= comment.content %></div>
 </div>
