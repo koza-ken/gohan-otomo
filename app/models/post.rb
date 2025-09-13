@@ -128,9 +128,9 @@ class Post < ApplicationRecord
     # 一時的にWebPを無効化してIntegrityErrorを回避
     case size
     when :thumbnail
-      thumbnail_image
+      webp_support ? thumbnail_image_webp : thumbnail_image
     when :medium, :large
-      medium_image
+      webp_support ? medium_image_webp : medium_image
     end
   end
 
