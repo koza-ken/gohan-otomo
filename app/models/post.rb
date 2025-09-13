@@ -64,28 +64,28 @@ class Post < ApplicationRecord
   def thumbnail_image
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [ 400, 300 ], strip: true).processed
+    image.variant(resize_to_fill: [ 400, 300 ])
   end
 
   # Active Storage variant: 中サイズ画像（投稿詳細用）
   def medium_image
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [ 800, 600 ], strip: true).processed
+    image.variant(resize_to_fill: [ 800, 600 ])
   end
 
   # WebP形式のvariant: サムネイル画像（投稿一覧用）
   def thumbnail_image_webp
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [ 400, 300 ], strip: true, format: :webp).processed
+    image.variant(resize_to_fill: [ 400, 300 ], format: :webp)
   end
 
   # WebP形式のvariant: 中サイズ画像（投稿詳細用）
   def medium_image_webp
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [ 800, 600 ], strip: true, format: :webp).processed
+    image.variant(resize_to_fill: [ 800, 600 ], format: :webp)
   end
 
   # ハイブリッド画像表示: ユーザーの選択に基づく画像表示
