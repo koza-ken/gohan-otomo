@@ -240,8 +240,35 @@ docker compose exec web rails generate rspec:install
 - ✅ **改行・長文対応**: `whitespace-pre-line break-all overflow-y-auto`でレイアウト崩れ完全防止
 - ✅ **レスポンシブ設計**: モバイル・PC対応の統一UX体験
 
+## 🚨 **現在の緊急課題（2025年9月13日）**
+
+### **画像表示エラーの継続**
+- **問題**: `ActiveStorage::IntegrityError` で本番環境の画像表示が停止
+- **現象**: Cloudinaryアップロード成功、ダウンロード成功、但しvariant処理でエラー
+- **現在のブランチ**: `17_adjust_#47`
+- **緊急度**: 🔴 Critical（サイトが使用不可）
+
+### **試行した解決策と結果**
+1. ✅ **HTTPS対応**: `storage.yml`に`secure: true`追加（Mixed Content解決）
+2. ✅ **vips導入**: `config.active_storage.variant_processor = :vips`設定
+3. ❌ **vips用パラメータ調整**: `quality: 85` → `strip: true` → 基本パラメータのみ
+4. ❌ **WebP無効化**: WebP処理を一時停止
+5. 🔄 **現在**: vipsに戻して再テスト中
+
+### **設定状況（現在）**
+- **application.rb**: `config.active_storage.variant_processor = :vips`
+- **Dockerfile.dev**: `libvips-dev` インストール済み
+- **storage.yml**: `secure: true` でHTTPS強制
+- **variant処理**: `.processed` 付きで確実な処理を試行
+
+### **エラー詳細**
+```
+ActionView::Template::Error (ActiveStorage::IntegrityError)
+app/models/post.rb:67:in `thumbnail_image'
+```
+
 ### 🎯 次期実装予定
-- **利用規約・プライバシーポリシーページ作成**: 本番運用に向けた法的コンプライアンス対応
+- **画像表示問題の完全解決**: 最優先課題
 - **高度な検索機能**: 人気順ソート（いいね数・コメント数順）
 - **System Spec拡張**: JavaScript関連テストの完全対応
 
