@@ -64,28 +64,58 @@ class Post < ApplicationRecord
   def thumbnail_image
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [ 400, 300 ], quality: 85 ).processed
+    begin
+      # vips用パラメータに修正 + エラーハンドリング
+      image.variant(resize_to_fill: [ 400, 300 ]).processed
+    rescue ActiveStorage::IntegrityError => e
+      Rails.logger.error "Thumbnail variant error: #{e.message}"
+      # エラー時はオリジナル画像を返す
+      image
+    end
   end
 
   # Active Storage variant: 中サイズ画像（投稿詳細用）
   def medium_image
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [ 800, 600 ], quality: 85).processed
+    begin
+      # vips用パラメータに修正 + エラーハンドリング
+      image.variant(resize_to_fill: [ 800, 600 ]).processed
+    rescue ActiveStorage::IntegrityError => e
+      Rails.logger.error "Medium variant error: #{e.message}"
+      # エラー時はオリジナル画像を返す
+      image
+    end
   end
 
   # WebP形式のvariant: サムネイル画像（投稿一覧用）
   def thumbnail_image_webp
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [ 400, 300 ], quality: 85, format: :webp).processed
+    begin
+      # WebP変換を一時的に無効化してエラー回避
+      # format: :webp パラメータが原因の可能性があるため
+      image.variant(resize_to_fill: [ 400, 300 ]).processed
+    rescue ActiveStorage::IntegrityError => e
+      Rails.logger.error "Thumbnail WebP variant error: #{e.message}"
+      # エラー時は通常のサムネイル画像にフォールバック
+      thumbnail_image
+    end
   end
 
   # WebP形式のvariant: 中サイズ画像（投稿詳細用）
   def medium_image_webp
     return nil unless image.attached?
 
-    image.variant(resize_to_fill: [ 800, 600 ], quality: 85, format: :webp).processed
+    begin
+      # WebP変換を一時的に無効化してエラー回避
+      # format: :webp パラメータが原因の可能性があるため
+      image.variant(resize_to_fill: [ 800, 600 ]).processed
+    rescue ActiveStorage::IntegrityError => e
+      Rails.logger.error "Medium WebP variant error: #{e.message}"
+      # エラー時は通常の中サイズ画像にフォールバック
+      medium_image
+    end
   end
 
   # ハイブリッド画像表示: ユーザーの選択に基づく画像表示
