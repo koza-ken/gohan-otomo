@@ -28,8 +28,8 @@ module Myapp
     config.i18n.default_locale = :ja
     config.i18n.available_locales = [:ja, :en]
     
-    # Active Storage: vips を使用（軽量・高速）
-    config.active_storage.variant_processor = :vips
+    # Active Storage: ImageMagick (mini_magick) を使用
+    config.active_storage.variant_processor = :mini_magick
     
     # app/services ディレクトリをオートロードパスに追加
     config.autoload_paths << Rails.root.join("app", "services")
