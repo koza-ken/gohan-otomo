@@ -100,9 +100,11 @@
             <h3 class="text-lg font-semibold text-orange-600 flex items-center">
               おすすめポイント
             </h3>
-            <%= link_to "この商品を見る", @post.safe_link,
-                          class: "text-sm sm:text-lg text-orange-500 hover:text-orange-700 underline font-medium",
-                          target: "_blank", rel: "noopener noreferrer" %>
+            <% if @post.safe_link.present? %>
+              <%= link_to "この商品を見る", @post.safe_link,
+                            class: "text-sm sm:text-lg text-orange-500 hover:text-orange-700 underline font-medium",
+                            target: "_blank", rel: "noopener noreferrer" %>
+            <% end %>
           </div>
           <div class="text-gray-700 leading-relaxed whitespace-pre-line break-words line-clamp-4 max-h-24 overflow-hidden"><%= @post.description %></div>
         </div>
