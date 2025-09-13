@@ -30,12 +30,57 @@ ja:
         invalid: の形式が正しくありません
         taken: はすでに存在します
         confirmation: と確認用パスワードが一致しません
+        accepted: を受諾してください
+        empty: を入力してください
+        equal_to: は%{count}と等しい値にしてください
+        even: は偶数にしてください
+        exclusion: は予約されています
+        greater_than: は%{count}より大きい値にしてください
+        greater_than_or_equal_to: は%{count}以上の値にしてください
+        inclusion: は一覧にありません
+        less_than: は%{count}より小さい値にしてください
+        less_than_or_equal_to: は%{count}以下の値にしてください
+        not_a_number: は数値で入力してください
+        not_an_integer: は整数で入力してください
+        odd: は奇数にしてください
+        other_than: は%{count}以外の値にしてください
+        present: は入力しないでください
+        required: は必須フィールドです
+        wrong_length: は%{count}文字で入力してください
       models:
         user:
           attributes:
+            email:
+              blank: メールアドレスを入力してください
+              invalid: メールアドレスの形式が正しくありません
+              taken: このメールアドレスは既に登録されています
+            password:
+              blank: パスワードを入力してください
+              too_short: パスワードは%{count}文字以上で入力してください
             password_confirmation:
-              confirmation: と確認用パスワードが一致しません
-        required: は必須です
+              confirmation: パスワードと確認用パスワードが一致しません
+            display_name:
+              blank: 表示名を入力してください
+              too_long: 表示名は%{count}文字以内で入力してください
+        post:
+          attributes:
+            title:
+              blank: 商品名を入力してください
+              too_long: 商品名は%{count}文字以内で入力してください
+            description:
+              blank: おすすめポイントを入力してください
+              too_long: おすすめポイントは%{count}文字以内で入力してください
+            link:
+              invalid: 通販リンクのURLが正しくありません
+              too_long: 通販リンクは%{count}文字以内で入力してください
+            image_url:
+              invalid: 画像URLの形式が正しくありません
+              too_long: 画像URLは%{count}文字以内で入力してください
+        comment:
+          attributes:
+            content:
+              blank: コメントを入力してください
+              too_long: コメントは%{count}文字以内で入力してください
   errors:
     messages:
       blank: を入力してください
@@ -83,24 +128,20 @@ ja:
       almost_x_years:
         one: "1年近く"
         other: "%{count}年近く"
-  devise:
-    sessions:
-      signed_in: "ログインしました"
-      signed_out: "ログアウトしました"
-    registrations:
-      signed_up: "アカウント登録が完了しました"
-    failure:
-      already_authenticated: "既にログインしています"
-      user:
-        already_authenticated: "既にログインしています"
-        inactive: "アカウントが有効化されていません"
-        invalid: "メールアドレスまたはパスワードが正しくありません"
-        locked: "アカウントがロックされています"
-        last_attempt: "もう一回失敗すると、アカウントがロックされます"
-        not_found_in_database: "メールアドレスまたはパスワードが正しくありません"
-        timeout: "セッションがタイムアウトしました。もう一度ログインしてください"
-        unauthenticated: "ログインまたはアカウント登録してください"
-        unconfirmed: "メールアドレスの確認が必要です"
-    errors:
-      messages:
-        confirmation: "と確認用パスワードが一致しません"
+  # アプリケーション固有メッセージ
+  messages:
+    post_created: "投稿を作成しました。"
+    post_updated: "投稿を更新しました。"
+    post_deleted: "投稿を削除しました。"
+    comment_created: "コメントを投稿しました。"
+    comment_deleted: "コメントを削除しました。"
+    profile_updated: "プロフィールを更新しました。"
+    access_denied: "アクセスが拒否されました。"
+    not_found: "ページが見つかりません。"
+    
+  # フラッシュメッセージ
+  flash:
+    notice: "正常に処理されました。"
+    alert: "エラーが発生しました。"
+    success: "成功しました。"
+    error: "エラーが発生しました。"
