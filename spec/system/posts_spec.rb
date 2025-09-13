@@ -111,8 +111,8 @@ RSpec.describe "Posts", type: :system do
 
         click_button "投稿する"
 
-        expect(page).to have_content("商品名 を入力してください")
-        expect(page).to have_content("おすすめポイント を入力してください")
+        expect(page).to have_content("商品名を入力してください")
+        expect(page).to have_content("おすすめポイントを入力してください")
         expect(Post.count).to eq(0)
       end
     end
@@ -153,7 +153,7 @@ RSpec.describe "Posts", type: :system do
 
         click_button "更新する"
 
-        expect(page).to have_content("商品名 を入力してください")
+        expect(page).to have_content("商品名を入力してください")
       end
     end
 

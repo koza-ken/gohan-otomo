@@ -28,10 +28,10 @@ RSpec.describe "ユーザー認証", type: :system do
 
       click_button "新規登録"
 
-      expect(page).to have_content("表示名 を入力してください")
-      expect(page).to have_content("メールアドレス の形式が正しくありません")
-      expect(page).to have_content("パスワード は6文字以上で入力してください")
-      expect(page).to have_content("Password confirmation と確認用パスワードが一致しません")
+      expect(page).to have_content("表示名を入力してください")
+      expect(page).to have_content("メールアドレスの形式が正しくありません")
+      expect(page).to have_content("パスワードは6文字以上で入力してください")
+      expect(page).to have_content("パスワードと確認用パスワードが一致しません")
     end
 
     it "表示名の重複では登録に失敗する" do

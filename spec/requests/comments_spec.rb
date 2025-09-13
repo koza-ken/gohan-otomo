@@ -179,9 +179,10 @@ RSpec.describe 'Comments', type: :request do
 
           it 'turbo_streamコンテンツが含まれる' do
             delete post_comment_path(post_record, comment), headers: turbo_headers
-            
+
             expect(response.body).to include('turbo-stream')
-            expect(response.body).to include("comment_#{comment.id}")
+            expect(response.body).to include('comments_list')
+            expect(response.body).to include('comments_count')
           end
         end
       end
