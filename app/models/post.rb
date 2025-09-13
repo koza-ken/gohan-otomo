@@ -125,11 +125,12 @@ class Post < ApplicationRecord
 
   # ファイル画像の取得（サイズ・WebP対応）
   def get_file_image(size, webp_support)
+    # 一時的にWebPを無効化してIntegrityErrorを回避
     case size
     when :thumbnail
-      webp_support ? thumbnail_image_webp : thumbnail_image
+      thumbnail_image
     when :medium, :large
-      webp_support ? medium_image_webp : medium_image
+      medium_image
     end
   end
 
