@@ -28,7 +28,7 @@
 
     <div class="flex items-center justify-between">
       <div class="text-xs text-gray-500">
-        <span id="comment_counter">0</span> / 300 文字
+        300文字以内
       </div>
 
       <%= form.submit "コメント投稿",
@@ -37,30 +37,3 @@
     </div>
   <% end %>
 </div>
-
-<script>
-  // 文字数カウンター
-  document.addEventListener('DOMContentLoaded', function() {
-    const textArea = document.querySelector('textarea[name="comment[content]"]');
-    const counter = document.getElementById('comment_counter');
-
-    if (textArea && counter) {
-      function updateCounter() {
-        const length = textArea.value.length;
-        counter.textContent = length;
-
-        // 文字数に応じて色を変更
-        if (length > 280) {
-          counter.className = 'text-red-600 font-medium';
-        } else if (length > 250) {
-          counter.className = 'text-orange-600';
-        } else {
-          counter.className = 'text-gray-500';
-        }
-      }
-
-      textArea.addEventListener('input', updateCounter);
-      updateCounter(); // 初期値設定
-    }
-  });
-</script>
