@@ -262,10 +262,10 @@ RSpec.describe "Posts", type: :system do
 
         fill_in "商品名", with: "画像付きテスト商品"
         fill_in "おすすめポイント", with: "美味しそうな見た目です"
-        
+
         # ファイルアップロードのラジオボタンを選択
         choose "post_image_source_file"
-        
+
         # 画像ファイルをアップロード
         attach_file "post_image", Rails.root.join('spec', 'fixtures', 'files', 'test_image.jpg')
 
@@ -276,34 +276,34 @@ RSpec.describe "Posts", type: :system do
         post = Post.last
         expect(post.image.attached?).to be true
         expect(post.image.filename.to_s).to eq('test_image.jpg')
-        
+
         expect(current_path).to eq(post_path(post))
         expect(page).to have_content("投稿が作成されました")
         expect(page).to have_content("画像付きテスト商品")
       end
 
-      it "楽天画像URLで投稿できる", skip: "現在の仕様では楽天検索からのみ画像URL設定可能（手動テスト対象）" do
+      # it "楽天画像URLで投稿できる", skip: "現在の仕様では楽天検索からのみ画像URL設定可能（手動テスト対象）" do
         # このテストは楽天API検索機能の統合テストが必要なため、
         # Request specで詳細テスト済み、ここでは手動確認対象とする
-        skip "楽天API連携機能は手動テストで確認"
-      end
+        # skip "楽天API連携機能は手動テストで確認"
+      # end
     end
 
     context "画像の基本確認" do
       it "楽天画像URLの投稿で適切に表示される" do
         post_with_url = create(:post, :with_image, user: user)
-        
+
         visit post_path(post_with_url)
-        
+
         expect(page).to have_content(post_with_url.title)
         expect(post_with_url.has_image?).to be true
       end
 
       it "画像がない投稿でも正常に表示される" do
         post_without_image = create(:post, user: user)
-        
+
         visit post_path(post_without_image)
-        
+
         expect(page).to have_content(post_without_image.title)
         expect(post_without_image.has_image?).to be false
       end
