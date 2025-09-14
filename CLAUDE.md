@@ -158,7 +158,7 @@ docker compose exec web rails generate rspec:install
   - Model spec: 115テスト（バリデーション、アソシエーション、いいね・コメント・楽天API機能）
   - System spec: 58テスト（画像アップロード、いいね・コメント操作、JavaScript統合テスト）
   - Request spec: 143テスト（CRUD操作、認証・認可、Ajax機能、Static Pages）
-  - 楽天API機能: 手動テスト対象（複雑なAPI連携のため）
+  - 楽天API機能: Service層15テスト実装済み、Controller層は手動テスト対象
   - Static Pages: OGPメタタグ、SEO対応完全実装
   - Comment機能: Ajax完全対応、リアルタイム更新
   - Like機能: Turbo Stream完全統合
