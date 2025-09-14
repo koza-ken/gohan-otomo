@@ -1,7 +1,10 @@
 <!-- コメント削除時のTurbo Stream レスポンス -->
 
-<!-- コメント一覧全体を更新（最後のコメント削除時の「まだコメントがありません」表示対応） -->
-<%= turbo_stream.replace "comments_list" do %>
+<!-- 削除されたコメントを即座に非表示 -->
+<%= turbo_stream.remove "comment_#{@comment.id}" %>
+
+<!-- コメント一覧の内容を更新（最後のコメント削除時の「まだコメントがありません」表示対応） -->
+<%= turbo_stream.update "comments_list" do %>
   <% if @post.comments.any? %>
     <%= render partial: 'comments/comment', collection: @post.comments.order(created_at: :desc) %>
   <% else %>
@@ -16,6 +19,6 @@
 <% end %>
 
 <!-- コメント数を更新 -->
-<%= turbo_stream.replace "comments_count" do %>
+<%= turbo_stream.update "comments_count" do %>
   <%= @post.comments.count %>
 <% end %>

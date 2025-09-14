@@ -19,8 +19,8 @@
 
       <% if comment.errors.any? %>
         <div class="text-sm text-red-600">
-          <% comment.errors.full_messages.each do |message| %>
-            <div>• <%= message %></div>
+          <% if comment.errors[:content].any? %>
+            <div>• コメントを入力してください</div>
           <% end %>
         </div>
       <% end %>

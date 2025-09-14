@@ -53,7 +53,7 @@
 
     <!-- 戻るボタン -->
     <div class="mt-6 text-center">
-      <%= link_to "トップページに戻る", root_path,
+      <%= link_to "戻る", posts_path(user_id: @user.id),
           class: "text-orange-600 hover:text-orange-700 font-medium transition duration-200" %>
     </div>
 
