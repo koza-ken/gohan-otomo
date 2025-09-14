@@ -150,7 +150,14 @@
     <!-- ＋ボタン -->
     <button data-action="click->floating-menu#toggle" data-floating-menu-target="button"
             class="bg-orange-500 hover:bg-orange-600 text-white w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center text-3xl font-bold">
-      <span data-floating-menu-target="icon">+</span>
+      <%# ＋ボタン %>
+      <svg data-floating-menu-target="plusIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      <%# ×ボタン %>
+      <svg data-floating-menu-target="closeIcon" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 hidden transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
     </button>
 
     <!-- ドロップダウンメニュー -->
