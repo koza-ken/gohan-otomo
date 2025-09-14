@@ -32,7 +32,7 @@ class RakutenProductService
       Rails.logger.info "✅ 楽天API検索成功: #{products.count}件取得"
       products
 
-    rescue Net::TimeoutError => e
+    rescue Timeout::Error => e
       Rails.logger.error "⏰ 楽天API タイムアウト: #{e.message}"
       []
     rescue StandardError => e

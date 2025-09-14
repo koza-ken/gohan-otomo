@@ -1,0 +1,51 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 4,
+      "fingerprint": "c2c3d846282569668fee88b73aa3a099b9c3b1527b9526ccb44408b881622536",
+      "check_name": "LinkToHref",
+      "message": "Potentially unsafe model attribute in `link_to` href",
+      "file": "app/views/posts/show.html.erb",
+      "line": 104,
+      "link": "https://brakemanscanner.org/docs/warning_types/link_to_href/",
+      "code": "link_to(\"この商品を見る\", Post.find(params[:id]).safe_link, :class => \"text-sm sm:text-lg text-orange-500 hover:text-orange-700 underline font-medium\", :target => \"_blank\", :rel => \"noopener noreferrer\")",
+      "render_path": null,
+      "location": {
+        "type": "template",
+        "template": "posts/show"
+      },
+      "user_input": "Post.find(params[:id]).safe_link",
+      "confidence": "Weak",
+      "cwe_id": [
+        79
+      ],
+      "note": "safe_linkメソッドで既にセキュリティ対策済み（javascript:スキーム等をブロック）"
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "c6537166df33c806706903e5a949b539fdf8f018fbc3d2c3eef162bf6f244bb4",
+      "check_name": "FileAccess",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/api/rakuten/products_controller.rb",
+      "line": 99,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "Net::HTTP.new(URI.parse(params[:url]).host, URI.parse(params[:url]).port)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Api::Rakuten::ProductsController",
+        "method": "proxy_image"
+      },
+      "user_input": "params[:url]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": "楽天CDNドメイン（https://thumbnail.image.rakuten.co.jp/）のみに制限済み"
+    }
+  ],
+  "updated": "2025-09-14 09:26:00 +0900",
+  "brakeman_version": "7.1.0"
+}

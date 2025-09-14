@@ -228,7 +228,7 @@ RSpec.describe "Posts", type: :request do
         title: "テスト商品",
         description: "とても美味しいです",
         link: "https://example.com",
-        image_url: "https://example.com/image.jpg"
+        image_url: "https://thumbnail.image.rakuten.co.jp/@0_mall/test/cabinet/sample.jpg"
       }
     end
 

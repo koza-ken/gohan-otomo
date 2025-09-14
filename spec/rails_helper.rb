@@ -24,16 +24,32 @@ Capybara.register_driver :rack_test do |app|
   Capybara::RackTest::Driver.new(app, headers: { 'HTTP_USER_AGENT' => 'Capybara' })
 end
 
-# Headless Chrome driver設定
+# Headless Chrome driver設定（JavaScript対応強化）
 Capybara.register_driver :selenium_chrome_headless do |app|
   options = Selenium::WebDriver::Chrome::Options.new
   options.add_argument('--headless')
   options.add_argument('--no-sandbox')
   options.add_argument('--disable-dev-shm-usage')
   options.add_argument('--disable-gpu')
+  options.add_argument('--disable-web-security')
+  options.add_argument('--allow-running-insecure-content')
   options.add_argument('--remote-debugging-port=9222')
   options.add_argument('--window-size=1400,1400')
-  
+
+  Capybara::Selenium::Driver.new(
+    app,
+    browser: :chrome,
+    options: options
+  )
+end
+
+# JavaScript対応ドライバー（ヘッドフル版、デバッグ用）
+Capybara.register_driver :selenium_chrome do |app|
+  options = Selenium::WebDriver::Chrome::Options.new
+  options.add_argument('--no-sandbox')
+  options.add_argument('--disable-dev-shm-usage')
+  options.add_argument('--window-size=1400,1400')
+
   Capybara::Selenium::Driver.new(
     app,
     browser: :chrome,
@@ -43,16 +59,21 @@ end
 
 # JavaScript テスト用の設定
 Capybara.server = :puma, { Silent: true }
+Capybara.default_max_wait_time = 5
 
 # System tests configuration
 RSpec.configure do |config|
   config.before(:each, type: :system) do |example|
     if example.metadata[:js]
-      driven_by :selenium_chrome_headless
+      # CI環境ではヘッドレス、ローカル開発時はオプション選択可能
+      driven_by ENV['CI'] ? :selenium_chrome_headless : :selenium_chrome_headless
     else
       driven_by :rack_test
     end
   end
+
+  # JavaScript テスト用のヘルパーメソッド
+  config.include RSpec::Rails::SystemExampleGroup, type: :system
 end
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
