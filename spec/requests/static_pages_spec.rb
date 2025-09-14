@@ -59,7 +59,7 @@ RSpec.describe 'StaticPages', type: :request do
 
       it 'メタタグが適切に設定されている' do
         expect(response.body).to include('<meta name="viewport"')
-        expect(response.body).to include('charset') # UTF-8の設定があることを確認
+        expect(response.body).to include('<meta property="og:') # OGPメタタグの存在確認
       end
 
       it 'CSSが読み込まれている' do

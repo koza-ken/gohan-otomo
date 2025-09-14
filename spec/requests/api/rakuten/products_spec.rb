@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Api::Rakuten::Products', type: :request do
   let(:user) { create(:user) }
 
-  describe 'GET /api/rakuten/products/search' do
+  describe 'POST /api/rakuten/search_products' do
     before { sign_in user }
 
     context '正常なリクエストの場合' do
@@ -29,7 +29,7 @@ RSpec.describe 'Api::Rakuten::Products', type: :request do
       end
 
       it '商品検索結果をJSONで返す' do
-        get '/api/rakuten/products/search', params: { q: 'お米' }
+        post '/api/rakuten/search_products', params: { q: 'お米' }
 
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to include('application/json')

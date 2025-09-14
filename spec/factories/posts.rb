@@ -11,7 +11,7 @@ FactoryBot.define do
     end
 
     trait :with_image do
-      image_url { "https://example.com/image.jpg" }
+      image_url { "https://thumbnail.image.rakuten.co.jp/@0_mall/test/cabinet/sample.jpg" }
     end
 
     # Active Storage画像添付用のtrait

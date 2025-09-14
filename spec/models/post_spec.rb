@@ -78,15 +78,15 @@ RSpec.describe Post, type: :model do
         expect(post.valid?).to be true
       end
 
-      it "正しいURL形式の場合は有効" do
-        post = Post.new(title: "テスト商品", description: "テスト", image_url: "https://example.com/image.jpg", user: user)
+      it "楽天CDNのURL形式の場合は有効" do
+        post = Post.new(title: "テスト商品", description: "テスト", image_url: "https://thumbnail.image.rakuten.co.jp/@0_mall/test/cabinet/sample.jpg", user: user)
         expect(post.valid?).to be true
       end
 
-      it "不正なURL形式の場合は無効" do
-        post = Post.new(title: "テスト商品", description: "テスト", image_url: "not-a-url", user: user)
+      it "楽天CDN以外のURL形式の場合は無効" do
+        post = Post.new(title: "テスト商品", description: "テスト", image_url: "https://example.com/image.jpg", user: user)
         expect(post.valid?).to be false
-        expect(post.errors[:image_url]).to include("正しいURLを入力してください")
+        expect(post.errors[:image_url]).to include("楽天市場の画像URLのみ使用できます")
       end
     end
   end
