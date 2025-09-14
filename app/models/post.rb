@@ -15,7 +15,11 @@ class Post < ApplicationRecord
   validates :image_url, length: { maximum: 1000 }, allow_blank: true
   # リンクの入力が正しいか確認
   validates :link, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "正しいURLを入力してください" }, if: :link?
-  validates :image_url, format: { with: URI::DEFAULT_PARSER.make_regexp(%w[http https]), message: "正しいURLを入力してください" }, if: :image_url?
+  # 楽天ドメインのみ許可（セキュリティ対策）
+  validates :image_url, format: {
+    with: %r{\Ahttps://thumbnail\.image\.rakuten\.co\.jp/.*\z},
+    message: "楽天市場の画像URLのみ使用できます"
+  }, if: :image_url?
 
   # 画像バリデーション
   validate :image_format
