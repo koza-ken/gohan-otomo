@@ -136,10 +136,10 @@ module ApplicationHelper
     # 投稿者判定でメッセージを変更
     if user_signed_in? && current_user == post.user
       # 自分の投稿の場合
-      base_message = "「#{post.title}」がおすすめ！！"
+      base_message = "白いごはんには\"#{post.title}\"がおすすめ！！"
     else
       # 他人の投稿の場合
-      base_message = "「#{post.title}」が気になる！！"
+      base_message = "\"#{post.title}\"が気になる！おいしそう！！"
     end
 
     # カスタムメッセージがある場合は優先
