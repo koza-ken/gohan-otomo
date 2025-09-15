@@ -28,3 +28,6 @@ application.register("product-search", ProductSearchController)
 import UnifiedPreviewController from "./unified_preview_controller"
 application.register("unified-preview", UnifiedPreviewController)
 
+import WelcomeModalController from "./welcome_modal_controller"
+application.register("welcome-modal", WelcomeModalController)
+

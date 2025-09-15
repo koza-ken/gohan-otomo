@@ -7,6 +7,97 @@ class RakutenProductService
   DEFAULT_LIMIT = 12
   TIMEOUT_SECONDS = 10
 
+  # 楽天市場URLから商品情報を取得する
+  #
+  # @param rakuten_url [String] 楽天市場の商品URL
+  # @return [Array<Hash>] 商品情報のハッシュ配列（1件または空配列）
+  def self.fetch_product_from_url(rakuten_url)
+    return [] if rakuten_url.blank?
+
+    # 楽天URLの正規表現パターン（商品ID部分を抽出）
+    rakuten_patterns = [
+      # https://item.rakuten.co.jp/shop-name/item-code/
+      %r{https?://(?:www\.)?item\.rakuten\.co\.jp/([^/]+)/([^/?]+)},
+      # https://www.rakuten.co.jp/shop-name/cabinet/item-code.html
+      %r{https?://(?:www\.)?rakuten\.co\.jp/([^/]+)/cabinet/([^/?]+)\.html}
+    ]
+
+    shop_code = nil
+    item_code = nil
+
+    rakuten_patterns.each do |pattern|
+      match = rakuten_url.match(pattern)
+      if match
+        shop_code = match[1]
+        item_code = match[2].gsub(/\.html$/, "") # .htmlを除去
+        break
+      end
+    end
+
+    return [] unless shop_code && item_code
+
+    begin
+      Rails.logger.info "🛒 楽天URL解析開始: shop_code=#{shop_code}, item_code=#{item_code}"
+
+      items = []
+
+      # 段階1: 正確な検索（shop_code + item_code）
+      begin
+        Rails.logger.info "🔍 段階1: 正確検索 (shop_code + item_code)"
+        items = RakutenWebService::Ichiba::Item.search(
+          shop_code: shop_code,
+          item_code: item_code
+        )
+        Rails.logger.info "✅ 正確検索結果: #{items.count}件"
+      rescue StandardError => e
+        Rails.logger.info "⚠️ 正確検索失敗: #{e.message} → 部分検索に移行"
+        items = []
+      end
+
+      # 段階2: 部分検索（keyword + shop_code）
+      if items.count == 0
+        begin
+          Rails.logger.info "🔍 段階2: 部分検索 (keyword + shop_code)"
+          items = RakutenWebService::Ichiba::Item.search(
+            keyword: item_code,
+            shop_code: shop_code
+          )
+          Rails.logger.info "✅ 部分検索結果: #{items.count}件"
+        rescue StandardError => e
+          Rails.logger.info "⚠️ 部分検索失敗: #{e.message} → キーワード検索に移行"
+          items = []
+        end
+      end
+
+      # 段階3: キーワード検索のみ（最終フォールバック）
+      if items.count == 0
+        begin
+          Rails.logger.info "🔍 段階3: キーワード検索のみ (最終フォールバック)"
+          items = RakutenWebService::Ichiba::Item.search(
+            keyword: item_code
+          )
+          Rails.logger.info "✅ キーワード検索結果: #{items.count}件"
+        rescue StandardError => e
+          Rails.logger.warn "⚠️ 最終検索も失敗: #{e.message}"
+          items = []
+        end
+      end
+
+      item = items.first
+      return [] unless item
+
+      product_info = format_product_info(item)
+      Rails.logger.info "✅ 楽天URL解析成功: #{product_info[:title]}"
+
+      [ product_info ] # 配列形式で返す（既存のAPIと統一）
+
+    rescue StandardError => e
+      Rails.logger.error "❌ 楽天URL解析 致命的エラー: #{e.message}"
+      Rails.logger.error e.backtrace.first(3).join("\n")
+      []
+    end
+  end
+
   # 商品名で楽天商品を検索し、候補リストを返す
   #
   # @param title [String] 検索する商品名

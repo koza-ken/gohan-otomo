@@ -124,7 +124,7 @@ RSpec.describe "Posts", type: :request do
       end
 
       describe "ページネーション機能" do
-        # 12件を超える投稿を作成（ページネーションをテスト）
+        # 8件を超える投稿を作成（ページネーションをテスト）
         let!(:additional_posts) do
           (4..15).map do |i|
             create(:post, title: "追加投稿#{i}", description: "テスト投稿#{i}", user: user, created_at: i.hours.ago)
@@ -153,7 +153,7 @@ RSpec.describe "Posts", type: :request do
         end
 
         it "検索結果もページネーションされる" do
-          # 追加投稿12件中、「追加」で検索すると12件ヒット
+          # 追加投稿12件中、「追加」で検索すると12件ヒット（1ページ8件表示）
           get posts_path, params: { search: "追加", page: 1 }
           expect(response).to have_http_status(:ok)
           expect(response.body).to include("追加")

@@ -79,11 +79,11 @@ puts "🍚 ご飯のお供投稿を作成中..."
 
 gohan_otomo_data = [
   # 定番のご飯のお供
-  { title: "明太子", description: "プチプチした食感と辛味が最高！九州福岡の名産品です。", link: "https://example.com/mentaiko", image_url: "https://via.placeholder.com/400x300/ff6b6b/ffffff?text=明太子" },
-  { title: "いくら醤油漬け", description: "贅沢なプチプチ食感。特別な日のご飯に最適です。", link: "https://example.com/ikura", image_url: "https://via.placeholder.com/400x300/ff8c42/ffffff?text=いくら" },
-  { title: "鮭フレーク", description: "手軽で美味しい定番のご飯のお供。おにぎりにも最適。", link: "https://example.com/sake-flake", image_url: "https://via.placeholder.com/400x300/ffa726/ffffff?text=鮭フレーク" },
-  { title: "のり佃煮", description: "甘辛い味付けがご飯とベストマッチ。朝食の定番です。", link: "https://example.com/nori-tsukudani", image_url: "https://via.placeholder.com/400x300/66bb6a/ffffff?text=のり佃煮" },
-  { title: "梅干し", description: "日本の伝統的な保存食。塩分補給にも良いです。", link: "https://example.com/umeboshi", image_url: "https://via.placeholder.com/400x300/e91e63/ffffff?text=梅干し" },
+  { title: "明太子", description: "プチプチした食感と辛味が最高！九州福岡の名産品です。", link: "https://example.com/mentaiko", image_url: "" },
+  { title: "いくら醤油漬け", description: "贅沢なプチプチ食感。特別な日のご飯に最適です。", link: "https://example.com/ikura", image_url: "" },
+  { title: "鮭フレーク", description: "手軽で美味しい定番のご飯のお供。おにぎりにも最適。", link: "https://example.com/sake-flake", image_url: "" },
+  { title: "のり佃煮", description: "甘辛い味付けがご飯とベストマッチ。朝食の定番です。", link: "https://example.com/nori-tsukudani", image_url: "" },
+  { title: "梅干し", description: "日本の伝統的な保存食。塩分補給にも良いです。", link: "https://example.com/umeboshi", image_url: "" },
   
   # 地域特産品
   { title: "博多明太子", description: "本場福岡の辛子明太子。一度食べたら忘れられません。", link: "https://example.com/hakata-mentaiko" },
@@ -199,6 +199,6 @@ puts <<~SUMMARY
   🔑 Password: password123
 
 🚀 ページネーション機能テストに十分なデータ量です！
-   (1ページ12件 × 約3ページ分のデータ)
+   (1ページ8件 × 約4ページ分のデータ)
 
 SUMMARY

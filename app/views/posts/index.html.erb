@@ -129,15 +129,16 @@
 
   <!-- ページネーション -->
   <% if @posts.respond_to?(:current_page) && @posts.total_pages > 1 %>
-    <div class="mt-12">
-      <div class="flex justify-center items-center space-x-1">
+    <div class="mt-12 px-2">
+      <div class="flex justify-center items-center">
         <%= paginate @posts,
             params: { search: params[:search], user_id: params[:user_id] }.compact,
-            class: "flex items-center space-x-1" %>
+            class: "flex items-center",
+            window: 1 %>
       </div>
 
       <!-- ページ情報表示 -->
-      <div class="text-center mt-4 text-sm text-orange-600">
+      <div class="text-center mt-4 text-xs sm:text-sm text-orange-600">
         <%= page_entries_info @posts, entry_name: '投稿' %>
       </div>
     </div>

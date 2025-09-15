@@ -6,13 +6,35 @@
     <div class="lg:col-span-2 space-y-5">
       <div>
         <%= f.label :title, "商品名", class: "block text-sm font-medium text-orange-700 mb-2" %>
-        <div class="relative">
+        <div class="flex space-x-2">
           <%= f.text_field :title,
-                          class: "w-full pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200" %>
+                          placeholder: "お好みの商品名を入力",
+                          class: "flex-1 pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200" %>
+          <button type="button"
+                  data-action="click->product-search#searchByProductName"
+                  class="px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition duration-200 whitespace-nowrap">
+            検索
+          </button>
         </div>
       </div>
 
-      <!-- スマホ時のみ表示: 商品名直下の楽天検索 -->
+      <div>
+        <%= label_tag :rakuten_url, "楽天市場URL", class: "block text-sm font-medium text-orange-700 mb-2" %>
+        <div class="flex space-x-2">
+          <%= text_field_tag :rakuten_url, "",
+                            placeholder: "https://item.rakuten.co.jp/...",
+                            class: "flex-1 pl-4 pr-4 py-3 border border-orange-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white transition duration-200" %>
+          <button type="button"
+                  data-action="click->product-search#searchByUrl"
+                  class="px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition duration-200 whitespace-nowrap">
+            検索
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 mt-1">💡 楽天市場の商品URLを貼り付けると検索できます
+        </p>
+      </div>
+
+      <!-- スマホ時のみ表示: 楽天検索結果表示エリア -->
       <div class="lg:hidden">
         <%= render 'rakuten_search' %>
       </div>
@@ -42,7 +64,7 @@
                                } %>
             <div class="flex-1">
               <div class="font-medium text-orange-700">商品画像を検索</div>
-              <div class="text-sm text-gray-600 mt-1">商品名を検索して画像を取得します</div>
+              <div class="text-sm text-gray-600 mt-1">商品名またはURLで画像を取得します</div>
             </div>
           </label>
 
@@ -164,7 +186,7 @@
       </div>
 
       <div>
-        <%= f.label :link, "通販リンク（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
+        <%= f.label :link, "楽天市場リンク（任意）", class: "block text-sm font-medium text-orange-700 mb-2" %>
         <div class="relative">
           <%= f.url_field :link,
                           placeholder: "https://example.com/product",

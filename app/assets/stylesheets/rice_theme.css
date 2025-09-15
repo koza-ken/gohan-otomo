@@ -169,12 +169,12 @@
 
 /* Kaminari pagination styling with rice theme */
 .pagination {
-  @apply flex items-center justify-center space-x-1;
+  @apply flex items-center justify-center space-x-0.5;
 }
 
 .pagination a,
 .pagination span {
-  @apply px-3 py-2 text-sm font-medium rounded-lg transition duration-200;
+  @apply px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base font-medium rounded-lg transition duration-200;
 }
 
 .pagination a {
@@ -189,12 +189,52 @@
   @apply text-orange-400 bg-transparent border-transparent cursor-default;
 }
 
+/* Previous/Next ボタンの簡単な記号変更 */
 .pagination a.prev,
-.pagination a.next {
-  @apply px-4 py-2 bg-orange-100 text-orange-700 hover:bg-orange-200;
-}
-
+.pagination a.next,
 .pagination span.prev,
 .pagination span.next {
-  @apply px-4 py-2 text-orange-300 bg-orange-50 border border-orange-100 cursor-not-allowed;
+  @apply px-2 py-2 sm:px-3 sm:py-2 bg-orange-100 text-orange-700 hover:bg-orange-200 text-base sm:text-lg font-bold;
+  text-indent: -9999px;
+  position: relative;
+}
+
+.pagination a.prev::after,
+.pagination span.prev::after {
+  content: "‹";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-indent: 0;
+}
+
+.pagination a.next::after,
+.pagination span.next::after {
+  content: "›";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-indent: 0;
+}
+
+/* レスポンシブ調整 */
+.pagination {
+  @apply flex-wrap;
+}
+
+/* より小さい画面でのボタンサイズ調整 */
+@media (max-width: 480px) {
+  .pagination a,
+  .pagination span {
+    @apply px-2 py-1.5 text-xs;
+  }
+
+  .pagination a.prev,
+  .pagination a.next,
+  .pagination span.prev,
+  .pagination span.next {
+    @apply px-2 py-1.5 text-sm;
+  }
 }
