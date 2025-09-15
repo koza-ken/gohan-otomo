@@ -5,7 +5,7 @@ export default class extends Controller {
   static targets = ["input", "preview", "urlInput", "urlPreview", "urlStatus"]
   
   connect() {
-    console.log("Image preview controller connected!")
+    // Controller initialization
   }
   
   preview(event) {

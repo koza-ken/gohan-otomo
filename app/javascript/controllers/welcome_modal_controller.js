@@ -8,17 +8,13 @@ export default class extends Controller {
     const path = window.location.pathname
     const isTopPage = path === '/' || path === '/posts' || path.startsWith('/posts?')
 
-    console.log('Current path:', path, 'Is top page:', isTopPage)
-
     if (!isTopPage) return
 
     // 初回アクセス判定（LocalStorageを使用）
     const hasVisited = localStorage.getItem('has_visited_otomo')
-    console.log('Has visited:', hasVisited)
 
     if (!hasVisited) {
       // 初回アクセスの場合、モーダルを表示
-      console.log('Showing modal in 500ms')
       setTimeout(() => {
         this.showModal()
       }, 500) // 0.5秒後に表示（ページロード完了待ち）

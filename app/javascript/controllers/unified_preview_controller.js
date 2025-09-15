@@ -9,7 +9,7 @@ export default class extends Controller {
   ]
 
   connect() {
-    console.log("Unified preview controller connected!")
+    // Unified preview controller connected
     // 画像ソース（urlかfile）を保持
     this.currentImageSource = 'url' // デフォルトはURL画像
 
@@ -20,7 +20,7 @@ export default class extends Controller {
   // ラジオボタンで画像ソースを切り替えたときに呼ばれる
   switchImageSource(event) {
     const selectedSource = event.target.value
-    console.log("画像ソース切り替え:", selectedSource)
+    // 画像ソース切り替え
 
     this.currentImageSource = selectedSource
     // 入力フォームを切り替え
@@ -70,16 +70,16 @@ export default class extends Controller {
   checkInitialState() {
     // 編集ページで既に値がある場合の自動選択
     if (this.hasUrlInputTarget && this.urlInputTarget.value.trim()) {
-      console.log("初期URL検出:", this.urlInputTarget.value.trim())
+      // 初期URL検出
       this.setImageSource('url')
       this.updateUrlPreview({ target: this.urlInputTarget })
     } else if (this.hasFileInputTarget && this.fileInputTarget.files[0]) {
-      console.log("初期ファイル検出:", this.fileInputTarget.files[0])
+      // 初期ファイル検出
       this.setImageSource('file')
       this.updateFilePreview({ target: this.fileInputTarget })
     } else {
       // デフォルトはURL画像選択、プレースホルダー表示
-      console.log("初期状態: URL画像選択デフォルト")
+      // 初期状態: URL画像選択デフォルト
       this.setImageSource('url')
       this.showPlaceholder()
     }

@@ -5,7 +5,7 @@ export default class extends Controller {
   static targets = ["password", "icon"]
 
   connect() {
-    console.log("Password toggle controller connected!")
+    // Controller initialization
   }
 
   toggle() {

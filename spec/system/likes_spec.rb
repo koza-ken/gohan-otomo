@@ -35,9 +35,7 @@ RSpec.describe "いいね機能", type: :system do
         # 期待するセレクタ
         expected_selector = '[data-turbo-frame="like_button_' + post_record.id.to_s + '"]'
         
-        # デバッグ出力
-        puts "Looking for selector: #{expected_selector}"
-        puts "Page content: #{page.body}" if ENV['DEBUG']
+        # セレクタ確認（デバッグ用）
         
         expect(page).to have_selector('turbo-frame') # turbo-frameタグの存在確認
         expect(page).to have_content("0") # いいね数は表示される

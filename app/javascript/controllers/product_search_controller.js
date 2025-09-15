@@ -12,7 +12,7 @@ export default class extends Controller {
 
   // コントローラー初期化時に実行
   connect() {
-    console.log("🛒 商品検索コントローラー初期化")
+    // 商品検索コントローラー初期化
 
     // Enter キー対応のためのイベントリスナー追加
     this.setupEnterKeyListener()
@@ -60,11 +60,11 @@ export default class extends Controller {
       return
     }
 
-    console.log('🔍 商品名検索モード')
+    // 商品名検索モード
     this.showLoading()
 
     try {
-      console.log(`🔍 商品名検索開始: ${productName}`)
+      // 商品名検索開始
 
       // APIエンドポイントに商品名検索リクエスト
       const response = await fetch('/api/rakuten/search_products', {
@@ -80,7 +80,7 @@ export default class extends Controller {
 
       if (response.ok && result.success) {
         if (result.products && result.products.length > 0) {
-          console.log(`✅ 商品名検索成功: ${result.count}件取得`)
+          // 商品名検索成功
           this.displayCandidates(result.products)
         } else {
           this.showMessage(result.message || `「${productName}」に該当する商品が見つかりませんでした`, 'info')
@@ -119,12 +119,12 @@ export default class extends Controller {
       return
     }
 
-    console.log('🔗 楽天URL検索モード')
+    // 楽天URL検索モード
 
     this.showLoading()
 
     try {
-      console.log(`🔍 商品検索開始: ${rakutenUrl}`)
+      // 商品検索開始
 
       // APIエンドポイントに商品検索リクエスト（楽天URLを送信）
       const response = await fetch('/api/rakuten/search_products', {
@@ -140,7 +140,7 @@ export default class extends Controller {
 
       if (response.ok && result.success) {
         if (result.products && result.products.length > 0) {
-          console.log(`✅ 商品検索成功: ${result.count}件取得`)
+          // 商品検索成功
           this.displayCandidates(result.products)
         } else {
           this.showMessage(result.message || 'URLに該当する商品が見つかりませんでした', 'info')
@@ -157,7 +157,7 @@ export default class extends Controller {
 
   // 商品候補を表示（統合版）
   displayCandidates(products) {
-    console.log(`🛒 楽天API検索成功: ${products.length}件の商品を表示`)
+    // 楽天API検索成功
 
     const productCardHtml = (product) => `
       <div class="border rounded-lg p-3 cursor-pointer hover:bg-orange-100 transition-colors"
@@ -236,13 +236,13 @@ export default class extends Controller {
     const linkField = this.getLinkField()
     if (linkField && rakutenUrl) {
       linkField.value = rakutenUrl
-      console.log(`🔗 通販リンク設定: ${rakutenUrl}`)
+      // 通販リンク設定
     }
 
     // 選択状態を視覚的に表示
     this.showSelectedState(card, productTitle, price)
 
-    console.log(`🎯 商品選択: ${productTitle}`)
+    // 商品選択
   }
 
   // 選択状態の表示（統合版）
@@ -270,7 +270,7 @@ export default class extends Controller {
       target.classList.add('hidden')
     })
     this.hideStatus()
-    console.log('🗑️ 検索結果をクリア')
+    // 検索結果をクリア
   }
 
   // ローディング表示
