@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 Kaminari.configure do |config|
-  # 1ページあたりのデフォルト表示件数（グリッドレイアウト3x4を想定）
-  config.default_per_page = 12
+  # 1ページあたりのデフォルト表示件数（グリッドレイアウト2x4を想定）
+  config.default_per_page = 8
   # 最大表示件数（パフォーマンス考慮）
   config.max_per_page = 50
   # ページネーションの表示窓幅（現在ページの前後に表示するページ数）
