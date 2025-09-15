@@ -85,13 +85,18 @@ RSpec.describe "Posts", type: :system do
         sign_in user
       end
 
-      it "新規投稿ができる" do
+      it "新規投稿ができる（ファイルアップロード）" do
         visit new_post_path
 
         fill_in "商品名", with: "テスト商品"
         fill_in "おすすめポイント", with: "とても美味しいです"
-        fill_in "通販リンク", with: "https://example.com/product"
-        fill_in "画像URL", with: "https://example.com/image.jpg"
+        fill_in "楽天市場リンク（任意）", with: "https://example.com/product"
+
+        # ファイルアップロード方式を選択
+        choose "post_image_source_file"
+
+        # テスト用画像ファイルをアップロード
+        attach_file "post_image", Rails.root.join("spec/fixtures/files/test_image.jpg")
 
         expect {
           click_button "投稿する"
