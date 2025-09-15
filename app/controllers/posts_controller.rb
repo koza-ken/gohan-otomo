@@ -29,10 +29,11 @@ class PostsController < ApplicationController
     end
 
     # 検索・ページネーション・includes適用（パフォーマンス最適化: 検索で絞り込んでからpage、最後にinclude）
+    # likesも追加してN+1問題を解消（いいねボタン表示時の個別SQLクエリを削減）
     @posts = @posts.search_by_keyword(params[:search])
                    .order(created_at: :desc)
                    .page(params[:page])
-                   .includes(:user, :comments)
+                   .includes(:user, :comments, :likes)
   end
 
   # GET /posts/1 （ログイン不要）
