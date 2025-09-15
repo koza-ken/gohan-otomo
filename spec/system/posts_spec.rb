@@ -88,9 +88,9 @@ RSpec.describe "Posts", type: :system do
       it "新規投稿ができる（ファイルアップロード）" do
         visit new_post_path
 
-        fill_in "商品名", with: "テスト商品"
-        fill_in "おすすめポイント", with: "とても美味しいです"
-        fill_in "楽天市場リンク（任意）", with: "https://example.com/product"
+        fill_in "商品名から検索", with: "テスト商品"
+        fill_in "おすすめポイント（200文字以内）", with: "とても美味しいです"
+        fill_in "商品リンク", with: "https://example.com/product"
 
         # ファイルアップロード方式を選択
         choose "post_image_source_file"
@@ -111,8 +111,8 @@ RSpec.describe "Posts", type: :system do
       it "バリデーションエラーが表示される" do
         visit new_post_path
 
-        fill_in "商品名", with: ""
-        fill_in "おすすめポイント", with: ""
+        fill_in "商品名から検索", with: ""
+        fill_in "おすすめポイント（200文字以内）", with: ""
 
         click_button "投稿する"
 
@@ -140,8 +140,8 @@ RSpec.describe "Posts", type: :system do
       it "投稿を編集できる" do
         visit edit_post_path(post_record)
 
-        fill_in "商品名", with: "更新されたタイトル"
-        fill_in "おすすめポイント", with: "更新された説明"
+        fill_in "商品名から検索", with: "更新されたタイトル"
+        fill_in "おすすめポイント（200文字以内）", with: "更新された説明"
 
         click_button "更新する"
 
@@ -154,7 +154,7 @@ RSpec.describe "Posts", type: :system do
       it "バリデーションエラーが表示される" do
         visit edit_post_path(post_record)
 
-        fill_in "商品名", with: ""
+        fill_in "商品名から検索", with: ""
 
         click_button "更新する"
 
@@ -265,8 +265,8 @@ RSpec.describe "Posts", type: :system do
       it "画像ファイルをアップロードして投稿できる" do
         visit new_post_path
 
-        fill_in "商品名", with: "画像付きテスト商品"
-        fill_in "おすすめポイント", with: "美味しそうな見た目です"
+        fill_in "商品名から検索", with: "画像付きテスト商品"
+        fill_in "おすすめポイント（200文字以内）", with: "美味しそうな見た目です"
 
         # ファイルアップロードのラジオボタンを選択
         choose "post_image_source_file"
