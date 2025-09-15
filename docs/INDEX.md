@@ -7,6 +7,7 @@ docs/
 ├── features/           # 機能別技術ドキュメント
 ├── development/        # 開発・技術関連
 ├── project/           # プロジェクト管理
+├── technologies/      # 技術要素別復習ガイド
 └── INDEX.md          # このファイル
 ```
 
@@ -33,6 +34,17 @@ docs/
 
 ---
 
+## 📚 **技術要素別復習ガイド** (`technologies/`)
+
+### 技術要素ごとの詳細解説 - 復習・学習用
+- **[Stimulus Controllers](./technologies/stimulus_controllers.md)** - Rails 7標準フロントエンド制御
+- **[楽天API連携](./technologies/rakuten_api.md)** - 外部API統合・CORS対策・プロキシパターン
+- **[Service Object](./technologies/service_objects.md)** - ビジネスロジック分離・責任分離設計
+- **[Active Storage](./technologies/active_storage.md)** - ファイルアップロード・画像処理・エラーハンドリング
+- **[Turbo Stream](./technologies/turbo_stream.md)** - リアルタイム部分更新・Ajax代替
+
+---
+
 ## 📋 **プロジェクト管理** (`project/`)
 
 ### 開発管理・計画
@@ -52,6 +64,10 @@ docs/
 ### 🔍 **特定機能を学習したい場合**
 - `features/` フォルダの該当機能ドキュメントを参照
 - 各ファイルには実装パターン・学習ポイント・コード例を記載
+
+### ⚡ **特定技術を復習したい場合**
+- `technologies/` フォルダの該当技術ドキュメントを参照
+- 技術概要・必要性・実装内容・学習ポイント・応用方法を完全網羅
 
 ### 📈 **開発の進捗・判断を振り返りたい場合**
 - [`development/branches_summary.md`](./development/branches_summary.md) - 学習テーマ別まとめ

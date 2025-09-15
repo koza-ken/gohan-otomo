@@ -157,14 +157,56 @@ end
 - ImageMagickのlibwebp 1.2.4対応
 - 動的変換によるストレージ効率化
 
-#### **3. 統一APIの提供**
+#### **3. Cloudinary連携でのエラーハンドリング実装**
+
+WebP実装自体は順調に進んだものの、Cloudinary経由でWebP変換した画像を取得する際に、
+稀に取得エラーが発生することが判明。これに対するgraceful degradationを実装。
+
+```ruby
+# app/models/post.rb
+def display_image(size = :medium)
+  if image.attached?
+    begin
+      case size.to_sym
+      when :thumbnail
+        thumbnail_image
+      when :medium, :large
+        medium_image
+      else
+        medium_image
+      end
+    rescue ActiveStorage::IntegrityError => e
+      Rails.logger.warn "WebP/Image processing error for post #{id}: #{e.message}"
+      # Cloudinary WebP取得エラー時は外部URLまたはプレースホルダーにフォールバック
+      image_url.presence
+    end
+  else
+    image_url.presence
+  end
+end
+
+def thumbnail_image
+  image.variant(resize_to_fill: [400, 300])
+rescue ActiveStorage::IntegrityError => e
+  Rails.logger.warn "Cloudinary WebP thumbnail error for post #{id}: #{e.message}"
+  nil
+end
+```
+
+**エラーハンドリングの重要性**:
+- Cloudinary WebP変換処理の失敗への対応
+- ネットワーク問題による取得エラーの回避
+- サイト全体の安定性確保（画像エラーでサイト停止を防止）
+
+#### **4. 統一APIの提供**
 ```ruby
 # ビューでの呼び出し（シンプル）
 <%= picture_post_image_tag(post, size: :thumbnail) %>
 
-# 内部でWebP/従来形式を自動選択
+# 内部でWebP/従来形式を自動選択 + エラーハンドリング
 def picture_post_image_tag(post, options = {})
   # ブラウザ対応に応じた最適画像配信
+  # Cloudinary WebPエラー時の適切なフォールバック
 end
 ```
 
@@ -178,7 +220,7 @@ end
 ```
 実測削減効果:
 ✅ プレースホルダー画像: 32KB → 6KB（80%削減）
-✅ 投稿画像（平均): 30-50%削減
+✅ 投稿画像（平均）: 30-50%削減
 ✅ 投稿一覧ページ: 2-3MB削減（12件表示時）
 ✅ データ転送量: 年間推定40-60%削減
 ```
@@ -216,9 +258,24 @@ UX改善効果:
 
 ## ⚠️ 懸念点・課題・今後の対応
 
-### 🔴 **現在の懸念点**
+### 🔴 **実際に遭遇した課題と解決**
 
-#### **1. 変換処理負荷**
+#### **1. Cloudinary WebP取得エラーの発生**
+```
+実際に発生した問題:
+- WebP変換自体は正常に動作
+- しかし、Cloudinaryからの取得時に間欠的エラー
+- ActiveStorage::IntegrityError が発生
+- 原因: ネットワーク遅延・Cloudinary側の一時的な問題
+
+解決した実装:
+✅ graceful degradationによるエラーハンドリング
+✅ フォールバック機能で画像表示継続
+✅ エラーログによる問題把握
+✅ サイト全体の安定性確保
+```
+
+#### **2. 変換処理負荷**
 ```
 CPU負荷の課題:
 - 初回アクセス時のWebP変換負荷
@@ -295,9 +352,10 @@ AVIF（AV1 Image File Format）の台頭:
 学習プロセス:
 1. HTTP Accept header判定の限界発見
 2. 15%の画像表示失敗リスクの認識
-3. 解決策選択肢の比較検討
-4. picture要素実装による根本解決
-5. 実際の動作確認とパフォーマンス測定
+3. picture要素実装によるWebP対応
+4. Cloudinary WebP取得エラーの発生発見
+5. graceful degradationによるエラーハンドリング追加
+6. 実際の動作確認とパフォーマンス測定
 ```
 
 #### **2. 技術選択の判断基準**
@@ -363,7 +421,7 @@ AVIF（AV1 Image File Format）の台頭:
 
 ---
 
-*実装完了日: 2025年9月11日*  
-*実装者: Learning Mode*  
-*ブランチ: 13_add_image_#40*  
+*実装完了日: 2025年9月11日*
+*実装者: Learning Mode*
+*ブランチ: 13_add_image_#40*
 *実装方式: picture要素 + Active Storage WebP variant*
