@@ -9,36 +9,57 @@ class Api::Rakuten::ProductsController < ApplicationController
   # 認証必須（ログインユーザーのみAPI利用可能）
   before_action :authenticate_user!
 
-  # 商品名で楽天商品を検索し、候補リストをJSONで返す
+  # 商品名または楽天URLで楽天商品を検索し、候補リストをJSONで返す
   #
   # POST /api/rakuten/search_products
-  # params: { title: "商品名" }
+  # params: { title: "商品名またはURL" }
   # response: { success: true, products: [...] } または { success: false, error: "..." }
   def search_products
-    title = params[:title]&.strip
+    input = params[:title]&.strip
 
     # バリデーション
-    if title.blank?
+    if input.blank?
       render json: {
         success: false,
-        error: "商品名を入力してください"
-      }, status: :bad_request
-      return
-    end
-
-    if title.length > 100
-      render json: {
-        success: false,
-        error: "商品名は100文字以内で入力してください"
+        error: "商品名またはURLを入力してください"
       }, status: :bad_request
       return
     end
 
     begin
-      Rails.logger.info "API商品検索開始: user_id=#{current_user.id}, title=#{title}"
+      Rails.logger.info "API商品検索開始: user_id=#{current_user.id}, input=#{input}"
+      Rails.logger.info "入力長: #{input.length}文字"
 
-      # RakutenProductService を使用して商品検索
-      products = RakutenProductService.fetch_product_candidates(title, limit: 12)
+      # 入力がURLかどうかを判定（より厳密にチェック）
+      is_rakuten_url = input.match?(%r{https?://(?:www\.|item\.)?rakuten\.co\.jp/})
+      Rails.logger.info "URL判定: #{is_rakuten_url ? 'URL' : '商品名'}"
+
+      # URLと商品名で異なる文字数制限
+      max_length = is_rakuten_url ? 1000 : 100
+      Rails.logger.info "文字数制限: #{max_length}文字"
+
+      if input.length > max_length
+        error_message = is_rakuten_url ?
+          "URLは1000文字以内で入力してください" :
+          "商品名は100文字以内で入力してください"
+
+        Rails.logger.error "文字数超過: #{input.length}文字 > #{max_length}文字"
+
+        render json: {
+          success: false,
+          error: error_message
+        }, status: :bad_request
+        return
+      end
+
+      # URLまたは商品名で検索
+      products = if is_rakuten_url
+        Rails.logger.info "🔗 楽天URL検索モード"
+        RakutenProductService.fetch_product_from_url(input)
+      else
+        Rails.logger.info "🔍 商品名検索モード"
+        RakutenProductService.fetch_product_candidates(input, limit: 12)
+      end
 
       if products.any?
         Rails.logger.info "API商品検索成功: #{products.count}件取得"
@@ -46,16 +67,24 @@ class Api::Rakuten::ProductsController < ApplicationController
         render json: {
           success: true,
           products: products,
-          count: products.count
+          count: products.count,
+          search_type: is_rakuten_url ? 'url' : 'keyword'
         }
       else
         Rails.logger.info "API商品検索: 結果なし"
+
+        error_message = if is_rakuten_url
+          "指定されたURLの商品が見つかりませんでした"
+        else
+          "「#{input}」に該当する商品が見つかりませんでした"
+        end
 
         render json: {
           success: true,
           products: [],
           count: 0,
-          message: "「#{title}」に該当する商品が見つかりませんでした"
+          message: error_message,
+          search_type: is_rakuten_url ? 'url' : 'keyword'
         }
       end
 

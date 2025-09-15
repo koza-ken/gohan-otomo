@@ -18,48 +18,122 @@ export default class extends Controller {
     this.setupEnterKeyListener()
   }
 
-  // 商品名フィールドでのEnter キー検索対応
+  // Enter キー検索対応
   setupEnterKeyListener() {
+    // 商品名フィールドでのEnter キー → 商品名検索
     const titleField = this.getTitleField()
     if (titleField) {
       titleField.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
           event.preventDefault() // フォーム送信を防ぐ
-          this.searchProducts()   // 商品検索を実行
+          this.searchByProductName()   // 商品名検索を実行
+        }
+      })
+    }
+
+    // 楽天URLフィールドでのEnter キー → URL検索
+    const rakutenUrlField = this.getRakutenUrlField()
+    if (rakutenUrlField) {
+      rakutenUrlField.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault() // フォーム送信を防ぐ
+          this.searchByUrl()   // URL検索を実行
         }
       })
     }
   }
 
-  // 商品検索を実行
-  async searchProducts() {
+  // 商品名で楽天検索を実行
+  async searchByProductName() {
     const titleField = this.getTitleField()
-    const title = titleField?.value?.trim()
+    const productName = titleField?.value?.trim()
 
     // バリデーション
-    if (!title) {
+    if (!productName) {
       this.showError('商品名を入力してください')
       return
     }
 
-    if (title.length > 100) {
+    // 商品名文字数制限
+    if (productName.length > 100) {
       this.showError('商品名は100文字以内で入力してください')
       return
     }
 
+    console.log('🔍 商品名検索モード')
     this.showLoading()
 
     try {
-      console.log(`🔍 商品検索開始: ${title}`)
+      console.log(`🔍 商品名検索開始: ${productName}`)
 
-      // APIエンドポイントに商品検索リクエスト
+      // APIエンドポイントに商品名検索リクエスト
       const response = await fetch('/api/rakuten/search_products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-Token': this.getCSRFToken()
         },
-        body: JSON.stringify({ title: title })
+        body: JSON.stringify({ title: productName })
+      })
+
+      const result = await response.json()
+
+      if (response.ok && result.success) {
+        if (result.products && result.products.length > 0) {
+          console.log(`✅ 商品名検索成功: ${result.count}件取得`)
+          this.displayCandidates(result.products)
+        } else {
+          this.showMessage(result.message || `「${productName}」に該当する商品が見つかりませんでした`, 'info')
+        }
+      } else {
+        this.showError(result.error || '商品名検索に失敗しました')
+      }
+
+    } catch (error) {
+      console.error('🚨 商品名検索エラー:', error)
+      this.showError('ネットワークエラーが発生しました。時間をおいて再試行してください。')
+    }
+  }
+
+  // URLで楽天検索を実行
+  async searchByUrl() {
+    const rakutenUrlField = this.getRakutenUrlField()
+    const rakutenUrl = rakutenUrlField?.value?.trim()
+
+    // バリデーション
+    if (!rakutenUrl) {
+      this.showError('楽天市場のURLを入力してください')
+      return
+    }
+
+    // URL形式チェック
+    const isRakutenUrl = rakutenUrl.match(/https?:\/\/(?:www\.|item\.)?rakuten\.co\.jp\//)
+    if (!isRakutenUrl) {
+      this.showError('楽天市場のURLを入力してください')
+      return
+    }
+
+    // URL文字数制限
+    if (rakutenUrl.length > 1000) {
+      this.showError('URLは1000文字以内で入力してください')
+      return
+    }
+
+    console.log('🔗 楽天URL検索モード')
+
+    this.showLoading()
+
+    try {
+      console.log(`🔍 商品検索開始: ${rakutenUrl}`)
+
+      // APIエンドポイントに商品検索リクエスト（楽天URLを送信）
+      const response = await fetch('/api/rakuten/search_products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': this.getCSRFToken()
+        },
+        body: JSON.stringify({ title: rakutenUrl })
       })
 
       const result = await response.json()
@@ -69,7 +143,7 @@ export default class extends Controller {
           console.log(`✅ 商品検索成功: ${result.count}件取得`)
           this.displayCandidates(result.products)
         } else {
-          this.showMessage(result.message || `「${title}」に該当する商品が見つかりませんでした`, 'info')
+          this.showMessage(result.message || 'URLに該当する商品が見つかりませんでした', 'info')
         }
       } else {
         this.showError(result.error || '商品検索に失敗しました')
@@ -136,7 +210,7 @@ export default class extends Controller {
     // this.showMessage(`${products.length}件の商品候補が見つかりました`, 'success')
   }
 
-  // 商品を選択（画像URLと通販リンクを自動設定）
+  // 商品を選択（画像URL、通販リンクを自動設定）
   selectProduct(event) {
     const card = event.currentTarget
     const imageUrl = card.dataset.productSearchImageUrl
@@ -183,7 +257,7 @@ export default class extends Controller {
     // 選択されたカードをハイライト
     selectedCard.classList.add('border-green-500', 'bg-green-50')
 
-    // 選択成功メッセージ（通販リンクも設定されたかに応じてメッセージを変更）
+    // 選択成功メッセージ（設定された項目に応じてメッセージを変更）
     const linkField = this.getLinkField()
     const linkSet = linkField && linkField.value
     const message = linkSet ? '画像と通販リンクを設定しました' : '画像を設定しました'
@@ -258,6 +332,11 @@ export default class extends Controller {
   // 商品名フィールドを取得
   getTitleField() {
     return this.element.closest('form')?.querySelector('input[name*="title"]')
+  }
+
+  // 楽天URLフィールドを取得
+  getRakutenUrlField() {
+    return this.element.closest('form')?.querySelector('input[name="rakuten_url"]')
   }
 
   // 画像URLフィールドを取得
