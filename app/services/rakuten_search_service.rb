@@ -42,9 +42,9 @@ class RakutenSearchService
 
     def search_type_string
       case search_type
-      when :url then 'url'
-      when :keyword then 'keyword'
-      else 'unknown'
+      when :url then "url"
+      when :keyword then "keyword"
+      else "unknown"
       end
     end
   end

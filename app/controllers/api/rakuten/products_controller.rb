@@ -28,7 +28,7 @@ class Api::Rakuten::ProductsController < ApplicationController
 
     # セキュリティ：楽天ドメインのみ許可
     unless image_url.match?(%r{^https://thumbnail\.image\.rakuten\.co\.jp/})
-      render json: { error: '許可されていない画像URLです' }, status: :forbidden
+      render json: { error: "許可されていない画像URLです" }, status: :forbidden
       return
     end
 
@@ -40,21 +40,21 @@ class Api::Rakuten::ProductsController < ApplicationController
 
       request = Net::HTTP::Get.new(uri.path + (uri.query ? "?#{uri.query}" : ""))
       # リファラーを楽天ドメインに設定
-      request['Referer'] = 'https://www.rakuten.co.jp/'
-      request['User-Agent'] = 'Mozilla/5.0 (compatible; RakutenImageProxy/1.0)'
+      request["Referer"] = "https://www.rakuten.co.jp/"
+      request["User-Agent"] = "Mozilla/5.0 (compatible; RakutenImageProxy/1.0)"
 
       response = http.request(request)
 
-      if response.code == '200'
+      if response.code == "200"
         send_data response.body,
-                  type: response.content_type || 'image/jpeg',
-                  disposition: 'inline'
+                  type: response.content_type || "image/jpeg",
+                  disposition: "inline"
       else
-        render json: { error: '画像の取得に失敗しました' }, status: :not_found
+        render json: { error: "画像の取得に失敗しました" }, status: :not_found
       end
     rescue => e
       Rails.logger.error "画像プロキシエラー: #{e.message}"
-      render json: { error: '画像の取得に失敗しました' }, status: :internal_server_error
+      render json: { error: "画像の取得に失敗しました" }, status: :internal_server_error
     end
   end
 end

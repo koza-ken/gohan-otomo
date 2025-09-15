@@ -29,7 +29,7 @@ class RakutenProductService
       match = rakuten_url.match(pattern)
       if match
         shop_code = match[1]
-        item_code = match[2].gsub(/\.html$/, '') # .htmlを除去
+        item_code = match[2].gsub(/\.html$/, "") # .htmlを除去
         break
       end
     end
@@ -89,7 +89,7 @@ class RakutenProductService
       product_info = format_product_info(item)
       Rails.logger.info "✅ 楽天URL解析成功: #{product_info[:title]}"
 
-      [product_info] # 配列形式で返す（既存のAPIと統一）
+      [ product_info ] # 配列形式で返す（既存のAPIと統一）
 
     rescue StandardError => e
       Rails.logger.error "❌ 楽天URL解析 致命的エラー: #{e.message}"
