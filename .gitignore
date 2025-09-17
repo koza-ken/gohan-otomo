@@ -44,3 +44,6 @@
 
 # /docs
 /docs/image
+
+# simple_cov
+/coverage
