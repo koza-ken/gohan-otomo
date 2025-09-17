@@ -2,6 +2,44 @@
 
 # 楽天商品検索のビジネスロジックを担当するサービスクラス
 # コントローラーから切り出した検索・バリデーション処理
+#
+# メソッド関連図:
+# RakutenSearchService
+# │
+# ├── 【外部インターフェース】
+# │   ├── initialize(input, user)          # 初期化
+# │   └── call                             # メイン処理 ★エントリーポイント
+# │       │
+# │       ├──→ validate_input              # 入力検証
+# │       │    │
+# │       │    ├──→ determine_search_type  # URL/キーワード判定
+# │       │    └──→ error_result          # バリデーションエラー時
+# │       │
+# │       ├──→ perform_search             # 検索実行
+# │       │    │
+# │       │    ├──→ RakutenProductService.fetch_product_from_url
+# │       │    ├──→ RakutenProductService.fetch_product_candidates
+# │       │    ├──→ success_result        # 成功時
+# │       │    └──→ success_result        # 結果なし時（メッセージ付き）
+# │       │
+# │       └──→ error_result               # 例外発生時
+# │
+# ├── 【結果生成ヘルパー】
+# │   ├── success_result(products, count, message)  # 成功Result生成
+# │   │    └──→ Result.new
+# │   │
+# │   └── error_result(error_message)              # エラーResult生成
+# │        └──→ Result.new
+# │
+# └── 【データ構造】
+#     └── Result (内部クラス)              # 結果オブジェクト
+#         ├── to_json_response            # JSON変換
+#         ├── http_status                 # HTTPステータス
+#         ├── success_json                # 成功JSON
+#         ├── error_json                  # エラーJSON
+#         └── search_type_string          # 検索タイプ文字列
+
+
 class RakutenSearchService
   # 結果オブジェクト（JSON生成機能付き）
   Result = Struct.new(:success?, :products, :count, :search_type, :error, :message, keyword_init: true) do

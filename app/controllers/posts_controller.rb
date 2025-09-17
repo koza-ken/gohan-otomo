@@ -91,5 +91,4 @@ class PostsController < ApplicationController
   def search_params
     params.permit(:search, :filter, :user_id, :page)
   end
-
 end
