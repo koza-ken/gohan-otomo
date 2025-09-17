@@ -6,12 +6,6 @@ class PostsController < ApplicationController
 
   # GET / および GET /posts （ログイン不要）
   def index
-    # 初回アクセス時はアニメーションを表示（開発中は一時的に無効化）
-    # unless session[:welcome_shown]
-    #   redirect_to welcome_path
-    #   return
-    # end
-
     # 基本スコープ設定
     @user = User.find_by(id: params[:user_id])
     # user_idが有効でユーザーが存在する場合
@@ -98,14 +92,4 @@ class PostsController < ApplicationController
     params.permit(:search, :filter, :user_id, :page)
   end
 
-  # ウェルカムアニメーション表示（ログイン不要）
-  def welcome_animation
-    # アニメーション画面を表示（セッション更新は別ルートで行う）
-  end
-
-  # アニメーションをスキップしてトップページへ
-  def skip_animation
-    session[:welcome_shown] = true
-    redirect_to root_path
-  end
 end
