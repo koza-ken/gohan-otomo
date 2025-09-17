@@ -101,9 +101,7 @@ class Post < ApplicationRecord
     return nil unless image.attached?
 
     begin
-      # WebP変換を一時的に無効化してエラー回避
-      # format: :webp パラメータが原因の可能性があるため
-      image.variant(resize_to_fill: [ 400, 300 ]).processed
+      image.variant(resize_to_fill: [ 400, 300 ], format: :webp).processed
     rescue ActiveStorage::IntegrityError => e
       Rails.logger.error "Thumbnail WebP variant error: #{e.message}"
       # エラー時は通常のサムネイル画像にフォールバック
@@ -116,9 +114,7 @@ class Post < ApplicationRecord
     return nil unless image.attached?
 
     begin
-      # WebP変換を一時的に無効化してエラー回避
-      # format: :webp パラメータが原因の可能性があるため
-      image.variant(resize_to_fill: [ 800, 600 ]).processed
+      image.variant(resize_to_fill: [ 800, 600 ], format: :webp).processed
     rescue ActiveStorage::IntegrityError => e
       Rails.logger.error "Medium WebP variant error: #{e.message}"
       # エラー時は通常の中サイズ画像にフォールバック
