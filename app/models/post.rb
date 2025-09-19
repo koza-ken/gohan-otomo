@@ -68,24 +68,30 @@ class Post < ApplicationRecord
     nil
   end
 
+  # 画像サイズ設定
+  IMAGE_SIZES = {
+    thumbnail: { width: 400, height: 300 },
+    medium: { width: 800, height: 600 }
+  }.freeze
+
   # 投稿一覧用サムネイル画像（400x300）
   def thumbnail_image
-    create_variant(400, 300)
+    create_variant_for_size(:thumbnail)
   end
 
   # 投稿詳細用中サイズ画像（800x600）
   def medium_image
-    create_variant(800, 600)
+    create_variant_for_size(:medium)
   end
 
   # WebP形式サムネイル画像（400x300）
   def thumbnail_image_webp
-    create_variant(400, 300, format: :webp, fallback_method: :thumbnail_image)
+    create_variant_for_size(:thumbnail, format: :webp, fallback_method: :thumbnail_image)
   end
 
   # WebP形式中サイズ画像（800x600）
   def medium_image_webp
-    create_variant(800, 600, format: :webp, fallback_method: :medium_image)
+    create_variant_for_size(:medium, format: :webp, fallback_method: :medium_image)
   end
 
   # ユーザー選択とフォールバックによるハイブリッド画像表示
@@ -100,6 +106,14 @@ class Post < ApplicationRecord
   end
 
   private
+
+  # サイズ設定を使用したvariant生成
+  def create_variant_for_size(size_key, format: nil, fallback_method: nil)
+    size_config = IMAGE_SIZES[size_key]
+    return nil unless size_config
+
+    create_variant(size_config[:width], size_config[:height], format: format, fallback_method: fallback_method)
+  end
 
   # 画像variant生成の共通処理（エラーハンドリング付き）
   def create_variant(width, height, format: nil, fallback_method: nil)
@@ -150,7 +164,7 @@ class Post < ApplicationRecord
   def image_format
     return unless image.attached?
 
-    unless image.content_type.in?([ "image/jpeg", "image/png", "image/webp", "image/gif" ])
+    unless image.content_type.in?(["image/jpeg", "image/png", "image/webp", "image/gif"])
       errors.add(:image, "画像はJPEG、PNG、WebP、GIF形式でアップロードしてください")
     end
   end

@@ -1,28 +1,28 @@
-import { Controller } from "@hotwired/stimulus"
+import BaseImageController from "./base_image_controller.js"
 
 // Connects to data-controller="image-preview"
-export default class extends Controller {
+export default class extends BaseImageController {
   static targets = ["input", "preview", "urlInput", "urlPreview", "urlStatus"]
   
   connect() {
     // Controller initialization
   }
   
-  preview(event) {
+  async preview(event) {
     const file = event.target.files[0]
-    
+
     if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader()
-      
-      reader.onload = (e) => {
-        this.previewTarget.src = e.target.result
-        this.previewTarget.classList.remove('hidden')
+      try {
+        const dataUrl = await this.readFileAsDataURL(file)
+        this.previewTarget.src = dataUrl
+        this.toggleElementVisibility(this.previewTarget, true)
+      } catch (error) {
+        console.error('File preview error:', error)
+        this.toggleElementVisibility(this.previewTarget, false)
       }
-      
-      reader.readAsDataURL(file)
     } else {
       // 画像ファイルでない場合はプレビューを隠す
-      this.previewTarget.classList.add('hidden')
+      this.toggleElementVisibility(this.previewTarget, false)
     }
   }
 
@@ -36,14 +36,7 @@ export default class extends Controller {
     img.parentElement.innerHTML = placeholder
   }
 
-  // プレースホルダーHTMLを生成
-  createPlaceholder(size) {
-    const heightClass = size === 'thumbnail' ? 'h-48' : 'h-64 md:h-80'
-    
-    return `<div class="flex items-center justify-center ${heightClass} bg-orange-100">
-              <img src="/no_image.png" alt="画像がありません" class="w-full h-full object-contain">
-            </div>`
-  }
+  // ベースクラスのcreatePlaceholderを使用（メソッド削除）
 
   // 画像URL入力時のリアルタイム検証
   validateImageUrl(event) {
@@ -65,28 +58,17 @@ export default class extends Controller {
   }
 
   // 画像URLの実際の読み込みテスト
-  testImageUrl(url) {
+  async testImageUrl(url) {
     this.showUrlStatus('🔄 画像を確認しています...', 'loading')
-    
-    // 非表示のimg要素で画像読み込みをテスト
-    this.urlPreviewTarget.src = url
-    this.urlPreviewTarget.onload = () => {
-      this.showUrlStatus('✅ 画像を確認できました', 'success')
-      this.urlPreviewTarget.classList.remove('hidden')
-    }
-    this.urlPreviewTarget.onerror = () => {
-      this.showUrlStatus('❌ 画像が読み込めません。URLを確認してください', 'error')
-      this.urlPreviewTarget.classList.add('hidden')
-    }
-  }
 
-  // URLの基本形式チェック
-  isValidUrl(url) {
     try {
-      const urlObj = new URL(url)
-      return ['http:', 'https:'].includes(urlObj.protocol)
-    } catch {
-      return false
+      const imageInfo = await this.testImageLoad(url)
+      this.urlPreviewTarget.src = url
+      this.showUrlStatus('✅ 画像を確認できました', 'success')
+      this.toggleElementVisibility(this.urlPreviewTarget, true)
+    } catch (error) {
+      this.showUrlStatus('❌ 画像が読み込めません。URLを確認してください', 'error')
+      this.toggleElementVisibility(this.urlPreviewTarget, false)
     }
   }
 
@@ -96,24 +78,9 @@ export default class extends Controller {
     this.urlStatusTarget.className = this.getStatusClass(type)
   }
 
-  // 状態別CSSクラス
-  getStatusClass(type) {
-    const baseClass = 'text-sm mt-2 px-3 py-2 rounded-lg'
-    switch (type) {
-      case 'success':
-        return `${baseClass} text-green-700 bg-green-50 border border-green-200`
-      case 'error':
-        return `${baseClass} text-red-700 bg-red-50 border border-red-200`
-      case 'loading':
-        return `${baseClass} text-orange-700 bg-orange-50 border border-orange-200`
-      default:
-        return `${baseClass} text-gray-700 bg-gray-50 border border-gray-200`
-    }
-  }
-
   // URLプレビューをクリア
   clearUrlPreview() {
-    this.urlPreviewTarget.classList.add('hidden')
+    this.toggleElementVisibility(this.urlPreviewTarget, false)
     this.urlStatusTarget.textContent = ''
     this.urlStatusTarget.className = ''
   }
