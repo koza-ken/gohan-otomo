@@ -6,34 +6,11 @@ class PostsController < ApplicationController
 
   # GET / および GET /posts （ログイン不要）
   def index
-    # 初回アクセス時はアニメーションを表示（開発中は一時的に無効化）
-    # unless session[:welcome_shown]
-    #   redirect_to welcome_path
-    #   return
-    # end
-
-    # 基本スコープ設定
-    @user = User.find_by(id: params[:user_id])
-    # user_idが有効でユーザーが存在する場合
-    if @user
-      @posts = @user.posts
-    else
-      # user_idパラメータが無効または存在しない場合は全投稿を表示
-      if params[:user_id].present?
-        # user_idが空でない場合はリダイレクト
-        redirect_to posts_path, alert: "指定されたユーザーが見つかりません"
-        return
-      end
-      # user_idが空の場合は全投稿を表示
-      @posts = Post.all
-    end
-
-    # 検索・ページネーション・includes適用（パフォーマンス最適化: 検索で絞り込んでからpage、最後にinclude）
-    # likesも追加してN+1問題を解消（いいねボタン表示時の個別SQLクエリを削減）
-    @posts = @posts.search_by_keyword(params[:search])
-                   .order(created_at: :desc)
-                   .page(params[:page])
-                   .includes(:user, :comments, :likes)
+    @posts = build_post_scope
+             .search_by_keyword(params[:search]) # 検索
+             .order(created_at: :desc) # ソート
+             .page(params[:page]) # ページネーション
+             .includes(:user, :comments, :likes)
   end
 
   # GET /posts/1 （ログイン不要）
@@ -60,7 +37,6 @@ class PostsController < ApplicationController
   # GET /posts/1/edit （ログイン必須・投稿者のみ）
   def edit
     # @postは既にset_postで設定済み
-    # 何も書かなくていい
   end
 
   # PATCH/PUT /posts/1 （ログイン必須・投稿者のみ）
@@ -80,6 +56,20 @@ class PostsController < ApplicationController
 
   private
 
+  # 投稿スコープの構築（全投稿 or ユーザー絞り込み）indexアクション
+  def build_post_scope
+    return Post.all unless params[:user_id].present?
+
+    @user = User.find_by(id: params[:user_id])
+    if @user
+      @user.posts
+    else
+      redirect_to posts_path, alert: "指定されたユーザーが見つかりません"
+      # 空のActiveReacord::Relationを返す→スコープメソッドでチェーンできる
+      Post.none  # リダイレクト後の空スコープ
+    end
+  end
+
   def set_post
     @post = Post.find(params[:id])
   end
@@ -93,19 +83,4 @@ class PostsController < ApplicationController
     params.require(:post).permit(:title, :description, :link, :image_url, :image, :image_source)
   end
 
-  # 検索・フィルター・ページネーション用のストロングパラメータ
-  def search_params
-    params.permit(:search, :filter, :user_id, :page)
-  end
-
-  # ウェルカムアニメーション表示（ログイン不要）
-  def welcome_animation
-    # アニメーション画面を表示（セッション更新は別ルートで行う）
-  end
-
-  # アニメーションをスキップしてトップページへ
-  def skip_animation
-    session[:welcome_shown] = true
-    redirect_to root_path
-  end
 end

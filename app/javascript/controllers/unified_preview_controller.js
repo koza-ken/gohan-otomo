@@ -1,7 +1,7 @@
-import { Controller } from "@hotwired/stimulus"
+import BaseImageController from "./base_image_controller.js"
 
 // Connects to data-controller="unified-preview"
-export default class extends Controller {
+export default class extends BaseImageController {
   // 指定した要素を参照する
   static targets = [
     "activePreviewArea", "activePreviewImage", "activeImageInfo",
@@ -130,16 +130,10 @@ export default class extends Controller {
       return
     }
 
-    if (!file.type.startsWith('image/')) {
+    const validation = this.validateImageFile(file)
+    if (!validation.isValid) {
       this.updateFileLabel('ファイルを選択')
-      this.showFileError('画像ファイルを選択してください')
-      return
-    }
-
-    // ファイルサイズチェック（10MB）
-    if (file.size > 10 * 1024 * 1024) {
-      this.updateFileLabel('ファイルを選択')
-      this.showFileError('ファイルサイズは10MB以下にしてください')
+      this.showFileError(validation.errors[0]) // 最初のエラーメッセージを表示
       return
     }
 
@@ -149,39 +143,28 @@ export default class extends Controller {
   }
 
   // URL画像の読み込み
-  loadUrlImage(url) {
+  async loadUrlImage(url) {
     this.showUrlLoading('URL画像を確認しています...')
 
-    // 新しいImage要素で画像読み込みをテスト
-    const testImg = new Image()
-
-    testImg.onload = () => {
-      this.showUrlPreview(url, `URL画像 (${testImg.naturalWidth}×${testImg.naturalHeight}px)`)
-    }
-
-    testImg.onerror = () => {
+    try {
+      const imageInfo = await this.testImageLoad(url)
+      this.showUrlPreview(url, `URL画像 (${imageInfo.width}×${imageInfo.height}px)`)
+    } catch (error) {
       this.showUrlError('画像が読み込めません。URLを確認してください')
     }
-
-    testImg.src = url
   }
 
   // ファイル画像の読み込み
-  loadFileImage(file) {
+  async loadFileImage(file) {
     this.showFileLoading('ファイル画像を読み込んでいます...')
 
-    const reader = new FileReader()
-
-    reader.onload = (e) => {
+    try {
+      const dataUrl = await this.readFileAsDataURL(file)
       const fileSize = this.formatFileSize(file.size)
-      this.showFilePreview(e.target.result, `ファイル画像 (${file.name}, ${fileSize})`)
-    }
-
-    reader.onerror = () => {
+      this.showFilePreview(dataUrl, `ファイル画像 (${file.name}, ${fileSize})`)
+    } catch (error) {
       this.showFileError('ファイルの読み込みに失敗しました')
     }
-
-    reader.readAsDataURL(file)
   }
 
   // URL画像プレビューを表示
@@ -200,21 +183,21 @@ export default class extends Controller {
 
   // アクティブプレビューを表示
   showActivePreview() {
-    this.activePreviewAreaTarget.classList.remove('hidden')
-    this.placeholderTarget.classList.add('hidden')
+    this.toggleElementVisibility(this.activePreviewAreaTarget, true)
+    this.toggleElementVisibility(this.placeholderTarget, false)
     // 削除ボタンも表示
     if (this.hasClearButtonTarget) {
-      this.clearButtonTarget.classList.remove('hidden')
+      this.toggleElementVisibility(this.clearButtonTarget, true)
     }
   }
 
   // プレースホルダーを表示
   showPlaceholder() {
-    this.activePreviewAreaTarget.classList.add('hidden')
-    this.placeholderTarget.classList.remove('hidden')
+    this.toggleElementVisibility(this.activePreviewAreaTarget, false)
+    this.toggleElementVisibility(this.placeholderTarget, true)
     // 削除ボタンも隠す
     if (this.hasClearButtonTarget) {
-      this.clearButtonTarget.classList.add('hidden')
+      this.toggleElementVisibility(this.clearButtonTarget, false)
     }
   }
 
@@ -281,26 +264,7 @@ export default class extends Controller {
     }
   }
 
-  // URLの基本形式チェック
-  isValidUrl(url) {
-    try {
-      const urlObj = new URL(url)
-      return ['http:', 'https:'].includes(urlObj.protocol)
-    } catch {
-      return false
-    }
-  }
-
-  // ファイルサイズのフォーマット
-  formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes'
-
-    const k = 1024
-    const sizes = ['Bytes', 'KB', 'MB', 'GB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
-  }
+  // ベースクラスのメソッドを使用（重複メソッド削除）
 
   // ファイルラベルの更新
   updateFileLabel(text) {

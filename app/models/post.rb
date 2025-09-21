@@ -68,90 +68,36 @@ class Post < ApplicationRecord
     nil
   end
 
-  # Active Storage variant: サムネイル画像（投稿一覧用）
+  # 画像サイズ設定
+  IMAGE_SIZES = {
+    thumbnail: { width: 400, height: 300 },
+    medium: { width: 800, height: 600 }
+  }.freeze
+
+  # 投稿一覧用サムネイル画像（400x300）
   def thumbnail_image
-    return nil unless image.attached?
-
-    begin
-      # vips用パラメータに修正 + エラーハンドリング
-      image.variant(resize_to_fill: [ 400, 300 ]).processed
-    rescue ActiveStorage::IntegrityError => e
-      Rails.logger.error "Thumbnail variant error: #{e.message}"
-      # エラー時はオリジナル画像を返す
-      image
-    end
+    create_variant_for_size(:thumbnail)
   end
 
-  # Active Storage variant: 中サイズ画像（投稿詳細用）
+  # 投稿詳細用中サイズ画像（800x600）
   def medium_image
-    return nil unless image.attached?
-
-    begin
-      # vips用パラメータに修正 + エラーハンドリング
-      image.variant(resize_to_fill: [ 800, 600 ]).processed
-    rescue ActiveStorage::IntegrityError => e
-      Rails.logger.error "Medium variant error: #{e.message}"
-      # エラー時はオリジナル画像を返す
-      image
-    end
+    create_variant_for_size(:medium)
   end
 
-  # WebP形式のvariant: サムネイル画像（投稿一覧用）
+  # WebP形式サムネイル画像（400x300）
   def thumbnail_image_webp
-    return nil unless image.attached?
-
-    begin
-      # WebP変換を一時的に無効化してエラー回避
-      # format: :webp パラメータが原因の可能性があるため
-      image.variant(resize_to_fill: [ 400, 300 ]).processed
-    rescue ActiveStorage::IntegrityError => e
-      Rails.logger.error "Thumbnail WebP variant error: #{e.message}"
-      # エラー時は通常のサムネイル画像にフォールバック
-      thumbnail_image
-    end
+    create_variant_for_size(:thumbnail, format: :webp, fallback_method: :thumbnail_image)
   end
 
-  # WebP形式のvariant: 中サイズ画像（投稿詳細用）
+  # WebP形式中サイズ画像（800x600）
   def medium_image_webp
-    return nil unless image.attached?
-
-    begin
-      # WebP変換を一時的に無効化してエラー回避
-      # format: :webp パラメータが原因の可能性があるため
-      image.variant(resize_to_fill: [ 800, 600 ]).processed
-    rescue ActiveStorage::IntegrityError => e
-      Rails.logger.error "Medium WebP variant error: #{e.message}"
-      # エラー時は通常の中サイズ画像にフォールバック
-      medium_image
-    end
+    create_variant_for_size(:medium, format: :webp, fallback_method: :medium_image)
   end
 
-  # ハイブリッド画像表示: ユーザーの選択に基づく画像表示
-  # image_source フィールド: 'url', 'file'
-  # 1. ユーザー選択優先（image_sourceに基づく）
-  # 2. フォールバック: URL画像 → ファイル画像の順
+  # ユーザー選択とフォールバックによるハイブリッド画像表示
   def display_image(size = :medium, webp_support = false)
-    # image_sourceが明示的に設定されている場合は、それに従う
-    if respond_to?(:image_source) && image_source.present?
-      case image_source
-      when "url"
-        return image_url if image_url.present?
-      when "file"
-        if image.attached?
-          return get_file_image(size, webp_support)
-        end
-      end
-    end
-
-    # フォールバック: URL画像を優先、次にファイル画像
-    return image_url if image_url.present?
-
-    if image.attached?
-      return get_file_image(size, webp_support)
-    end
-
-    # 両方ともない場合はnilを返す（プレースホルダーは呼び出し元で処理）
-    nil
+    image_from_source_preference(size, webp_support) ||
+    image_from_fallback(size, webp_support)
   end
 
   # 画像が存在するかチェック
@@ -161,9 +107,51 @@ class Post < ApplicationRecord
 
   private
 
+  # サイズ設定を使用したvariant生成
+  def create_variant_for_size(size_key, format: nil, fallback_method: nil)
+    size_config = IMAGE_SIZES[size_key]
+    return nil unless size_config
+
+    create_variant(size_config[:width], size_config[:height], format: format, fallback_method: fallback_method)
+  end
+
+  # 画像variant生成の共通処理（エラーハンドリング付き）
+  def create_variant(width, height, format: nil, fallback_method: nil)
+    return nil unless image.attached?
+
+    begin
+      variant_options = { resize_to_fill: [width, height] }
+      variant_options[:format] = format if format
+      image.variant(variant_options).processed
+    rescue ActiveStorage::IntegrityError => e
+      # フォーマットの情報を整形（デバッグ用）
+      format_suffix = format ? " #{format.to_s.upcase}" : ""
+      # エラーログ出力（デバッグ用）
+      Rails.logger.error "#{format_suffix} variant error (#{width}x#{height}): #{e.message}"
+      fallback_method ? send(fallback_method) : image
+    end
+  end
+
+  # ユーザー指定のimage_sourceに基づく画像取得
+  def image_from_source_preference(size, webp_support)
+    return unless respond_to?(:image_source) && image_source.present?
+
+    case image_source
+    when "url"
+      image_url if image_url.present?
+    when "file"
+      get_file_image(size, webp_support) if image.attached?
+    end
+  end
+
+  # フォールバック順序による画像取得（URL優先→ファイル）
+  def image_from_fallback(size, webp_support)
+    return image_url if image_url.present?
+    get_file_image(size, webp_support) if image.attached?
+  end
+
   # ファイル画像の取得（サイズ・WebP対応）
   def get_file_image(size, webp_support)
-    # 一時的にWebPを無効化してIntegrityErrorを回避
     case size
     when :thumbnail
       webp_support ? thumbnail_image_webp : thumbnail_image
@@ -176,7 +164,7 @@ class Post < ApplicationRecord
   def image_format
     return unless image.attached?
 
-    unless image.content_type.in?([ "image/jpeg", "image/png", "image/webp", "image/gif" ])
+    unless image.content_type.in?(["image/jpeg", "image/png", "image/webp", "image/gif"])
       errors.add(:image, "画像はJPEG、PNG、WebP、GIF形式でアップロードしてください")
     end
   end

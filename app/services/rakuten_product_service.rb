@@ -2,6 +2,13 @@
 
 # 楽天商品検索APIとの連携を行うサービスクラス
 # 商品名から商品候補を検索し、投稿フォーム用のデータ構造に変換
+#
+# 定義メソッド:
+# - fetch_product_from_url(rakuten_url): 楽天URLから商品情報を3段階フォールバック検索で取得
+# - fetch_product_candidates(title, limit): 商品名から楽天商品候補リストを取得
+# - format_product_info(rakuten_item): 楽天APIレスポンスを投稿フォーム用ハッシュに変換
+# - get_first_image_url(item): 商品画像URLを高画質優先・フォールバック付きで取得
+# - strip_html(html): HTML文字列からタグを除去してプレーンテキストに変換
 class RakutenProductService
   # デフォルト設定
   DEFAULT_LIMIT = 12
@@ -25,6 +32,7 @@ class RakutenProductService
     shop_code = nil
     item_code = nil
 
+    # shop_codeとitem_codeを正規表現から抽出
     rakuten_patterns.each do |pattern|
       match = rakuten_url.match(pattern)
       if match
@@ -42,6 +50,7 @@ class RakutenProductService
       items = []
 
       # 段階1: 正確な検索（shop_code + item_code）
+      # 取得したshop_codeとitem_codeで検索
       begin
         Rails.logger.info "🔍 段階1: 正確検索 (shop_code + item_code)"
         items = RakutenWebService::Ichiba::Item.search(
@@ -97,6 +106,9 @@ class RakutenProductService
       []
     end
   end
+
+
+  
 
   # 商品名で楽天商品を検索し、候補リストを返す
   #

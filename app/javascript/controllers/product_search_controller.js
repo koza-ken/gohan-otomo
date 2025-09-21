@@ -48,51 +48,9 @@ export default class extends Controller {
     const titleField = this.getTitleField()
     const productName = titleField?.value?.trim()
 
-    // バリデーション
-    if (!productName) {
-      this.showError('商品名を入力してください')
-      return
-    }
+    if (!this.validateProductName(productName)) return
 
-    // 商品名文字数制限
-    if (productName.length > 100) {
-      this.showError('商品名は100文字以内で入力してください')
-      return
-    }
-
-    // 商品名検索モード
-    this.showLoading()
-
-    try {
-      // 商品名検索開始
-
-      // APIエンドポイントに商品名検索リクエスト
-      const response = await fetch('/api/rakuten/search_products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': this.getCSRFToken()
-        },
-        body: JSON.stringify({ title: productName })
-      })
-
-      const result = await response.json()
-
-      if (response.ok && result.success) {
-        if (result.products && result.products.length > 0) {
-          // 商品名検索成功
-          this.displayCandidates(result.products)
-        } else {
-          this.showMessage(result.message || `「${productName}」に該当する商品が見つかりませんでした`, 'info')
-        }
-      } else {
-        this.showError(result.error || '商品名検索に失敗しました')
-      }
-
-    } catch (error) {
-      console.error('🚨 商品名検索エラー:', error)
-      this.showError('ネットワークエラーが発生しました。時間をおいて再試行してください。')
-    }
+    await this.executeRakutenSearch({ title: productName })
   }
 
   // URLで楽天検索を実行
@@ -100,59 +58,41 @@ export default class extends Controller {
     const rakutenUrlField = this.getRakutenUrlField()
     const rakutenUrl = rakutenUrlField?.value?.trim()
 
-    // バリデーション
-    if (!rakutenUrl) {
-      this.showError('楽天市場のURLを入力してください')
-      return
+    if (!this.validateRakutenUrl(rakutenUrl)) return
+
+    await this.executeRakutenSearch({ title: rakutenUrl })
+  }
+
+  // 画像HTML生成専用メソッド
+  generateImageSection(product) {
+    if (!product.image_url) {
+      return `
+        <div class="bg-gray-100 h-32 lg:h-40 flex items-center justify-center rounded mb-2 text-gray-500 text-xs">
+          <div class="text-center">
+            <div class="mb-1">📷</div>
+            <div>画像なし</div>
+          </div>
+        </div>
+      `
     }
 
-    // URL形式チェック
-    const isRakutenUrl = rakutenUrl.match(/https?:\/\/(?:www\.|item\.)?rakuten\.co\.jp\//)
-    if (!isRakutenUrl) {
-      this.showError('楽天市場のURLを入力してください')
-      return
-    }
-
-    // URL文字数制限
-    if (rakutenUrl.length > 1000) {
-      this.showError('URLは1000文字以内で入力してください')
-      return
-    }
-
-    // 楽天URL検索モード
-
-    this.showLoading()
-
-    try {
-      // 商品検索開始
-
-      // APIエンドポイントに商品検索リクエスト（楽天URLを送信）
-      const response = await fetch('/api/rakuten/search_products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': this.getCSRFToken()
-        },
-        body: JSON.stringify({ title: rakutenUrl })
-      })
-
-      const result = await response.json()
-
-      if (response.ok && result.success) {
-        if (result.products && result.products.length > 0) {
-          // 商品検索成功
-          this.displayCandidates(result.products)
-        } else {
-          this.showMessage(result.message || 'URLに該当する商品が見つかりませんでした', 'info')
-        }
-      } else {
-        this.showError(result.error || '商品検索に失敗しました')
-      }
-
-    } catch (error) {
-      console.error('🚨 商品検索エラー:', error)
-      this.showError('ネットワークエラーが発生しました。時間をおいて再試行してください。')
-    }
+    return `
+      <div class="relative w-full h-32 lg:h-40 bg-gray-100 rounded mb-2 flex items-center justify-center">
+        <img src="/api/rakuten/proxy_image?url=${encodeURIComponent(product.image_url)}"
+             alt="${this.escapeHtml(product.title)}"
+             class="w-full h-32 lg:h-40 object-cover rounded absolute inset-0"
+             loading="lazy"
+             style="display: block;"
+             onload="this.nextElementSibling.style.display='none';"
+             onerror="console.warn('楽天画像読み込み失敗:', this.src); this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="absolute inset-0 bg-gray-100 rounded flex items-center justify-center text-gray-500 text-xs" style="display: none;">
+          <div class="text-center">
+            <div class="mb-1">🚫</div>
+            <div>プロキシエラー</div>
+          </div>
+        </div>
+      </div>
+    `
   }
 
   // 商品候補を表示（統合版）
@@ -166,29 +106,7 @@ export default class extends Controller {
            data-product-search-product-title="${this.escapeHtml(product.title)}"
            data-product-search-price="${product.price}"
            data-product-search-rakuten-url="${product.rakuten_url || ''}">
-        ${product.image_url ?
-          `<div class="relative w-full h-32 lg:h-40 bg-gray-100 rounded mb-2 flex items-center justify-center">
-             <img src="/api/rakuten/proxy_image?url=${encodeURIComponent(product.image_url)}"
-                  alt="${this.escapeHtml(product.title)}"
-                  class="w-full h-32 lg:h-40 object-cover rounded absolute inset-0"
-                  loading="lazy"
-                  style="display: block;"
-                  onload="this.nextElementSibling.style.display='none';"
-                  onerror="console.warn('楽天画像読み込み失敗:', this.src); this.style.display='none'; this.nextElementSibling.style.display='flex';">
-             <div class="absolute inset-0 bg-gray-100 rounded flex items-center justify-center text-gray-500 text-xs" style="display: none;">
-               <div class="text-center">
-                 <div class="mb-1">🚫</div>
-                 <div>プロキシエラー</div>
-               </div>
-             </div>
-           </div>` :
-          `<div class="bg-gray-100 h-32 lg:h-40 flex items-center justify-center rounded mb-2 text-gray-500 text-xs">
-             <div class="text-center">
-               <div class="mb-1">📷</div>
-               <div>画像なし</div>
-             </div>
-           </div>`
-        }
+        ${this.generateImageSection(product)}
         <p class="text-xs text-gray-600 truncate mb-1" title="${this.escapeHtml(product.title)}">
           ${this.truncateText(product.title, 30)}
         </p>
@@ -198,13 +116,11 @@ export default class extends Controller {
     `
 
     // 統合版: 全ての楽天検索UI（モバイル・PC両方）に同じ内容を表示
-    this.candidatesListTargets.forEach(target => {
+    this.updateAllTargets(this.candidatesListTargets, target => {
       target.innerHTML = products.map(productCardHtml).join('')
     })
 
-    this.candidatesTargets.forEach(target => {
-      target.classList.remove('hidden')
-    })
+    this.toggleElementsVisibility(this.candidatesTargets, true)
 
     this.hideStatus()
     // this.showMessage(`${products.length}件の商品候補が見つかりました`, 'success')
@@ -248,7 +164,7 @@ export default class extends Controller {
   // 選択状態の表示（統合版）
   showSelectedState(selectedCard, productTitle, price) {
     // 全ての楽天検索UI内のカードの選択状態をリセット
-    this.candidatesListTargets.forEach(target => {
+    this.updateAllTargets(this.candidatesListTargets, target => {
       target.querySelectorAll('.border-green-500').forEach(card => {
         card.classList.remove('border-green-500', 'bg-green-50')
       })
@@ -266,9 +182,7 @@ export default class extends Controller {
 
   // 検索結果をクリア（統合版）
   clearResults() {
-    this.candidatesTargets.forEach(target => {
-      target.classList.add('hidden')
-    })
+    this.toggleElementsVisibility(this.candidatesTargets, false)
     this.hideStatus()
     // 検索結果をクリア
   }
@@ -316,17 +230,15 @@ export default class extends Controller {
 
   // ステータス表示（統合版）
   showStatus(html) {
-    this.statusTargets.forEach(target => {
+    this.updateAllTargets(this.statusTargets, target => {
       target.innerHTML = html
-      target.classList.remove('hidden')
     })
+    this.toggleElementsVisibility(this.statusTargets, true)
   }
 
   // ステータス非表示（統合版）
   hideStatus() {
-    this.statusTargets.forEach(target => {
-      target.classList.add('hidden')
-    })
+    this.toggleElementsVisibility(this.statusTargets, false)
   }
 
   // 商品名フィールドを取得
@@ -364,5 +276,82 @@ export default class extends Controller {
   // テキスト省略
   truncateText(text, length) {
     return text.length > length ? text.substring(0, length) + '...' : text
+  }
+
+  // バリデーション専用メソッド
+  validateProductName(productName) {
+    if (!productName) {
+      this.showError('商品名を入力してください')
+      return false
+    }
+
+    if (productName.length > 100) { // 100: 商品名最大文字数
+      this.showError('商品名は100文字以内で入力してください')
+      return false
+    }
+
+    return true
+  }
+
+  validateRakutenUrl(rakutenUrl) {
+    if (!rakutenUrl) {
+      this.showError('楽天市場のURLを入力してください')
+      return false
+    }
+
+    if (!rakutenUrl.match(/https?:\/\/(?:www\.|item\.)?rakuten\.co\.jp\//)) {
+      this.showError('楽天市場のURLを入力してください')
+      return false
+    }
+
+    if (rakutenUrl.length > 1000) { // 1000: URL最大文字数
+      this.showError('URLは1000文字以内で入力してください')
+      return false
+    }
+
+    return true
+  }
+
+  // API呼び出し共通メソッド
+  async executeRakutenSearch(searchParams) {
+    this.showLoading()
+
+    try {
+      const response = await fetch('/api/rakuten/search_products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': this.getCSRFToken()
+        },
+        body: JSON.stringify(searchParams)
+      })
+
+      const result = await response.json()
+
+      if (response.ok && result.success) {
+        if (result.products && result.products.length > 0) {
+          this.displayCandidates(result.products)
+        } else {
+          this.showMessage(result.message || '該当する商品が見つかりませんでした', 'info')
+        }
+      } else {
+        this.showError(result.error || '商品検索に失敗しました')
+      }
+
+    } catch (error) {
+      console.error('🚨 商品検索エラー:', error)
+      this.showError('ネットワークエラーが発生しました。時間をおいて再試行してください。')
+    }
+  }
+
+  // DOM操作ユーティリティメソッド
+  toggleElementsVisibility(targets, isVisible) {
+    targets.forEach(target => {
+      target.classList.toggle('hidden', !isVisible)
+    })
+  }
+
+  updateAllTargets(targets, callback) {
+    targets.forEach(callback)
   }
 }
