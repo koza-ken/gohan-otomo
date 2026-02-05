@@ -1,6 +1,6 @@
 # 🍚 お供だち
 
-ご飯のお供を投稿・共有するWebアプリケーション
+ご飯のお供を投稿・共有するWebアプリケーション<br>
 https://gohan-otomo.onrender.com
 
 ## 開発のきっかけ
@@ -43,3 +43,4 @@ https://gohan-otomo.onrender.com
 ## ライセンス
 
 このプロジェクトはMITライセンスの下で公開されています。
+
